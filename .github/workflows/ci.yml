@@ -14,10 +14,12 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      # the lockfile is authored by npm 11; npm 10 (node 22's default)
-      # can't reconcile its optional-dependency entries
-      - run: npm install -g npm@11
-      - run: npm ci
+      # npm install, not npm ci: macOS-authored lockfiles omit the
+      # Linux-only wasm optional deps (@emnapi/*) that a clean Linux
+      # `npm ci` demands — a long-standing npm resolver gap. install
+      # still honors the lockfile and heals the platform-conditional
+      # entries.
+      - run: npm install
       - run: npm run lint
       - run: npm test
       - run: npm run build
