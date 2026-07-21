@@ -5,7 +5,7 @@ import { useCockpit, type ViewMode } from "@/lib/cockpit/store";
 import { STRATEGIES } from "@/lib/options/strategies";
 import manifest from "@/data/manifest.json";
 import { useSnapshot } from "@/lib/data/snapshot";
-import { TrendingUp, TrendingDown, MoveHorizontal, Zap } from "lucide-react";
+import { TrendingUp, TrendingDown, MoveHorizontal, Zap, BookOpen } from "lucide-react";
 import type { Outlook } from "@/lib/options/strategies";
 
 /** Bottom rails: the Universe-Atlas place chips, but for markets.
@@ -107,6 +107,7 @@ export function ChipRails() {
   const setOverlay = useCockpit((s) => s.setOverlay);
   const mobilePanel = useCockpit((s) => s.mobilePanel);
   const setMobilePanel = useCockpit((s) => s.setMobilePanel);
+  const overlay = useCockpit((s) => s.overlay);
   const { snapshot } = useSnapshot(ticker);
 
   return (
@@ -141,8 +142,23 @@ export function ChipRails() {
           </Chip>
         ))}
         <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" />
-        <Chip accent onClick={() => setOverlay("tours")} title="Guided tours — learn by flying (t)">
+        <Chip
+          accent
+          active={overlay === "tours"}
+          onClick={() => setOverlay(overlay === "tours" ? null : "tours")}
+          title="Guided tours — learn by flying (t)"
+        >
           ✦ tour
+        </Chip>
+        <Chip
+          active={overlay === "glossary"}
+          onClick={() => setOverlay(overlay === "glossary" ? null : "glossary")}
+          title="Every term, in plain English (g)"
+        >
+          <span className="mr-1 inline-block translate-y-px">
+            <BookOpen className="size-3" aria-hidden />
+          </span>
+          glossary
         </Chip>
         <span className="lg:hidden">
           <Chip
