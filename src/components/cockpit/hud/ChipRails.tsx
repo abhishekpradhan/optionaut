@@ -70,7 +70,7 @@ export function ChipRails() {
   return (
     <div className="pointer-events-auto flex select-none flex-col gap-1.5">
       {/* strategies */}
-      <div className="scrollbar-none flex items-center gap-1.5 overflow-x-auto pb-0.5">
+      <div className="scrollbar-none rail-fade flex items-center gap-1.5 overflow-x-auto pb-0.5">
         {STRATEGIES.map((s) => (
           <Chip
             key={s.id}
@@ -86,7 +86,7 @@ export function ChipRails() {
         ))}
       </div>
       {/* tickers + views + tour */}
-      <div className="scrollbar-none flex items-center gap-1.5 overflow-x-auto">
+      <div className="scrollbar-none rail-fade flex items-center gap-1.5 overflow-x-auto">
         {manifest.map((m) => (
           <Chip key={m.symbol} active={m.symbol === ticker} onClick={() => setTicker(m.symbol)} title={m.name}>
             {m.symbol}

@@ -229,7 +229,7 @@ export function PayoffChart({
               stroke="var(--muted-foreground)" strokeWidth={1}
               strokeDasharray="3 4" opacity={0.55} />
             <text x={x(spot)} y={-10} textAnchor="middle"
-              className="figures" fontSize={10.5} fill="var(--muted-foreground)">
+              className="figures chart-label" fontSize={10.5} fill="var(--muted-foreground)">
               now {fmtUsd(spot)}
             </text>
 
@@ -293,7 +293,7 @@ export function PayoffChart({
                 <rect x={-4.5} y={-4.5} width={9} height={9} transform="rotate(45)"
                   fill="var(--background)" stroke="var(--foreground)" strokeWidth={1.5} />
                 <text y={-10} textAnchor="middle" fontSize={10.5}
-                  className="figures" fill="var(--muted-foreground)">
+                  className="figures chart-label" fill="var(--muted-foreground)">
                   BE {fmtUsd(b, { cents: false })}
                 </text>
               </g>

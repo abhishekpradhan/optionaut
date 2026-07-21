@@ -15,6 +15,10 @@ import { X, AlertTriangle, Search, Play } from "lucide-react";
 export function Overlays({ snapshot }: { snapshot: Snapshot | null }) {
   const overlay = useCockpit((s) => s.overlay);
   const setOverlay = useCockpit((s) => s.setOverlay);
+  const closeRef = React.useRef<HTMLButtonElement | null>(null);
+  React.useEffect(() => {
+    if (overlay) closeRef.current?.focus();
+  }, [overlay]);
   if (!overlay) return null;
 
   return (
@@ -28,6 +32,7 @@ export function Overlays({ snapshot }: { snapshot: Snapshot | null }) {
     >
       <div className="panel stage-enter relative flex max-h-[82vh] w-full max-w-2xl flex-col overflow-hidden">
         <button
+          ref={closeRef}
           onClick={() => setOverlay(null)}
           className="absolute right-3 top-3 z-10 rounded p-1 text-muted-foreground transition-colors hover:text-foreground"
           aria-label="Close (esc)"
@@ -84,6 +89,15 @@ function GuideSheet() {
 
 function GlossarySheet() {
   const [q, setQ] = React.useState("");
+  const focusTerm = useCockpit((s) => s.glossaryTerm);
+  React.useEffect(() => {
+    if (!focusTerm) return;
+    // let the sheet paint, then bring the term into view
+    const t = setTimeout(() => {
+      document.getElementById(`gl-${focusTerm}`)?.scrollIntoView({ block: "center" });
+    }, 60);
+    return () => clearTimeout(t);
+  }, [focusTerm]);
   const needle = q.trim().toLowerCase();
   const entries = needle
     ? GLOSSARY.filter(
@@ -106,7 +120,15 @@ function GlossarySheet() {
       </div>
       <dl className="space-y-3">
         {entries.map((e) => (
-          <div key={e.id} id={e.id}>
+          <div
+            key={e.id}
+            id={`gl-${e.id}`}
+            className={
+              focusTerm === e.id
+                ? "rounded-md bg-accent/50 p-2 ring-1 ring-primary/40"
+                : undefined
+            }
+          >
             <dt className="text-[13.5px] font-semibold">{e.term}</dt>
             <dd className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
               {e.short}

@@ -168,23 +168,32 @@ export function PriceCone({ snapshot, height = 380 }: Props) {
               today
             </text>
 
-            {/* expiry markers on the centerline */}
-            {snapshot.expirations.filter((e) => e.dte <= maxDte).map((e) => {
-              const px = x(candles.length - 1 + (e.dte * 5) / 7);
-              return (
-                <g key={e.date} transform={`translate(${px},${y(spot)})`}>
-                  <rect x={-3} y={-3} width={6} height={6} transform="rotate(45)"
-                    fill="var(--background)" stroke="var(--muted-foreground)" strokeWidth={1} />
-                  <text y={innerH - y(spot) + 16} textAnchor="middle" fontSize={9.5}
-                    className="figures" fill="var(--muted-foreground)">
-                    {e.dte}d
-                  </text>
-                </g>
-              );
-            })}
+            {/* expiry markers on the centerline; labels skip when crowded */}
+            {(() => {
+              const marks = snapshot.expirations
+                .filter((e) => e.dte <= maxDte)
+                .map((e) => ({ e, px: x(candles.length - 1 + (e.dte * 5) / 7) }));
+              let lastLabelX = -Infinity;
+              return marks.map(({ e, px }) => {
+                const label = px - lastLabelX >= 30;
+                if (label) lastLabelX = px;
+                return (
+                  <g key={e.date} transform={`translate(${px},${y(spot)})`}>
+                    <rect x={-3} y={-3} width={6} height={6} transform="rotate(45)"
+                      fill="var(--background)" stroke="var(--muted-foreground)" strokeWidth={1} />
+                    {label && (
+                      <text y={innerH - y(spot) + 16} textAnchor="middle" fontSize={9.5}
+                        className="figures chart-label" fill="var(--muted-foreground)">
+                        {e.dte}d
+                      </text>
+                    )}
+                  </g>
+                );
+              });
+            })()}
 
             {/* cone edge labels */}
-            <g fontSize={10.5} fill="var(--secondary-foreground)">
+            <g fontSize={10.5} fill="var(--secondary-foreground)" className="chart-label">
               <text x={innerW + 8} y={y(spot + coneAt(maxDte, 1)) + 4}>
                 ±{fmtUsd(coneAt(maxDte, 1), { cents: false })}
               </text>

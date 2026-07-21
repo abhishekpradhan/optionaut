@@ -29,7 +29,10 @@ export function Readout({
     const em = snapshot.iv30 ? expectedMove(snapshot.spot, snapshot.iv30, 30) : null;
     return (
       <div className="pointer-events-none select-none">
-        <div className="figures text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+        <div
+          className="figures font-semibold tracking-tight text-foreground"
+          style={{ fontSize: "clamp(30px, 5.5vh, 52px)", lineHeight: 1.05 }}
+        >
           {fmtUsd(snapshot.spot)}
         </div>
         <div className="hud mt-2 space-y-0.5 !text-[10.5px]">
@@ -51,31 +54,39 @@ export function Readout({
   const price = whatIfPrice ?? snapshot.spot;
   const pl = legs.length ? markToMarket(legs, price, elapsedDays, ctx, ivScale) : 0;
   const cost = legs.length ? netEntryCost(legs) : 0;
+  const stockOnly = legs.length > 0 && legs.every((l) => l.kind === "stock");
   const scenario =
     whatIfPrice == null && elapsedDays === 0 && ivScale === 1
       ? "as priced, right now"
       : `${fmtUsd(price, { cents: false })}${elapsedDays > 0 ? ` · +${elapsedDays}d` : " · today"}${
-          ivScale !== 1 ? ` · iv ×${ivScale.toFixed(2)}` : ""
+          ivScale !== 1 && !stockOnly ? ` · iv ×${ivScale.toFixed(2)}` : ""
         }`;
 
   return (
     <div className="pointer-events-none select-none">
       <div
-        className={`figures text-4xl font-semibold tracking-tight sm:text-5xl ${
+        className={`figures font-semibold tracking-tight ${
           pl > 0.5
             ? "text-gain num-glow-gain"
             : pl < -0.5
               ? "text-loss num-glow-loss"
               : "text-foreground"
         }`}
+        style={{ fontSize: "clamp(30px, 5.5vh, 52px)", lineHeight: 1.05 }}
       >
         {fmtSignedUsd(pl, { cents: false })}
       </div>
       <div className="hud mt-2 space-y-0.5 !text-[10.5px]">
         <div className="text-secondary-foreground">{scenario}</div>
         <div className="text-muted-foreground">
-          {cost >= 0 ? "paid" : "collected"} {fmtUsd(Math.abs(cost), { cents: false })} ·{" "}
-          {dte}d contract · per 1-lot
+          {stockOnly ? (
+            <>100 shares · {fmtUsd(snapshot.spot * 100, { cents: false })} notional · no expiry, no decay</>
+          ) : (
+            <>
+              {cost >= 0 ? "paid" : "collected"} {fmtUsd(Math.abs(cost), { cents: false })} ·{" "}
+              {dte}d contract · per 1-lot
+            </>
+          )}
         </div>
       </div>
     </div>

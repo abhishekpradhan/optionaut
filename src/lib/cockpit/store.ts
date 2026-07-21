@@ -37,6 +37,8 @@ interface CockpitState {
   tour: TourRef | null;
   /** small screens: the slide-up dials/stats sheet */
   mobilePanel: boolean;
+  /** term id to scroll to when the glossary sheet opens */
+  glossaryTerm: string | null;
 
   init: (partial: Partial<Pick<CockpitState, "ticker" | "strategyId" | "view" | "overlay" | "tour">>) => void;
   setTicker: (t: string) => void;
@@ -52,6 +54,7 @@ interface CockpitState {
   setOverlay: (o: OverlayKind) => void;
   setTour: (t: TourRef | null) => void;
   setMobilePanel: (v: boolean) => void;
+  openGlossaryAt: (termId: string) => void;
 }
 
 export const useCockpit = create<CockpitState>((set, get) => ({
@@ -67,6 +70,7 @@ export const useCockpit = create<CockpitState>((set, get) => ({
   overlay: null,
   tour: null,
   mobilePanel: false,
+  glossaryTerm: null,
 
   init: (partial) => set({ ...partial }),
 
@@ -127,7 +131,8 @@ export const useCockpit = create<CockpitState>((set, get) => ({
   setIvScale: (x) => set({ ivScale: x }),
   setDomainScale: (x) => set({ domainScale: Math.min(Math.max(x, 0.55), 1.7) }),
   resetDials: () => set({ whatIfPrice: null, elapsedDays: 0, ivScale: 1 }),
-  setOverlay: (o) => set({ overlay: o }),
+  setOverlay: (o) => set({ overlay: o, glossaryTerm: o === "glossary" ? get().glossaryTerm : null }),
   setTour: (t) => set({ tour: t, overlay: null }),
   setMobilePanel: (v) => set({ mobilePanel: v }),
+  openGlossaryAt: (termId) => set({ overlay: "glossary", glossaryTerm: termId }),
 }));

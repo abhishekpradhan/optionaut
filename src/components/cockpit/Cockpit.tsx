@@ -88,6 +88,9 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
       const t = e.target as HTMLElement;
       if (t.closest("input, textarea, [contenteditable], [role=slider]")) return;
       const s = useCockpit.getState();
+      // While a sheet is open, only escape and the sheet toggles work —
+      // the stage shouldn't change under a modal.
+      if (s.overlay && !["Escape", "t", "g", "i", "?"].includes(e.key)) return;
       switch (e.key) {
         case "Escape":
           if (s.tour) setTour(null);

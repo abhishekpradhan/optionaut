@@ -32,6 +32,7 @@ export function DialStack({
   const pctMove = ((price - spot) / spot) * 100;
   const priceStep = spot > 400 ? 1 : spot > 100 ? 0.5 : 0.25;
   const optionLegs = legs.filter((l) => l.kind !== "stock");
+  const stockOnly = legs.length > 0 && optionLegs.length === 0;
   const repIv = optionLegs.length
     ? optionLegs.reduce((a, l) => a + l.iv, 0) / optionLegs.length
     : snapshot.iv30 ?? 0.3;
@@ -40,8 +41,8 @@ export function DialStack({
 
   return (
     <div className="pointer-events-auto select-none">
-      {/* expiries */}
-      <div className="mb-3 flex flex-wrap justify-end gap-1">
+      {/* expiries — meaningless for plain shares */}
+      <div className={`mb-3 flex flex-wrap justify-end gap-1 ${stockOnly ? "hidden" : ""}`}>
         {snapshot.expirations.map((e, i) => (
           <button
             key={e.date}
@@ -79,6 +80,7 @@ export function DialStack({
             }}
           />
         </Dial>
+        {!stockOnly && (
         <Dial
           label="time"
           value={
@@ -88,10 +90,19 @@ export function DialStack({
           <Slider aria-label="Days into the future" min={0} max={dte} step={1}
             value={[elapsedDays]} onValueChange={(v) => setElapsedDays(oneOf(v))} />
         </Dial>
+        )}
+        {!stockOnly && (
         <Dial label="volatility" value={<>×{ivScale.toFixed(2)} · iv ≈ {fmtPct(repIv * ivScale, 0)}</>}>
           <Slider aria-label="Volatility multiplier" min={0.5} max={1.8} step={0.05}
             value={[ivScale]} onValueChange={(v) => setIvScale(oneOf(v))} />
         </Dial>
+        )}
+        {stockOnly && (
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
+            Plain shares: time and volatility have no dial to turn — nothing decays, nothing
+            deflates. Every option strategy trades that simplicity away.
+          </p>
+        )}
       </div>
 
       {dirty && (

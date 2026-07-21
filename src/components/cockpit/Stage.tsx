@@ -25,7 +25,6 @@ export function Stage({
   const ivScale = useCockpit((s) => s.ivScale);
   const whatIfPrice = useCockpit((s) => s.whatIfPrice);
   const domainScale = useCockpit((s) => s.domainScale);
-  const setDomainScale = useCockpit((s) => s.setDomainScale);
   const setStrike = useCockpit((s) => s.setStrike);
   const setWhatIfPrice = useCockpit((s) => s.setWhatIfPrice);
   const setElapsedDays = useCockpit((s) => s.setElapsedDays);
@@ -40,11 +39,20 @@ export function Stage({
     return () => ro.disconnect();
   }, []);
 
-  const onWheel = (e: React.WheelEvent) => {
-    if (view === "history") return;
-    e.preventDefault();
-    setDomainScale(domainScale * (e.deltaY > 0 ? 1.07 : 0.93));
-  };
+  // Native non-passive wheel listener: React's synthetic onWheel is
+  // passive, so preventDefault there is silently ignored.
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      const s = useCockpit.getState();
+      if (s.view === "history") return;
+      e.preventDefault();
+      s.setDomainScale(s.domainScale * (e.deltaY > 0 ? 1.07 : 0.93));
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
 
   const chartH = Math.max(h - 8, 200);
   const pick = (price: number, day: number) => {
@@ -57,7 +65,6 @@ export function Stage({
       ref={ref}
       id="main"
       className="relative h-full w-full min-w-0"
-      onWheel={onWheel}
       aria-label="Chart stage"
     >
       {h > 0 && def && (
@@ -65,16 +72,6 @@ export function Stage({
           {view === "history" && <PriceCone snapshot={snapshot} height={chartH} />}
           {view === "payoff" && (
             <>
-              <div className="hud pointer-events-none absolute right-2 top-0 z-10 flex items-center gap-3 !text-[9.5px]">
-                <span className="flex items-center gap-1.5">
-                  <span aria-hidden className="inline-block h-0.5 w-3.5 rounded-full bg-primary" />
-                  {elapsedDays > 0 ? `in ${elapsedDays}d` : "today"}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span aria-hidden className="inline-block h-0.5 w-3.5 rounded-full bg-foreground" />
-                  at expiry
-                </span>
-              </div>
               <PayoffChart
                 snapshot={snapshot}
                 def={def}
@@ -90,17 +87,28 @@ export function Stage({
             </>
           )}
           {view === "map" && (
-            <Heatmap
-              snapshot={snapshot}
-              legs={legs}
-              dte={dte}
-              ivScale={ivScale}
-              elapsedDays={elapsedDays}
-              whatIfPrice={whatIfPrice}
-              onPick={pick}
-              cellH={Math.min(Math.max(Math.floor((chartH - 60) / 46), 7), 15)}
-              domainScale={domainScale}
-            />
+            <>
+              <div className="hud pointer-events-none absolute right-2 top-0 z-10 flex items-center gap-2 !text-[9.5px]">
+                <span>loss</span>
+                <span
+                  aria-hidden
+                  className="inline-block h-1.5 w-20 rounded-full"
+                  style={{ background: "linear-gradient(90deg, #e66767, #20242e 50%, #3987e5)" }}
+                />
+                <span>profit</span>
+              </div>
+              <Heatmap
+                snapshot={snapshot}
+                legs={legs}
+                dte={dte}
+                ivScale={ivScale}
+                elapsedDays={elapsedDays}
+                whatIfPrice={whatIfPrice}
+                onPick={pick}
+                cellH={Math.min(Math.max(Math.floor((chartH - 60) / 46), 7), 15)}
+                domainScale={domainScale}
+              />
+            </>
           )}
         </div>
       )}

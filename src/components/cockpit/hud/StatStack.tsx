@@ -86,7 +86,7 @@ export function StatStack({
           title="greeks · the dials, named"
           rows={[
             ["Δ delta / $1", fmtSignedUsd(g.delta, { cents: false })],
-            ["Γ gamma / $1", `${g.gamma >= 0 ? "+" : "−"}${Math.abs(g.gamma * 100).toFixed(1)}Δ`],
+            ["Γ gamma / $1", `${g.gamma >= 0 ? "+" : "−"}${Math.abs(g.gamma).toFixed(1)}Δ`],
             ["Θ theta / day", fmtSignedUsd(g.theta / 365, { cents: false })],
             ["V vega / 1pt", fmtSignedUsd(g.vega / 100, { cents: false })],
           ]}

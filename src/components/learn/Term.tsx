@@ -32,17 +32,17 @@ export function Term({
       <PopoverContent side="top" align="center" className="w-72 border-border bg-popover p-3.5">
         <div className="text-[13px] font-semibold text-foreground">{entry.term}</div>
         <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">{entry.short}</p>
-        <GlossaryJump />
+        <GlossaryJump id={entry.id} />
       </PopoverContent>
     </Popover>
   );
 }
 
-function GlossaryJump() {
-  const setOverlay = useCockpit((s) => s.setOverlay);
+function GlossaryJump({ id }: { id: string }) {
+  const openGlossaryAt = useCockpit((s) => s.openGlossaryAt);
   return (
     <button
-      onClick={() => setOverlay("glossary")}
+      onClick={() => openGlossaryAt(id)}
       className="mt-2 inline-block text-[11.5px] text-primary hover:underline"
     >
       glossary →
