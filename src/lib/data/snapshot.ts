@@ -26,10 +26,16 @@ export function useSnapshot(symbol: string): {
 } {
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    let alive = true;
+  // Reset synchronously during render when the symbol changes (the React
+  // "adjust state during render" pattern, not a setState-in-effect).
+  const [prevSymbol, setPrevSymbol] = useState(symbol);
+  if (prevSymbol !== symbol) {
+    setPrevSymbol(symbol);
     setSnapshot(null);
     setError(null);
+  }
+  useEffect(() => {
+    let alive = true;
     fetchSnapshot(symbol)
       .then((s) => alive && setSnapshot(s))
       .catch((e) => alive && setError(e.message));
