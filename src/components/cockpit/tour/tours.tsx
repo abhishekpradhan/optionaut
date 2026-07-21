@@ -43,8 +43,8 @@ export const TOURS: Tour[] = [
         caption: (
           <>
             Start with the honest baseline: owning 100 <Term id="share">shares</Term>. This is a{" "}
-            <Term id="payoff-diagram">payoff diagram</Term> — stock price runs left to right,
-            your <Term id="pl">profit or loss</Term> runs up and down. One picture, every
+            <Term id="payoff-diagram">payoff diagram</Term>{" "}— stock price runs left to right,
+            your <Term id="pl">profit or loss</Term>{" "}runs up and down. One picture, every
             outcome. Shares are a perfect 45° line: no kinks, no tricks, no expiry.
           </>
         ),
@@ -63,9 +63,9 @@ export const TOURS: Tour[] = [
         setup: (s) => { s.setStrategy("long-call", null); base(s); },
         caption: (
           <>
-            Now the interesting distortion: a <Term id="call">call</Term> — the right to buy 100
-            shares at the <Term id="strike">strike</Term> until{" "}
-            <Term id="expiration">expiration</Term>, for a <Term id="premium">premium</Term> paid
+            Now the interesting distortion: a <Term id="call">call</Term>{" "}— the right to buy 100
+            shares at the <Term id="strike">strike</Term>{" "}until{" "}
+            <Term id="expiration">expiration</Term>, for a <Term id="premium">premium</Term>{" "}paid
             today. The famous hockey stick: flat on the left (worst case = the premium, fully
             prepaid), rising dollar-for-dollar on the right.
           </>
@@ -75,7 +75,7 @@ export const TOURS: Tour[] = [
         caption: (
           <>
             Find the diamond where the white line crosses zero. That&apos;s your{" "}
-            <Term id="breakeven">breakeven</Term> — strike <em>plus</em> premium.
+            <Term id="breakeven">breakeven</Term>{" "}— strike <em>plus</em>{" "}premium.
             &quot;The stock went up&quot; and &quot;I made money&quot; are different sentences,
             separated by what you paid. Try dragging the strike pill under the chart: the kink
             follows it, and the entry price reprices.
@@ -86,7 +86,7 @@ export const TOURS: Tour[] = [
         setup: (s) => { s.setStrategy("cash-secured-put", null); base(s); },
         caption: (
           <>
-            Every contract has two ends. This is a <em>sold</em> <Term id="put">put</Term> — you
+            Every contract has two ends. This is a <em>sold</em> <Term id="put">put</Term>{" "}— you
             collect the premium and take on the obligation. The shelf on the right is your
             capped win (keep the premium); the slope on the left is the promise you made. Seller
             and buyer are mirror images; neither is &quot;the smart side.&quot;
@@ -104,9 +104,9 @@ export const TOURS: Tour[] = [
         setup: (s) => { s.setStrategy("long-call", null); base(s); },
         caption: (
           <>
-            Two lines now. White is the option <em>at expiry</em> — pure cash-in value
+            Two lines now. White is the option <em>at expiry</em>{" "}— pure cash-in value
             (<Term id="intrinsic">intrinsic</Term>). Blue is the option <em>today</em>. The
-            vertical gap between them is <Term id="extrinsic">extrinsic value</Term> — the price
+            vertical gap between them is <Term id="extrinsic">extrinsic value</Term>{" "}— the price
             of possibility, of every path the stock might still take.
           </>
         ),
@@ -174,7 +174,7 @@ export const TOURS: Tour[] = [
       {
         caption: (
           <>
-            Two warnings before you leave. The melt <em>accelerates</em> — the last two weeks
+            Two warnings before you leave. The melt <em>accelerates</em>{" "}— the last two weeks
             are far steeper than the first two. And endgame mechanics are real: sellers of
             in-the-money options get <Term id="assignment">assigned</Term>. Every strategy&apos;s
             &quot;what can bite&quot; panel (press <span className="figures">i</span>) flags when
@@ -194,10 +194,10 @@ export const TOURS: Tour[] = [
         caption: (
           <>
             This is the market&apos;s forecast made visible: the cone is the{" "}
-            <Term id="expected-move">expected move</Term> — the range options prices give
+            <Term id="expected-move">expected move</Term>{" "}— the range options prices give
             roughly 2-in-3 odds of containing the stock. Wide cone = expensive drama. The number
             behind it is <Term id="iv">implied volatility</Term>, in the panel on the right,
-            next to what the stock <em>actually</em> delivered (<Term id="hv">historical volatility</Term>).
+            next to what the stock <em>actually</em>{" "}delivered (<Term id="hv">historical volatility</Term>).
           </>
         ),
       },
@@ -291,10 +291,10 @@ export const TOURS: Tour[] = [
         setup: (s) => { s.setExpIndex(0); },
         caption: (
           <>
-            Second: respect the last days. This is the <em>nearest</em> expiry — notice how
+            Second: respect the last days. This is the <em>nearest</em>{" "}expiry — notice how
             violently the map&apos;s colors swing near the strikes. That concentration is{" "}
             <Term id="gamma">gamma</Term>, and its industrial form is{" "}
-            <Term id="0dte">0DTE</Term> trading: statistically the fastest wealth transfer from
+            <Term id="0dte">0DTE</Term>{" "}trading: statistically the fastest wealth transfer from
             beginners to market makers yet devised.
           </>
         ),
@@ -302,8 +302,8 @@ export const TOURS: Tour[] = [
       {
         caption: (
           <>
-            Third: <Term id="liquidity">liquidity</Term> is a silent fee — every leg crosses the{" "}
-            <Term id="bid-ask">bid–ask spread</Term> twice, and sleepy strikes tax you going
+            Third: <Term id="liquidity">liquidity</Term>{" "}is a silent fee — every leg crosses the{" "}
+            <Term id="bid-ask">bid–ask spread</Term>{" "}twice, and sleepy strikes tax you going
             both ways. Fourth: events reprice everything (tour 4). Fifth: know your exits before
             your entries — the &quot;what can bite&quot; panel is your pre-flight checklist.
             This instrument is a simulator; every crash in here is free. Spend them lavishly.

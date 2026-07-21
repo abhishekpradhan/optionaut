@@ -178,7 +178,7 @@ function AboutSheet({ snapshot }: { snapshot: Snapshot | null }) {
           advice, a recommendation, or a solicitation to buy or sell any security. The
           strategies shown can and do lose money — several exist to demonstrate exactly how.
           Before trading for real, read your broker&apos;s{" "}
-          <em>Characteristics and Risks of Standardized Options</em> and assume real fills are
+          <em>Characteristics and Risks of Standardized Options</em>{" "}and assume real fills are
           worse than model fills.
         </p>
       </div>

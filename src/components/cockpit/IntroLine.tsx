@@ -12,10 +12,12 @@ export function IntroLine() {
   const view = useCockpit((s) => s.view);
 
   React.useEffect(() => {
-    if (localStorage.getItem("ol-intro-seen")) return;
+    // Session-scoped: greet every fresh visit, but stay dismissed for
+    // the rest of the session once the pilot starts flying.
+    if (sessionStorage.getItem("ol-intro-seen")) return;
     const reveal = setTimeout(() => setShow(true), 500);
     const dismiss = () => {
-      localStorage.setItem("ol-intro-seen", "1");
+      sessionStorage.setItem("ol-intro-seen", "1");
       setShow(false);
     };
     const unsub = useCockpit.subscribe((s, prev) => {
