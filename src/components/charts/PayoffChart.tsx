@@ -70,7 +70,7 @@ export function PayoffChart({
   domainScale = 1,
 }: Props) {
   const { ref, width } = useMeasure<HTMLDivElement>();
-  const margin = { top: 26, right: 86, bottom: 78, left: 60 };
+  const margin = { top: 26, right: 80, bottom: 74, left: 58 };
   const innerW = Math.max(width - margin.left - margin.right, 40);
   const innerH = height - margin.top - margin.bottom;
   const [hoverX, setHoverX] = React.useState<number | null>(null);
@@ -84,8 +84,14 @@ export function PayoffChart({
   const em = expectedMove(spot, snapshot.iv30 ?? 0.3, Math.max(dte, 7));
   const span =
     Math.min(Math.max((2.6 * em) / spot, 0.16), 0.5) * domainScale;
-  const xLo = Math.min(spot * (1 - span), ...(strikes.length ? [Math.min(...strikes) * 0.96] : []));
-  const xHi = Math.max(spot * (1 + span), ...(strikes.length ? [Math.max(...strikes) * 1.04] : []));
+  const rawLo = Math.min(spot * (1 - span), ...(strikes.length ? [Math.min(...strikes) * 0.96] : []));
+  const rawHi = Math.max(spot * (1 + span), ...(strikes.length ? [Math.max(...strikes) * 1.04] : []));
+  // Snap the domain to the tick grid so the plot never ends on a naked
+  // unlabeled band — every edge lands on a gridline, like history view.
+  const probe = scaleLinear().domain([rawLo, rawHi]).ticks(6);
+  const xStep = probe.length > 1 ? probe[1] - probe[0] : Math.max((rawHi - rawLo) / 6, 1);
+  const xLo = Math.floor(rawLo / xStep) * xStep;
+  const xHi = Math.ceil(rawHi / xStep) * xStep;
 
   const { xs, expiryPts, nowPts } = React.useMemo(() => {
     const xs: number[] = [];
@@ -104,13 +110,15 @@ export function PayoffChart({
   const yVals = [...expiryPts, ...nowPts].map((p) => p[1]);
   const yMin = Math.min(...yVals, 0);
   const yMax = Math.max(...yVals, 0);
-  const yPad = Math.max((yMax - yMin) * 0.12, 50);
+  const yPad = Math.max((yMax - yMin) * 0.06, 40);
 
   const x = scaleLinear().domain([xLo, xHi]).range([0, innerW]);
+  // nice(5) matches ticks(5): the vertical domain also ends on labeled
+  // gridlines instead of a mismatched .nice(10) overhang.
   const y = scaleLinear()
     .domain([yMin - yPad, yMax + yPad])
     .range([innerH, 0])
-    .nice();
+    .nice(5);
 
   const linePath = d3line<[number, number]>()
     .x((d) => x(d[0]))

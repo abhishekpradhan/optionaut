@@ -55,6 +55,10 @@ export function Heatmap({
   const cols = Math.min(dte + 1, 44);
   const margin = { left: 56, right: 10, top: 30, bottom: 30 };
   const plotW = Math.max(width - margin.left - margin.right, 60);
+  // Cap cell width relative to cell height and center the grid: full-bleed
+  // stretching turned cells into 3:1 bricks on wide stages.
+  const gridW = Math.min(plotW, cols * CELL_H * 2.5);
+  const padX = (plotW - gridW) / 2;
   const plotH = ROWS * CELL_H;
   const height = plotH + margin.top + margin.bottom;
 
@@ -94,12 +98,12 @@ export function Heatmap({
     const canvas = canvasRef.current;
     if (!canvas || width === 0) return;
     const dpr = window.devicePixelRatio || 1;
-    canvas.width = plotW * dpr;
+    canvas.width = gridW * dpr;
     canvas.height = plotH * dpr;
     const c2 = canvas.getContext("2d");
     if (!c2) return;
     c2.scale(dpr, dpr);
-    const cw = plotW / cols;
+    const cw = gridW / cols;
     // bigger cells earn a bigger surface gap; color caps below full
     // saturation so large flat regions don't turn into solid slabs
     const gap = CELL_H >= 11 ? 2 : 1;
@@ -112,7 +116,7 @@ export function Heatmap({
         c2.fillRect(c * cw + gap / 2, r * CELL_H + gap / 2, cw - gap, CELL_H - gap);
       }
     }
-  }, [grid, plotW, plotH, cols, width, CELL_H]);
+  }, [grid, gridW, plotH, cols, width, CELL_H]);
 
   const hoverInfo = hover
     ? { price: priceAt(hover.r), day: dayAt(hover.c), v: grid.g[hover.r][hover.c] }
@@ -140,11 +144,11 @@ export function Heatmap({
         <>
           <div
             className="map-reveal"
-            style={{ position: "absolute", left: margin.left, top: margin.top }}
+            style={{ position: "absolute", left: margin.left + padX, top: margin.top }}
           >
             <canvas
               ref={canvasRef}
-              style={{ width: plotW, height: plotH, cursor: "pointer", display: "block", borderRadius: 6 }}
+              style={{ width: gridW, height: plotH, cursor: "pointer", display: "block", borderRadius: 6 }}
               onPointerMove={(e) => setHover(cellFromEvent(e))}
               onPointerLeave={() => setHover(null)}
               onClick={(e) => {
@@ -159,9 +163,9 @@ export function Heatmap({
               <div
                 className="pointer-events-none absolute rounded-[3px] ring-2 ring-foreground/80"
                 style={{
-                  left: (plotW / cols) * hover.c,
+                  left: (gridW / cols) * hover.c,
                   top: hover.r * CELL_H,
-                  width: plotW / cols,
+                  width: gridW / cols,
                   height: CELL_H,
                 }}
               />
@@ -171,7 +175,7 @@ export function Heatmap({
               <div
                 className="pointer-events-none absolute rounded-full border-2 border-background bg-foreground"
                 style={{
-                  left: (plotW / cols) * dialC + plotW / cols / 2 - 4,
+                  left: (gridW / cols) * dialC + gridW / cols / 2 - 4,
                   top: dialR * CELL_H + CELL_H / 2 - 4,
                   width: 8,
                   height: 8,
@@ -181,16 +185,16 @@ export function Heatmap({
           </div>
 
           {/* y axis: prices */}
-          <svg width={margin.left} height={height} className="absolute left-0 top-0 figures">
+          <svg width={margin.left + padX} height={height} className="absolute left-0 top-0 figures">
             {[0, Math.round(ROWS * 0.25), Math.round(ROWS * 0.5), Math.round(ROWS * 0.75), ROWS - 1].map(
               (r) => (
-                <text key={r} x={margin.left - 8} y={margin.top + r * CELL_H + CELL_H / 2}
+                <text key={r} x={margin.left + padX - 8} y={margin.top + r * CELL_H + CELL_H / 2}
                   dy="0.32em" textAnchor="end" fontSize={10.5} fill="var(--muted-foreground)">
                   {fmtUsd(priceAt(r), { cents: false })}
                 </text>
               ),
             )}
-            <line x1={margin.left - 2} x2={margin.left - 2}
+            <line x1={margin.left + padX - 2} x2={margin.left + padX - 2}
               y1={margin.top + ((pHi - spot) / (pHi - pLo)) * plotH - 5}
               y2={margin.top + ((pHi - spot) / (pHi - pLo)) * plotH + 5}
               stroke="var(--foreground)" strokeWidth={2} />
@@ -200,7 +204,7 @@ export function Heatmap({
           <svg width={width} height={margin.bottom} className="absolute bottom-0 left-0 figures">
             {dayTicks.map((d) => (
               <text key={d}
-                x={margin.left + (plotW * (d / dte) * (cols - 1)) / cols + plotW / cols / 2}
+                x={margin.left + padX + (gridW * (d / dte) * (cols - 1)) / cols + gridW / cols / 2}
                 y={16} textAnchor="middle" fontSize={10.5} fill="var(--muted-foreground)">
                 {d === 0 ? "today" : d === dte ? "expiry" : `+${d}d`}
               </text>
@@ -213,7 +217,7 @@ export function Heatmap({
         <div
           className="pointer-events-none absolute z-10 rounded-lg border border-border bg-popover/95 px-3 py-2 text-[12px] shadow-lg backdrop-blur"
           style={{
-            left: Math.min(margin.left + (plotW / cols) * hover!.c + 18, width - 180),
+            left: Math.min(margin.left + padX + (gridW / cols) * hover!.c + 18, width - 180),
             top: Math.max(margin.top + hover!.r * CELL_H - 14, 2),
           }}
         >
