@@ -174,7 +174,7 @@ export function CustomSheet() {
               rel="noopener noreferrer"
               className="rounded-md border border-primary/60 bg-accent px-3.5 py-1.5 text-[13px] font-medium transition-colors hover:border-primary"
             >
-              open {cboeSlug.toUpperCase()} on Cboe ↗
+              open it on Cboe ↗
             </a>
           ) : (
             <span aria-hidden className="cursor-default rounded-md border border-border px-3.5 py-1.5 text-[13px] text-muted-foreground/50">
