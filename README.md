@@ -2,14 +2,21 @@
   <img src="docs/banner.svg" alt="Optionaut — learn options by flying them" width="100%" />
 </p>
 
-# Optionaut
+<div align="center">
 
-**Learn options by flying them.** A free, cinematic, full-screen instrument for
-understanding trading — pick a stock, fly everything you could do with it (from buying
-shares to iron condors), and *understand* it by dragging strikes, scrubbing time, and
-crushing volatility while the profit picture responds. Every crash is free.
+**A free, cinematic, full-screen instrument for understanding options trading.**
+Pick a stock, fly every strategy from buying shares to iron condors — drag strikes,
+fast-forward time, crush volatility — and watch the profit picture respond.
+Every crash is free.
 
-**Live at [optionaut.org](https://optionaut.org).**
+[![optionaut.org](https://img.shields.io/website?url=https%3A%2F%2Foptionaut.org&style=flat-square&label=optionaut.org&up_message=live&up_color=3987e5&down_message=down)](https://optionaut.org)
+[![CI](https://img.shields.io/github/actions/workflow/status/abhishekpradhan/optionaut/ci.yml?style=flat-square&label=ci)](https://github.com/abhishekpradhan/optionaut/actions/workflows/ci.yml)
+[![Market data](https://img.shields.io/github/actions/workflow/status/abhishekpradhan/optionaut/refresh-data.yml?style=flat-square&label=nightly%20data)](https://github.com/abhishekpradhan/optionaut/actions/workflows/refresh-data.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+
+[**Fly it →**](https://optionaut.org) · [Take a tour](https://optionaut.org/learn) · [Roadmap](#status--roadmap) · [Contributing](CONTRIBUTING.md)
+
+</div>
 
 > **Educational only.** Options involve a high degree of risk and are not suitable for
 > all investors. Optionaut is not a brokerage and nothing in it is investment advice, a
@@ -19,17 +26,29 @@ crushing volatility while the profit picture responds. Every crash is free.
 ## The instrument
 
 One full-screen cockpit — no scrolling website. A chart fills the stage, the UI floats
-at the edges, and three views morph in place:
+at the edges as a HUD, and three views morph in place (`H` / `P` / `M`):
 
-- **HISTORY** — months of candles flowing into the options-implied *expected-move cone*.
-- **PAYOFF** — the neon expiry/today diagram with draggable strike pills and three dials
-  (price / time / volatility — which are secretly delta, theta, and vega).
-- **MAP** — the price×time P/L heatmap; click any cell to jump the whole cockpit to that
-  scenario.
+<p align="center">
+  <img src="docs/shot-payoff.png" alt="The payoff view: an iron condor on AAPL — neon expiry and today curves, draggable strike pills, dials, live greeks" width="100%" />
+  <em>PAYOFF — the neon expiry/today diagram. Drag the strike pills, twist the price /
+  time / volatility dials (secretly delta, theta, vega), watch every number recompute.</em>
+</p>
 
-Plus **TOUR mode** — six guided flights that drive the real instrument with action gates
-("drag the time dial yourself…") — a concept-gated glossary behind every dotted term,
-per-strategy "what can bite" guides, and a full keyboard map (`?` in the app).
+<p align="center">
+  <img src="docs/shot-history.png" alt="The history view: months of candles flowing into the options-implied expected-move cone" width="100%" />
+  <em>HISTORY — real candles flowing into the options-implied expected-move cone:
+  what the market thinks "likely" and "rare" look like, drawn to scale.</em>
+</p>
+
+<p align="center">
+  <img src="docs/shot-tours.png" alt="Tour mode: six guided flights that drive the real instrument" width="100%" />
+  <em>TOUR mode — six guided flights that drive the real instrument, with action gates
+  ("drag the time dial yourself…"). Ten minutes from zero to iron condor.</em>
+</p>
+
+Plus the **MAP** view (a clickable price×time P/L heatmap — click any cell to jump the
+cockpit to that scenario), a concept-gated glossary behind every dotted term, a
+"what can bite?" honesty panel per strategy, and a full keyboard map (`?` in the app).
 12 strategies × 10 tickers, all on real captured option chains.
 
 Built for **desktop and landscape tablets** (pinch-to-zoom included); phones get an
@@ -44,7 +63,7 @@ npm install
 npm run dev        # http://localhost:3000
 npm test           # options-math test suite (Vitest)
 npm run lint
-npm run build      # 147 static pages
+npm run build      # 148 static pages
 ```
 
 ## How the numbers are made
@@ -52,10 +71,11 @@ npm run build      # 147 static pages
 - **Market data** is a bundled snapshot of [Cboe's public delayed quotes](https://www.cboe.com/delayed_quotes/)
   (chains, IV, OI, volume, price history), captured by `scripts/capture-snapshot.mjs`
   into `public/snapshots/`. It refreshes itself every trading night via the
-  [refresh-data workflow](.github/workflows/refresh-data.yml) (see Automation below);
-  manual refresh works anytime with `node scripts/capture-snapshot.mjs`. Data is
-  deliberately frozen and labeled as a dated snapshot in the UI — never live, never
-  executable. Optionaut is not affiliated with Cboe.
+  [refresh-data workflow](.github/workflows/refresh-data.yml) (see
+  [Automation](#automation)); manual refresh works anytime with
+  `node scripts/capture-snapshot.mjs`. Data is deliberately frozen and labeled as a
+  dated snapshot in the UI — never live, never executable. Optionaut is not affiliated
+  with Cboe.
 - **All interactive math is computed client-side** by a hand-written Black-Scholes-Merton
   engine ([`src/lib/options/`](src/lib/options)) — pricing, analytic greeks, and implied
   vol via Newton-Raphson with bisection fallback. It is validated in
@@ -69,11 +89,22 @@ npm run build      # 147 static pages
   validated for common color-vision deficiencies, and meaning is never carried by color
   alone.
 
-## Stack
+## Status & roadmap
 
-Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · shadcn/ui ·
-Zustand · d3-scale/shape/interpolate · custom SVG + canvas charts · Vitest.
-Fully static output — deploys anywhere that serves files (built for Vercel).
+Optionaut is **v1, live, and actively developed** — the data refreshes itself nightly
+and every commit to `main` deploys to production.
+
+- [x] The Cockpit — full-screen instrument, three morphing views, HUD, keyboard map
+- [x] TOUR mode — six guided flights with action gates
+- [x] Hand-written, test-anchored options-math engine (37 tests)
+- [x] Nightly market-data refresh pipeline with validation gates
+- [x] [optionaut.org](https://optionaut.org) + push-to-deploy
+- [ ] Shareable strategy URLs — the full setup encoded in the link
+- [ ] Scenario simulators — IV-crush earnings replay, position-sizing trials
+- [ ] Live delayed-data mode (Alpaca free tier)
+
+The full decision log (D1–D10) with the *why* behind the shape of the product lives in
+[`PLAN.md`](PLAN.md).
 
 ## Automation
 
@@ -97,11 +128,11 @@ workflow's `GITHUB_TOKEN` don't re-trigger CI (GitHub's loop protection) — Ver
 own build still gates those deploys, and a failed build leaves the previous
 deployment live.
 
-## Project docs
+## Stack
 
-- [`PLAN.md`](PLAN.md) — the living product plan: research findings, the decision log
-  (D1–D10) that explains *why* the app is shaped this way, teaching principles, roadmap.
-- [`CONTRIBUTING.md`](CONTRIBUTING.md) — dev setup, conventions, and how to refresh data.
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · shadcn/ui ·
+Zustand · d3-scale/shape/interpolate · custom SVG + canvas charts · Vitest.
+Fully static output — deploys anywhere that serves files (built for Vercel).
 
 ## Credits
 

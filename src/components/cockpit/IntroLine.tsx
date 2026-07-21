@@ -9,6 +9,7 @@ export function IntroLine() {
   const [show, setShow] = React.useState(false);
   const overlay = useCockpit((s) => s.overlay);
   const tour = useCockpit((s) => s.tour);
+  const view = useCockpit((s) => s.view);
 
   React.useEffect(() => {
     if (localStorage.getItem("ol-intro-seen")) return;
@@ -37,7 +38,9 @@ export function IntroLine() {
     };
   }, []);
 
-  if (!show || overlay || tour) return null;
+  // Payoff view only: the mantra's verbs (drag a strike, twist the
+  // dials) belong to that view, and it collides with history's labels.
+  if (!show || overlay || tour || view !== "payoff") return null;
 
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-44 z-20 flex flex-col items-center gap-1.5 px-4 text-center">
