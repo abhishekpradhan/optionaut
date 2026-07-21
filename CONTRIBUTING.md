@@ -47,14 +47,29 @@ public/snapshots/         # captured chains + history (the app's only data sourc
 
 ## Refreshing market data
 
+Normally you don't: the **Refresh market data** workflow
+(`.github/workflows/refresh-data.yml`) recaptures and commits on trading nights, and
+can be run on demand from the Actions tab (`workflow_dispatch`). Expect data commits
+authored by `github-actions[bot]`.
+
+Manual runs still work and use the exact same validation:
+
 ```bash
 node scripts/capture-snapshot.mjs        # all 10 tickers + manifest
 node scripts/capture-snapshot.mjs AAPL   # one ticker (manifest untouched)
 ```
 
-Commit the changed `public/snapshots/*.json` + `src/data/manifest.json` together. Data
-comes from Cboe's public delayed endpoints; keep request volume polite.
+The script refuses to ship bad data: each snapshot must pass sanity checks before its
+file is written, a failed capture keeps the previous good snapshot, and the manifest
+is only rewritten when all ten tickers resolve with at least eight fresh — otherwise
+it exits nonzero (which is what turns the workflow red). If you touch the capture or
+validation logic, run a full manual capture and eyeball the summary line before
+pushing. Data comes from Cboe's public delayed endpoints; keep request volume polite.
 
 ## Commits
 
-Present-tense summary line, body explaining *why*. CI (lint + tests + build) must pass.
+Present-tense summary line, body explaining *why*. CI (lint + tests + build) must
+pass. Two pipeline facts to know: bot data commits skip CI (GitHub doesn't re-trigger
+workflows for `GITHUB_TOKEN` pushes — Vercel's build still gates those deploys), and
+every commit to `main` deploys to production via Vercel's Git integration, so treat
+`main` as live.

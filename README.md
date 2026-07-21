@@ -9,6 +9,8 @@ understanding trading — pick a stock, fly everything you could do with it (fro
 shares to iron condors), and *understand* it by dragging strikes, scrubbing time, and
 crushing volatility while the profit picture responds. Every crash is free.
 
+**Live at [optionaut.vercel.app](https://optionaut.vercel.app).**
+
 > **Educational only.** Options involve a high degree of risk and are not suitable for
 > all investors. Optionaut is not a brokerage and nothing in it is investment advice, a
 > recommendation, or a solicitation. Several strategies are included specifically to
@@ -49,9 +51,11 @@ npm run build      # 147 static pages
 
 - **Market data** is a bundled snapshot of [Cboe's public delayed quotes](https://www.cboe.com/delayed_quotes/)
   (chains, IV, OI, volume, price history), captured by `scripts/capture-snapshot.mjs`
-  into `public/snapshots/`. Refresh anytime with `node scripts/capture-snapshot.mjs`.
-  Data is deliberately frozen and labeled as a dated snapshot in the UI — never live,
-  never executable. Optionaut is not affiliated with Cboe.
+  into `public/snapshots/`. It refreshes itself every trading night via the
+  [refresh-data workflow](.github/workflows/refresh-data.yml) (see Automation below);
+  manual refresh works anytime with `node scripts/capture-snapshot.mjs`. Data is
+  deliberately frozen and labeled as a dated snapshot in the UI — never live, never
+  executable. Optionaut is not affiliated with Cboe.
 - **All interactive math is computed client-side** by a hand-written Black-Scholes-Merton
   engine ([`src/lib/options/`](src/lib/options)) — pricing, analytic greeks, and implied
   vol via Newton-Raphson with bisection fallback. It is validated in
@@ -71,10 +75,32 @@ Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · shadcn/u
 Zustand · d3-scale/shape/interpolate · custom SVG + canvas charts · Vitest.
 Fully static output — deploys anywhere that serves files (built for Vercel).
 
+## Automation
+
+Two GitHub Actions keep the project honest without anyone touching it:
+
+- **[CI](.github/workflows/ci.yml)** — every push and pull request runs lint, the
+  options-math test suite, and a full production build. (It uses `npm install`
+  rather than `npm ci` deliberately: macOS-authored lockfiles omit Linux-only wasm
+  optional dependencies that a clean Linux `npm ci` rejects.)
+- **[Refresh market data](.github/workflows/refresh-data.yml)** — on trading nights
+  (~10:23pm ET, plus manual dispatch from the Actions tab) it recaptures all ten
+  tickers from Cboe, validates every snapshot (spot present, ≥200 history rows,
+  ≥3 expirations, no thin chains, plausible IV), and commits only real changes. A
+  failed or invalid capture keeps the previous good snapshot; if fewer than eight
+  tickers come back fresh — or any ticker would disappear — the script exits nonzero
+  and nothing ships. Bad nights become a red ✗ in the Actions tab, never a broken site.
+
+Deployment is Vercel's Git integration: every commit to `main` (human or bot) deploys
+to production automatically. One nuance worth knowing: pushes made by the data
+workflow's `GITHUB_TOKEN` don't re-trigger CI (GitHub's loop protection) — Vercel's
+own build still gates those deploys, and a failed build leaves the previous
+deployment live.
+
 ## Project docs
 
 - [`PLAN.md`](PLAN.md) — the living product plan: research findings, the decision log
-  (D1–D9) that explains *why* the app is shaped this way, teaching principles, roadmap.
+  (D1–D10) that explains *why* the app is shaped this way, teaching principles, roadmap.
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — dev setup, conventions, and how to refresh data.
 
 ## Credits
