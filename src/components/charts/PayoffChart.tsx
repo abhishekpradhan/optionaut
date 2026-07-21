@@ -70,7 +70,7 @@ export function PayoffChart({
   domainScale = 1,
 }: Props) {
   const { ref, width } = useMeasure<HTMLDivElement>();
-  const margin = { top: 26, right: 86, bottom: 66, left: 60 };
+  const margin = { top: 26, right: 86, bottom: 78, left: 60 };
   const innerW = Math.max(width - margin.left - margin.right, 40);
   const innerH = height - margin.top - margin.bottom;
   const [hoverX, setHoverX] = React.useState<number | null>(null);
@@ -345,12 +345,25 @@ export function PayoffChart({
             <rect x={0} y={0} width={innerW} height={innerH} fill="transparent"
               onPointerMove={handlePointer} onPointerLeave={() => setHoverX(null)} />
 
-            {/* strike handles (draggable, keyboard-steppable) */}
+            {/* strike handles (draggable, keyboard-steppable). Pills size
+                to their label, and near-neighbors stagger into a second
+                row instead of colliding (tight condors on low-priced
+                underlyings). */}
             <g onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag}>
-              {handles.map((h) => {
-                const yPos = innerH + 44;
-                const w = 66;
-                return (
+              {(() => {
+                const placed = handles
+                  .map((h) => {
+                    const label = `${h.side > 0 ? "+" : "−"}${h.kind === "call" ? "C" : "P"} ${h.strike}`;
+                    return { ...h, label2: label, px: x(h.strike), w: Math.max(64, label.length * 6.4 + 38) };
+                  })
+                  .sort((a, b) => a.px - b.px);
+                const rowEnds = [-Infinity, -Infinity];
+                return placed.map((h) => {
+                  const row = h.px - h.w / 2 - 4 > rowEnds[0] ? 0 : 1;
+                  rowEnds[row] = h.px + h.w / 2;
+                  const yPos = innerH + 34 + row * 25;
+                  const w = h.w;
+                  return (
                   <g key={h.role} transform={`translate(${x(h.strike)},${yPos})`}
                     tabIndex={0} role="slider"
                     aria-label={`${h.label} strike`}
@@ -373,16 +386,17 @@ export function PayoffChart({
                     />
                     <text textAnchor="middle" dy="0.32em" fontSize={10.5} className="figures"
                       fill="var(--secondary-foreground)">
-                      {`${h.side > 0 ? "+" : "−"}${h.kind === "call" ? "C" : "P"} ${h.strike}`}
+                      {h.label2}
                     </text>
                     {/* drag affordance: the pill advertises its axis */}
-                    <path d={`M ${-w / 2 + 5} 0 L ${-w / 2 + 8.5} -3 L ${-w / 2 + 8.5} 3 Z`}
-                      fill="var(--muted-foreground)" opacity={0.65} />
-                    <path d={`M ${w / 2 - 5} 0 L ${w / 2 - 8.5} -3 L ${w / 2 - 8.5} 3 Z`}
-                      fill="var(--muted-foreground)" opacity={0.65} />
+                    <path d={`M ${-w / 2 + 6} 0 L ${-w / 2 + 9.5} -3 L ${-w / 2 + 9.5} 3 Z`}
+                      fill="var(--muted-foreground)" opacity={0.45} />
+                    <path d={`M ${w / 2 - 6} 0 L ${w / 2 - 9.5} -3 L ${w / 2 - 9.5} 3 Z`}
+                      fill="var(--muted-foreground)" opacity={0.45} />
                   </g>
-                );
-              })}
+                  );
+                });
+              })()}
             </g>
           </g>
         </svg>

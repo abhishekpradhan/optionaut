@@ -14,7 +14,7 @@
  * from IV with its own tested Black-Scholes engine so every displayed
  * number stays consistent with the interactive sliders.
  */
-import { writeFile, mkdir } from "node:fs/promises";
+import { writeFile, readFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname;
@@ -132,6 +132,28 @@ function buildChain(options, spot, capturedAt, dense) {
     });
 }
 
+/** A capture that fails these checks must never ship — the workflow
+ *  keeps the previous good snapshot instead. */
+function validateSnapshot(snap) {
+  const problems = [];
+  if (!(snap.spot > 0)) problems.push("no spot price");
+  if (!snap.history || snap.history.length < 200) {
+    problems.push(`history has ${snap.history?.length ?? 0} rows (<200)`);
+  }
+  if (!snap.expirations || snap.expirations.length < 3) {
+    problems.push(`${snap.expirations?.length ?? 0} expirations (<3)`);
+  } else {
+    const thin = snap.expirations.filter((e) => e.strikes.length < 8);
+    if (thin.length) {
+      problems.push(`thin chains at ${thin.map((e) => `${e.dte}d`).join(", ")}`);
+    }
+  }
+  if (snap.iv30 != null && (snap.iv30 < 0.01 || snap.iv30 > 4)) {
+    problems.push(`implausible iv30 ${snap.iv30}`);
+  }
+  return problems;
+}
+
 async function capture(meta) {
   const base = "https://cdn.cboe.com/api/global/delayed_quotes";
   const [quotes, hist] = await Promise.all([
@@ -169,18 +191,19 @@ async function capture(meta) {
     expirations: buildChain(d.options, spot, capturedAt, meta.dense),
   };
 
-  const outDir = path.join(ROOT, "public/snapshots");
-  await mkdir(outDir, { recursive: true });
-  const file = path.join(outDir, `${meta.symbol}.json`);
-  await writeFile(file, JSON.stringify(snapshot));
-  const kb = (JSON.stringify(snapshot).length / 1024).toFixed(0);
-  console.log(
-    `${meta.symbol.padEnd(6)} spot=${snapshot.spot} iv30=${snapshot.iv30} ` +
-      `expirations=${snapshot.expirations.length} (${snapshot.expirations
-        .map((e) => e.dte)
-        .join("/")}d) ${kb}KB`,
-  );
   return snapshot;
+}
+
+function manifestEntry(snap) {
+  return {
+    symbol: snap.symbol,
+    name: snap.name,
+    spot: snap.spot,
+    changePct: snap.changePct,
+    iv30: snap.iv30,
+    hv252: snap.hv252,
+    capturedAt: snap.capturedAt,
+  };
 }
 
 const requested = process.argv.slice(2).map((s) => s.toUpperCase());
@@ -188,30 +211,58 @@ const targets = requested.length
   ? CURATED.filter((t) => requested.includes(t.symbol))
   : CURATED;
 
+const outDir = path.join(ROOT, "public/snapshots");
+await mkdir(outDir, { recursive: true });
+
 const manifest = [];
+let fresh = 0;
+let missing = 0;
+
 for (const meta of targets) {
+  const file = path.join(outDir, `${meta.symbol}.json`);
   try {
     const snap = await capture(meta);
-    manifest.push({
-      symbol: snap.symbol,
-      name: snap.name,
-      spot: snap.spot,
-      changePct: snap.changePct,
-      iv30: snap.iv30,
-      hv252: snap.hv252,
-      capturedAt: snap.capturedAt,
-    });
+    const problems = validateSnapshot(snap);
+    if (problems.length) throw new Error(problems.join("; "));
+    await writeFile(file, JSON.stringify(snap));
+    manifest.push(manifestEntry(snap));
+    fresh++;
+    console.log(
+      `${meta.symbol.padEnd(6)} spot=${snap.spot} iv30=${snap.iv30} ` +
+        `expirations=${snap.expirations.length} (${snap.expirations
+          .map((e) => e.dte)
+          .join("/")}d) ${(JSON.stringify(snap).length / 1024).toFixed(0)}KB`,
+    );
   } catch (err) {
-    console.error(`FAILED ${meta.symbol}:`, err.message);
+    // Keep the previous good snapshot rather than shipping a bad or
+    // missing one — the app must never lose a ticker to a flaky capture.
+    console.error(`FAILED ${meta.symbol}: ${err.message}`);
+    try {
+      const prev = JSON.parse(await readFile(file, "utf8"));
+      manifest.push(manifestEntry(prev));
+      console.error(`       keeping previous snapshot from ${prev.capturedAt}`);
+    } catch {
+      missing++;
+      console.error(`       no previous snapshot on disk either`);
+    }
   }
   await new Promise((res) => setTimeout(res, 400)); // be polite to the CDN
 }
 
-if (!requested.length && manifest.length) {
+if (requested.length) {
+  console.log("(partial capture: manifest not rewritten — run with no args to refresh it)");
+} else if (fresh >= 8 && missing === 0) {
   const manifestPath = path.join(ROOT, "src/data/manifest.json");
   await mkdir(path.dirname(manifestPath), { recursive: true });
   await writeFile(manifestPath, JSON.stringify(manifest, null, 2));
-  console.log(`manifest: ${manifest.length} tickers -> src/data/manifest.json`);
-} else if (requested.length) {
-  console.log("(partial capture: manifest not rewritten — run with no args to refresh it)");
+  console.log(
+    `manifest: ${manifest.length} tickers (${fresh} fresh, ${manifest.length - fresh} kept) -> src/data/manifest.json`,
+  );
+} else {
+  console.error(
+    `ABORT: only ${fresh}/${targets.length} fresh captures` +
+      (missing ? ` and ${missing} ticker(s) missing entirely` : "") +
+      " — manifest not written, nothing should be committed.",
+  );
+  process.exit(1);
 }

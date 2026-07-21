@@ -1,0 +1,41 @@
+name: Refresh market data
+
+# Nightly freshness: capture Cboe's delayed close, validate it, and
+# commit only when it changed and passed the script's sanity checks
+# (bad captures keep the previous snapshot and abort the commit).
+#
+# Note: pushes made with the default GITHUB_TOKEN deliberately do not
+# re-trigger the CI workflow (GitHub's loop protection). Vercel's Git
+# integration deploys through its own app, so the data commit still
+# goes live automatically.
+
+on:
+  schedule:
+    # ~10:23pm ET on trading days (02:23 UTC Tue–Sat)
+    - cron: "23 2 * * 2-6"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Capture and validate snapshots
+        run: node scripts/capture-snapshot.mjs
+      - name: Commit refreshed data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/snapshots src/data/manifest.json
+          if git diff --cached --quiet; then
+            echo "No data changes — market closed or capture identical."
+          else
+            git commit -m "data: refresh market snapshots ($(date -u +%Y-%m-%d))"
+            git push
+          fi
