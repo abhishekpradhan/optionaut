@@ -186,6 +186,7 @@ Principles:
 | D4 | Later-phase priorities | ✅ Scenario simulators + shareable strategy links; paper trading & quizzes parked (2026-07-20) |
 | D5 | Repo: private on github.com/abhishekpradhan, name `trading-helper-app` | ✅ Done |
 | D6 | Stack per §6 | ✅ Accepted alongside D1–D4 |
+| D7 | Visual bar raised to "video-game quality" (2026-07-21), reference: universeatlas.org — full-bleed scenes, void + luminous data, HUD mono chrome, WebGL centerpiece. Implemented as V1 atmosphere (starfield/nebula/grain/glow system), V2 3D payoff terrain (react-three-fiber, shared engine+ramp with the heatmap, click-to-set-dials), V3 cinematic motion (route transitions, dial glow). All motion compositor-driven CSS where possible; 3D lazy-loaded with SVG fallback until first WebGL frame; reduced-motion honored throughout. | ✅ Built |
 
 ---
 

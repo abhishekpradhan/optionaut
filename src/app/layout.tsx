@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteHeader } from "@/components/shared/SiteHeader";
 import { SiteFooter } from "@/components/shared/SiteFooter";
+import { Atmosphere } from "@/components/shared/Atmosphere";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -52,6 +53,7 @@ export default function RootLayout({
         >
           Skip to content
         </a>
+        <Atmosphere />
         <SiteHeader />
         {children}
         <SiteFooter />

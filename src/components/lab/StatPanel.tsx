@@ -45,8 +45,12 @@ export function StatPanel({ snapshot, legs, dte, elapsedDays, ivScale, whatIfPri
       <div className="panel p-4 sm:p-5">
         <div className="text-[13px] text-muted-foreground">Your P/L {scenario}</div>
         <div
-          className={`mt-1 text-3xl font-semibold tracking-tight ${
-            current > 0.5 ? "text-gain" : current < -0.5 ? "text-loss" : "text-foreground"
+          className={`mt-1 text-3xl font-semibold tracking-tight transition-colors ${
+            current > 0.5
+              ? "text-gain num-glow-gain"
+              : current < -0.5
+                ? "text-loss num-glow-loss"
+                : "text-foreground"
           }`}
         >
           {fmtSignedUsd(current, { cents: false })}

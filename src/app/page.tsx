@@ -1,7 +1,7 @@
 import Link from "next/link";
 import manifest from "@/data/manifest.json";
 import { fmtUsd, fmtPct } from "@/lib/format";
-import { HeroPayoff } from "@/components/shared/HeroPayoff";
+import { HeroTerrain } from "@/components/shared/HeroTerrain";
 import { MousePointerClick, SlidersHorizontal, Sigma } from "lucide-react";
 
 export default function Home() {
@@ -37,8 +37,8 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <div className="hidden justify-center lg:flex">
-          <HeroPayoff />
+        <div className="hidden items-center justify-center lg:flex">
+          <HeroTerrain />
         </div>
       </section>
 
@@ -93,7 +93,7 @@ export default function Home() {
               <Link
                 key={m.symbol}
                 href={`/t/${m.symbol}`}
-                className="panel group p-4 transition-colors hover:border-primary/40"
+                className="panel group p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_0_28px_-8px_rgba(57,135,229,0.35)]"
               >
                 <div className="flex items-baseline justify-between">
                   <span className="font-bold tracking-tight">{m.symbol}</span>

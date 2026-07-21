@@ -127,8 +127,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    background: var(--background);
+  }
   body {
-    @apply bg-background text-foreground;
+    /* transparent so the fixed Atmosphere (z -1) shows through */
+    @apply bg-transparent text-foreground;
     font-feature-settings: "ss01";
   }
   html {
@@ -146,12 +150,62 @@
 }
 
 @layer utilities {
-  /* Hairline panel treatment used across the terminal chrome. */
+  /* Hairline panel treatment used across the terminal chrome: opaque
+     glass islands floating in the void, lit faintly from above. */
   .panel {
     background: linear-gradient(180deg, var(--panel-raised), var(--panel));
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
+    box-shadow:
+      inset 0 1px 0 rgba(237, 241, 247, 0.05),
+      0 12px 32px -18px rgba(0, 0, 0, 0.7);
   }
+  /* HUD micro-labels: the Universe-Atlas corner-chrome voice. */
+  .hud {
+    font-family: var(--font-geist-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  /* Luminous numbers for the big live readouts. */
+  .num-glow-gain {
+    text-shadow: 0 0 24px rgba(57, 135, 229, 0.55), 0 0 6px rgba(57, 135, 229, 0.3);
+  }
+  .num-glow-loss {
+    text-shadow: 0 0 24px rgba(230, 103, 103, 0.5), 0 0 6px rgba(230, 103, 103, 0.28);
+  }
+  .dot-pulse {
+    animation: dot-pulse 2.4s ease-in-out infinite;
+  }
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px 1px rgba(57, 135, 229, 0.6); }
+  50% { opacity: 0.55; box-shadow: 0 0 3px 0 rgba(57, 135, 229, 0.25); }
+}
+
+/* Route entrance — the page rises out of the void. */
+.route-enter {
+  animation: route-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes route-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Dials glow under the hand. */
+[data-slot="slider-thumb"] {
+  transition: box-shadow 0.2s ease;
+}
+[data-slot="slider-thumb"]:hover,
+[data-slot="slider-thumb"]:focus-visible,
+[data-slot="slider-thumb"]:active {
+  box-shadow:
+    0 0 0 4px rgba(57, 135, 229, 0.16),
+    0 0 18px 2px rgba(57, 135, 229, 0.5);
 }
 
 /* Hero draw-in — CSS-only so it completes even when rAF is throttled. */

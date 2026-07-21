@@ -3,7 +3,6 @@
 import * as React from "react";
 import { scaleLinear } from "d3-scale";
 import { line as d3line, area as d3area, curveLinear } from "d3-shape";
-import { motion, useReducedMotion } from "motion/react";
 import { payoffAtExpiry, markToMarket, breakevens, expectedMove } from "@/lib/options/position";
 import { strikeCandidates, type LabLeg, type StrategyDef } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
@@ -69,7 +68,6 @@ export function PayoffChart({
   const margin = { top: 26, right: 86, bottom: 66, left: 60 };
   const innerW = Math.max(width - margin.left - margin.right, 40);
   const innerH = height - margin.top - margin.bottom;
-  const reduceMotion = useReducedMotion();
   const [hoverX, setHoverX] = React.useState<number | null>(null);
   const [dragRole, setDragRole] = React.useState<string | null>(null);
 
@@ -236,24 +234,26 @@ export function PayoffChart({
                 opacity={dragRole === h.role ? 0.9 : 0.45} />
             ))}
 
-            {/* expiry payoff (the skeleton) */}
-            <motion.path
+            {/* expiry payoff (the skeleton) — soft halo under a crisp core */}
+            <path d={linePath(expiryPts) ?? undefined} fill="none"
+              stroke="var(--foreground)" strokeWidth={6} opacity={0.1}
+              strokeLinejoin="round" strokeLinecap="round" />
+            <path className="hero-draw" pathLength={1}
               d={linePath(expiryPts) ?? undefined}
               fill="none" stroke="var(--foreground)" strokeWidth={2}
-              strokeLinejoin="round" strokeLinecap="round"
-              initial={reduceMotion ? false : { pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-            />
-            {/* value now (the living line) */}
-            <motion.path
+              strokeLinejoin="round" strokeLinecap="round" />
+            {/* value now (the living line) — neon stack */}
+            <path d={linePath(nowPts) ?? undefined} fill="none"
+              stroke="var(--primary)" strokeWidth={11} opacity={0.07}
+              strokeLinejoin="round" strokeLinecap="round" />
+            <path d={linePath(nowPts) ?? undefined} fill="none"
+              stroke="var(--primary)" strokeWidth={5} opacity={0.18}
+              strokeLinejoin="round" strokeLinecap="round" />
+            <path className="hero-draw" pathLength={1}
+              style={{ animationDelay: "0.12s" }}
               d={linePath(nowPts) ?? undefined}
               fill="none" stroke="var(--primary)" strokeWidth={2.5}
-              strokeLinejoin="round" strokeLinecap="round"
-              initial={reduceMotion ? false : { pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 0.7, ease: "easeOut", delay: reduceMotion ? 0 : 0.15 }}
-            />
+              strokeLinejoin="round" strokeLinecap="round" />
 
             {/* direct end labels with line keys (text wears ink, not data
                 color); nudged apart when the series converge at the edge */}
@@ -298,6 +298,8 @@ export function PayoffChart({
               <g>
                 <line x1={x(whatIf.S)} x2={x(whatIf.S)} y1={0} y2={innerH}
                   stroke="var(--primary)" strokeWidth={1} opacity={0.5} />
+                <circle cx={x(whatIf.S)} cy={y(whatIf.now)} r={10}
+                  fill="var(--primary)" opacity={0.22} />
                 <circle cx={x(whatIf.S)} cy={y(whatIf.now)} r={5}
                   fill="var(--primary)" stroke="var(--background)" strokeWidth={2} />
                 <circle cx={x(whatIf.S)} cy={y(whatIf.exp)} r={4.5}

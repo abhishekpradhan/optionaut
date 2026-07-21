@@ -142,10 +142,16 @@ export function MiniLab({
                 stroke="var(--background)" strokeWidth={2} />
               {/* lines */}
               <path d={path(expiryPts) ?? undefined} fill="none" stroke="var(--foreground)"
+                strokeWidth={5} opacity={0.09} strokeLinejoin="round" strokeLinecap="round" />
+              <path d={path(expiryPts) ?? undefined} fill="none" stroke="var(--foreground)"
                 strokeWidth={2} strokeLinejoin="round" />
               {showToday && (
-                <path d={path(nowPts) ?? undefined} fill="none" stroke="var(--primary)"
-                  strokeWidth={2.25} strokeLinejoin="round" />
+                <>
+                  <path d={path(nowPts) ?? undefined} fill="none" stroke="var(--primary)"
+                    strokeWidth={7} opacity={0.14} strokeLinejoin="round" strokeLinecap="round" />
+                  <path d={path(nowPts) ?? undefined} fill="none" stroke="var(--primary)"
+                    strokeWidth={2.25} strokeLinejoin="round" />
+                </>
               )}
               {/* breakevens */}
               {bes.map((b) => (

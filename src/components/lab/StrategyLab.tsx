@@ -11,7 +11,7 @@ import { PayoffChart } from "./PayoffChart";
 import { Controls } from "./Controls";
 import { StatPanel } from "./StatPanel";
 import { GreeksStrip } from "./GreeksStrip";
-import { Heatmap, HeatmapLegend } from "./Heatmap";
+import { LabSurface } from "./LabSurface";
 import { fmtDate } from "@/lib/format";
 import { AlertTriangle } from "lucide-react";
 
@@ -184,18 +184,7 @@ export function StrategyLab({ symbol, strategyId }: { symbol: string; strategyId
       {/* every price, every day */}
       {usesOptions && (
         <div className="panel mt-4 p-4 sm:p-5">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <h2 className="text-sm font-semibold tracking-wide text-secondary-foreground">
-                Every price, every day
-              </h2>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Your P/L across the whole map. Click anywhere to set the dials to that scenario.
-              </p>
-            </div>
-            <HeatmapLegend />
-          </div>
-          <Heatmap
+          <LabSurface
             snapshot={snapshot}
             legs={legs}
             dte={exp.dte}

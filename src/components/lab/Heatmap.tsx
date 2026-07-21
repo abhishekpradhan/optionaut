@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { interpolateRgb } from "d3-interpolate";
 import { markToMarket, expectedMove } from "@/lib/options/position";
+import { RAMP_NEUTRAL, toGain, toLoss } from "@/lib/viz/ramp";
 import type { LabLeg } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
 import { fmtUsd, fmtSignedUsd } from "@/lib/format";
@@ -26,9 +26,7 @@ interface Props {
   onPick: (price: number, day: number) => void;
 }
 
-const NEUTRAL = "#20242e";
-const toGain = interpolateRgb(NEUTRAL, "#3987e5");
-const toLoss = interpolateRgb(NEUTRAL, "#e66767");
+const NEUTRAL = RAMP_NEUTRAL;
 
 function useMeasure<T extends HTMLElement>() {
   const ref = React.useRef<T | null>(null);
