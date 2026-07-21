@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import manifest from "@/data/manifest.json";
 import { STRATEGIES, strategyById } from "@/lib/options/strategies";
-import { StrategyLab } from "@/components/lab/StrategyLab";
+import { Cockpit } from "@/components/cockpit/Cockpit";
 
 interface Params {
   symbol: string;
@@ -26,7 +26,7 @@ export async function generateMetadata({
   if (!def || !entry) return {};
   return {
     title: `${def.name} on ${entry.symbol}`,
-    description: `${def.tagline} Explore a ${def.name.toLowerCase()} on ${entry.name} interactively: payoff diagram, breakevens, max profit and loss, and what price, time, and volatility do to it.`,
+    description: `${def.tagline} Fly it in the instrument: payoff, map, dials, greeks.`,
   };
 }
 
@@ -36,5 +36,5 @@ export default async function LabPage({ params }: { params: Promise<Params> }) {
   if (!strategyById(strategy) || !manifest.some((m) => m.symbol === sym)) {
     notFound();
   }
-  return <StrategyLab symbol={sym} strategyId={strategy} />;
+  return <Cockpit initial={{ ticker: sym, strategyId: strategy, view: "payoff" }} />;
 }

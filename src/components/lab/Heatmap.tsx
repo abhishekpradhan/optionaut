@@ -14,7 +14,6 @@ import { fmtUsd, fmtSignedUsd } from "@/lib/format";
  * payoff chart are two views of the same machine.
  */
 const ROWS = 46;
-const CELL_H = 7;
 
 interface Props {
   snapshot: Snapshot;
@@ -24,6 +23,9 @@ interface Props {
   elapsedDays: number;
   whatIfPrice: number | null;
   onPick: (price: number, day: number) => void;
+  /** cell height in px — the cockpit stage uses larger cells */
+  cellH?: number;
+  domainScale?: number;
 }
 
 const NEUTRAL = RAMP_NEUTRAL;
@@ -40,7 +42,10 @@ function useMeasure<T extends HTMLElement>() {
   return { ref, width: w };
 }
 
-export function Heatmap({ snapshot, legs, dte, ivScale, elapsedDays, whatIfPrice, onPick }: Props) {
+export function Heatmap({
+  snapshot, legs, dte, ivScale, elapsedDays, whatIfPrice, onPick,
+  cellH: CELL_H = 7, domainScale = 1,
+}: Props) {
   const { ref, width } = useMeasure<HTMLDivElement>();
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const [hover, setHover] = React.useState<{ c: number; r: number } | null>(null);
@@ -54,7 +59,8 @@ export function Heatmap({ snapshot, legs, dte, ivScale, elapsedDays, whatIfPrice
   const height = plotH + margin.top + margin.bottom;
 
   const em = expectedMove(spot, snapshot.iv30 ?? 0.3, Math.max(dte, 7));
-  const span = Math.min(Math.max((2.2 * em) / spot, 0.14), 0.42);
+  const span =
+    Math.min(Math.max((2.2 * em) / spot, 0.14), 0.42) * domainScale;
   const pLo = spot * (1 - span);
   const pHi = spot * (1 + span);
 
@@ -104,7 +110,7 @@ export function Heatmap({ snapshot, legs, dte, ivScale, elapsedDays, whatIfPrice
         c2.fillRect(c * cw + 0.5, r * CELL_H + 0.5, cw - 1, CELL_H - 1);
       }
     }
-  }, [grid, plotW, plotH, cols, width]);
+  }, [grid, plotW, plotH, cols, width, CELL_H]);
 
   const hoverInfo = hover
     ? { price: priceAt(hover.r), day: dayAt(hover.c), v: grid.g[hover.r][hover.c] }

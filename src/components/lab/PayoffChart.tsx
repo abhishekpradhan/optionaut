@@ -20,6 +20,10 @@ interface Props {
   ivScale: number;
   whatIfPrice: number | null;
   onStrikeChange: (role: string, strike: number) => void;
+  /** rendered height in px (the cockpit stage passes its own) */
+  height?: number;
+  /** widens/narrows the price domain (cockpit wheel-zoom) */
+  domainScale?: number;
 }
 
 function useMeasure<T extends HTMLElement>() {
@@ -62,9 +66,10 @@ export function PayoffChart({
   ivScale,
   whatIfPrice,
   onStrikeChange,
+  height = 420,
+  domainScale = 1,
 }: Props) {
   const { ref, width } = useMeasure<HTMLDivElement>();
-  const height = 420;
   const margin = { top: 26, right: 86, bottom: 66, left: 60 };
   const innerW = Math.max(width - margin.left - margin.right, 40);
   const innerH = height - margin.top - margin.bottom;
@@ -77,7 +82,8 @@ export function PayoffChart({
   // ----- domains ---------------------------------------------------------
   const strikes = legs.filter((l) => l.kind !== "stock").map((l) => l.strike);
   const em = expectedMove(spot, snapshot.iv30 ?? 0.3, Math.max(dte, 7));
-  const span = Math.min(Math.max((2.6 * em) / spot, 0.16), 0.5);
+  const span =
+    Math.min(Math.max((2.6 * em) / spot, 0.16), 0.5) * domainScale;
   const xLo = Math.min(spot * (1 - span), ...(strikes.length ? [Math.min(...strikes) * 0.96] : []));
   const xHi = Math.max(spot * (1 + span), ...(strikes.length ? [Math.max(...strikes) * 1.04] : []));
 

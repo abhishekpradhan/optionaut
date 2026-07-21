@@ -9,15 +9,18 @@ investment advice. Product plan, research, and roadmap live in [PLAN.md](./PLAN.
 
 ## What's inside
 
-- **Strategy Lab** — interactive payoff diagram (expiry + T+0 curves), draggable strike
-  pills, price/time/volatility dials, stat panel, plain-English greeks strip, and a
-  clickable price×time P/L heatmap, for 12 strategies × 10 tickers.
-- **Ticker overview** — six months of candles flowing into the options-implied
-  expected-move cone, volatility context, and a strategy gallery with live payoff
-  sparklines.
-- **The path** — a 10-unit learning progression ("own a share" → iron condors) with
-  interactive lesson widgets, predict-first prompts, and a concept-gated glossary
-  (every term tappable, everywhere).
+**One full-screen instrument** (no scrolling website — inspired by universeatlas.org):
+a chart-filled stage with HUD at the edges, chip rails for tickers/strategies, a giant
+live P/L readout, and three view modes that morph in place:
+
+- **HISTORY** — six months of candles flowing into the options-implied expected-move cone.
+- **PAYOFF** — the neon expiry/today diagram with draggable strike pills and the three
+  dials (price / time / volatility — secretly delta, theta, vega).
+- **MAP** — the clickable price×time P/L heatmap; click any cell to jump the dials there.
+
+Plus **TOUR mode** (guided flights of the real instrument with action gates), a
+concept-gated glossary behind every dotted term, per-strategy "what can bite" guides,
+and a full keyboard map (`?` in-app). 12 strategies × 10 tickers.
 
 ## How it works
 

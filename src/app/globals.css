@@ -185,15 +185,23 @@
   50% { opacity: 0.55; box-shadow: 0 0 3px 0 rgba(57, 135, 229, 0.25); }
 }
 
-/* Route entrance — the page rises out of the void. */
-.route-enter {
-  animation: route-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+/* Scene entrance — a view or sheet rises out of the void. */
+.stage-enter {
+  animation: stage-enter 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
-@keyframes route-enter {
+@keyframes stage-enter {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: scale(0.992) translateY(6px);
   }
+}
+
+/* Chip rails scroll sideways without chrome. */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 /* Dials glow under the hand. */

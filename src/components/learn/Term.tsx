@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { glossaryById } from "@/lib/learn/glossary";
+import { useCockpit } from "@/lib/cockpit/store";
 
 /**
  * Inline jargon firewall: wraps a term with a tappable dotted underline
@@ -32,13 +32,20 @@ export function Term({
       <PopoverContent side="top" align="center" className="w-72 border-border bg-popover p-3.5">
         <div className="text-[13px] font-semibold text-foreground">{entry.term}</div>
         <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">{entry.short}</p>
-        <Link
-          href={`/glossary#${entry.id}`}
-          className="mt-2 inline-block text-[11.5px] text-primary hover:underline"
-        >
-          glossary →
-        </Link>
+        <GlossaryJump />
       </PopoverContent>
     </Popover>
+  );
+}
+
+function GlossaryJump() {
+  const setOverlay = useCockpit((s) => s.setOverlay);
+  return (
+    <button
+      onClick={() => setOverlay("glossary")}
+      className="mt-2 inline-block text-[11.5px] text-primary hover:underline"
+    >
+      glossary →
+    </button>
   );
 }

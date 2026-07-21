@@ -12,10 +12,10 @@ import { fmtUsd, fmtDate } from "@/lib/format";
  * pricing". 1σ ≈ 68% of outcomes, 2σ ≈ 95% — labeled as estimates.
  */
 const PAST_DAYS = 140;
-const HEIGHT = 380;
 
 interface Props {
   snapshot: Snapshot;
+  height?: number;
 }
 
 function useMeasure<T extends HTMLElement>() {
@@ -30,11 +30,11 @@ function useMeasure<T extends HTMLElement>() {
   return { ref, width: w };
 }
 
-export function PriceCone({ snapshot }: Props) {
+export function PriceCone({ snapshot, height = 380 }: Props) {
   const { ref, width } = useMeasure<HTMLDivElement>();
   const margin = { top: 24, right: 92, bottom: 34, left: 14 };
   const innerW = Math.max(width - margin.left - margin.right, 40);
-  const innerH = HEIGHT - margin.top - margin.bottom;
+  const innerH = height - margin.top - margin.bottom;
   const [hover, setHover] = React.useState<number | null>(null); // x index
 
   const candles = snapshot.history.slice(-PAST_DAYS);
@@ -120,9 +120,9 @@ export function PriceCone({ snapshot }: Props) {
   };
 
   return (
-    <div ref={ref} className="relative w-full" style={{ height: HEIGHT }}>
+    <div ref={ref} className="relative w-full" style={{ height }}>
       {width > 0 && (
-        <svg width={width} height={HEIGHT} role="img"
+        <svg width={width} height={height} role="img"
           aria-label={`${snapshot.symbol} price history with the market's expected range ahead`}>
           <g transform={`translate(${margin.left},${margin.top})`}>
             {/* y grid + right-side price labels */}
