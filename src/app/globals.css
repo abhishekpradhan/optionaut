@@ -177,7 +177,10 @@
     text-shadow: 0 0 24px rgba(230, 103, 103, 0.5), 0 0 6px rgba(230, 103, 103, 0.28);
   }
   .dot-pulse {
-    animation: dot-pulse 2.4s ease-in-out infinite;
+    animation: dot-pulse 1.1s ease-in-out infinite;
+  }
+  .dot-steady {
+    box-shadow: 0 0 6px 0 rgba(57, 135, 229, 0.45);
   }
 }
 

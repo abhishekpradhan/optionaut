@@ -20,7 +20,15 @@ export function ContextBar({ snapshot }: { snapshot: Snapshot | null }) {
   return (
     <div className="pointer-events-auto select-none">
       <div className="flex items-center gap-2.5">
-        <span aria-hidden className="dot-pulse inline-block size-2 rounded-full bg-primary" />
+        {/* status light, not decoration: pulses only while the snapshot
+            loads, steady once data is live */}
+        <span
+          aria-hidden
+          title={snapshot ? "snapshot loaded" : "loading snapshot"}
+          className={`inline-block size-2 rounded-full bg-primary ${
+            snapshot ? "dot-steady" : "dot-pulse"
+          }`}
+        />
         <span className="font-mono text-[13px] font-bold tracking-[0.22em] text-foreground">
           OPTIONS LAB
         </span>
