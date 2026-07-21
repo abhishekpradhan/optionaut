@@ -1,6 +1,6 @@
 # Product Plan — trading-helper-app
 
-**Status:** Planning (v0.2 — decisions from first discussion pending)
+**Status:** Plan locked (v1.0, 2026-07-20) — ready to build, starting with M0
 **Last updated:** 2026-07-20
 **Working title:** `trading-helper-app` (product name TBD — see Parking Lot)
 
@@ -146,9 +146,9 @@ Notes: Next 16 caching is fully **opt-in** now — nothing caches implicitly. Ve
 
 ## 7. Design direction
 
-**Decision pending (Q3):** dark "pro-terminal with a friendly voice" vs bright editorial explainer vs playful illustrated.
+**Decided (D3): dark pro-terminal with a friendly voice.** Sleek dark fintech aesthetic — credible and aspirational, the OptionStrat/TradingView lane done more beautifully — paired with warm, plain-English copy. Concrete implications: dark-first design tokens, restrained accent palette on near-black, tabular/monospace numerals for prices, glassy panel chrome, and motion budget spent on the visualizations themselves rather than decorative UI.
 
-Principles regardless of direction:
+Principles:
 - Direct manipulation everywhere; immediate feedback (<16 ms recompute — client-side math makes this free).
 - One idea per view; progressive disclosure (scrollytelling for lesson intros, sandbox at the end).
 - Motion with meaning only (state transitions, causality) — never decorative confetti.
@@ -172,7 +172,7 @@ Principles regardless of direction:
 - **M2 — Breadth:** security overview page (price chart, expected-move cone, IV context) + strategy gallery + all 12 v1 strategies running through the same engine + greeks strip.
 - **M3 — The teaching layer:** tooltip/glossary system with concept gating, guided intro per strategy, "what goes wrong" boxes, price×time heatmap, units 1–6 lesson flow.
 - **M4 — Polish & ship:** landing page, empty/edge states, a11y pass, disclaimer/about, deploy to Vercel, share with friends.
-- **M5 (v2) — Live mode & sims:** Alpaca proxy + caching, IV-crush replay, position-sizing simulator, more strategies.
+- **M5 (v2) — Live mode, sims & sharing:** Alpaca proxy + caching, scenario simulators (IV-crush replay, position-sizing trials), shareable strategy URLs (Lab state encoded in the link), more strategies.
 
 ---
 
@@ -180,19 +180,19 @@ Principles regardless of direction:
 
 | # | Decision | Status |
 |---|---|---|
-| D1 | v1 data source: bundled snapshots vs live API | **Pending** |
-| D2 | Product spine: explorer-first vs course-first | **Pending** |
-| D3 | Visual identity | **Pending** |
-| D4 | Later-phase priorities (paper trading / sims / sharing / quizzes) | **Pending** |
+| D1 | v1 data source | ✅ Bundled snapshots + client-side math (2026-07-20) |
+| D2 | Product spine | ✅ Explorer-first, lessons woven in (2026-07-20) |
+| D3 | Visual identity | ✅ Dark pro-terminal, friendly voice (2026-07-20) |
+| D4 | Later-phase priorities | ✅ Scenario simulators + shareable strategy links; paper trading & quizzes parked (2026-07-20) |
 | D5 | Repo: private on github.com/abhishekpradhan, name `trading-helper-app` | ✅ Done |
-| D6 | Stack per §6 | Proposed |
+| D6 | Stack per §6 | ✅ Accepted alongside D1–D4 |
 
 ---
 
 ## 11. Parking lot
 
 - Product name + domain (candidates to brainstorm: something around "see/understand," not "profit/win")
-- Paper-trading portfolio with fake money; scenario sims (2008/2020 replays); shareable strategy URLs; quizzes/progress tracking; mobile-first pass; i18n
+- Paper-trading portfolio with fake money; quizzes/progress tracking (both deliberately parked per D4); historical crash replays (2008/2020) as deeper scenario sims; mobile-first pass; i18n
 - CRR binomial pricing as an advanced lesson; futures/crypto later (explicitly out of scope for v1)
 
 ## Appendix — key sources
