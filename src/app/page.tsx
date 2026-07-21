@@ -25,7 +25,7 @@ export default function Home() {
           return (
             <Link
               key={m.symbol}
-              href={`/lab/${m.symbol}/long-call`}
+              href={`/t/${m.symbol}`}
               className="panel group p-4 transition-colors hover:border-primary/40"
             >
               <div className="flex items-baseline justify-between">
@@ -40,7 +40,7 @@ export default function Home() {
                 IV {m.iv30 ? fmtPct(m.iv30, 0) : "—"}
               </div>
               <div className="mt-3 text-xs text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                Open the Lab →
+                Explore →
               </div>
             </Link>
           );

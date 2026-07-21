@@ -1,15 +1,16 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import { ArrowLeft, TrendingUp, TrendingDown, MoveHorizontal, Zap } from "lucide-react";
+import { TrendingUp, TrendingDown, MoveHorizontal, Zap } from "lucide-react";
 import { useSnapshot } from "@/lib/data/snapshot";
 import { useLabStore } from "@/lib/lab/store";
 import { strategyById, buildPosition, type Outlook } from "@/lib/options/strategies";
+import { TickerHeader } from "@/components/shared/TickerHeader";
 import { PayoffChart } from "./PayoffChart";
 import { Controls } from "./Controls";
 import { StatPanel } from "./StatPanel";
-import { fmtUsd, fmtDateLong, fmtDate } from "@/lib/format";
+import { GreeksStrip } from "./GreeksStrip";
+import { fmtDate } from "@/lib/format";
 
 const OUTLOOK: Record<Outlook, { label: string; icon: React.ReactNode; color: string }> = {
   bullish: { label: "Bullish", icon: <TrendingUp className="size-3.5" aria-hidden />, color: "var(--outlook-bullish)" },
@@ -48,32 +49,14 @@ export function StrategyLab({ symbol, strategyId }: { symbol: string; strategyId
   const usesOptions = def.legs.some((l) => l.kind !== "stock");
   const exp = snapshot.expirations[Math.min(expIndex, snapshot.expirations.length - 1)];
   const outlook = OUTLOOK[def.outlook];
-  const changeUp = snapshot.changePct >= 0;
 
   return (
     <Shell>
-      {/* ticker bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="size-4" aria-hidden /> All tickers
-        </Link>
-        <div className="text-xs text-muted-foreground">
-          Snapshot {fmtDateLong(snapshot.capturedAt.slice(0, 10))} · delayed data · educational
-        </div>
-      </div>
-
-      <div className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="text-xl font-bold tracking-tight">{snapshot.symbol}</span>
-        <span className="text-sm text-muted-foreground">{snapshot.name}</span>
-        <span className="figures text-xl font-semibold">{fmtUsd(snapshot.spot)}</span>
-        <span className={`figures text-sm ${changeUp ? "text-gain" : "text-loss"}`}>
-          {changeUp ? "▲" : "▼"} {Math.abs(snapshot.changePct).toFixed(1)}%
-          <span className="ml-1 text-muted-foreground">today</span>
-        </span>
-      </div>
+      <TickerHeader
+        snapshot={snapshot}
+        backHref={`/t/${snapshot.symbol}`}
+        backLabel={`${snapshot.symbol} overview`}
+      />
 
       {/* strategy header */}
       <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -140,14 +123,23 @@ export function StrategyLab({ symbol, strategyId }: { symbol: string; strategyId
           </div>
           <Controls snapshot={snapshot} legs={legs} dte={exp.dte} expiryDate={exp.date} />
         </div>
-        <StatPanel
-          snapshot={snapshot}
-          legs={legs}
-          dte={exp.dte}
-          elapsedDays={elapsedDays}
-          ivScale={ivScale}
-          whatIfPrice={whatIfPrice}
-        />
+        <div className="flex flex-col gap-4">
+          <StatPanel
+            snapshot={snapshot}
+            legs={legs}
+            dte={exp.dte}
+            elapsedDays={elapsedDays}
+            ivScale={ivScale}
+            whatIfPrice={whatIfPrice}
+          />
+          <GreeksStrip
+            snapshot={snapshot}
+            legs={legs}
+            elapsedDays={elapsedDays}
+            ivScale={ivScale}
+            whatIfPrice={whatIfPrice}
+          />
+        </div>
       </div>
 
       <p className="mt-8 border-t border-border pt-4 text-center text-xs leading-relaxed text-muted-foreground">

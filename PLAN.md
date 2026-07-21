@@ -132,7 +132,7 @@ This mirrors the consensus ordering across tastylive, Option Alpha, OIC/OCC, and
 | Framework | Next.js 16.2.x (App Router, Turbopack) + React 19.2 + TypeScript 5.x |
 | Styling | Tailwind CSS v4 + shadcn/ui (CLI v4) for chrome; custom design tokens |
 | Motion | Motion 12.x (`motion/react`); React 19 View Transitions for page-level; raw rAF + d3-interpolate on slider hot paths |
-| Price charts | TradingView lightweight-charts 5.2 (Apache-2.0, attribution required) via a thin hand-rolled React wrapper |
+| Price charts | Hand-rolled SVG candles (decided during M2: the price chart and expected-move cone belong in one coherent picture, which lightweight-charts can't draw — and we don't need pan/zoom for teaching) |
 | Teaching visuals | Hand-built React SVG using d3-scale / d3-shape / d3-interpolate (visx primitives optional); heatmap on `<canvas>` |
 | Options math | Hand-written TS module (npm `black-scholes`/`greeks` packages are 2014-stale — do not use) |
 | State | Zustand 5.x (one store per lab: legs, spot/vol/time inputs, UI prefs) |
