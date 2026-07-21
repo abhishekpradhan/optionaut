@@ -17,9 +17,13 @@ export function HintsBar({ snapshot }: { snapshot: Snapshot | null }) {
         educational · delayed snapshot
         {snapshot ? ` · ${fmtDateLong(snapshot.capturedAt.slice(0, 10))}` : ""} · not advice
       </button>
-      <div className="hud hidden !text-[9.5px] !tracking-[0.16em] text-muted-foreground/60 md:block">
+      <button
+        onClick={() => setOverlay("help")}
+        className="hud hidden rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground/60 transition-colors hover:text-foreground md:block"
+        title="All controls (?)"
+      >
         h/p/m views · [ ] expiry · drag strikes · ? help
-      </div>
+      </button>
     </div>
   );
 }
