@@ -1,6 +1,7 @@
 "use client";
 
 import { useCockpit } from "@/lib/cockpit/store";
+import { RotateCcw } from "lucide-react";
 import { markToMarket, netEntryCost, expectedMove } from "@/lib/options/position";
 import type { LabLeg } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
@@ -22,6 +23,7 @@ export function Readout({
   const whatIfPrice = useCockpit((s) => s.whatIfPrice);
   const elapsedDays = useCockpit((s) => s.elapsedDays);
   const ivScale = useCockpit((s) => s.ivScale);
+  const resetDials = useCockpit((s) => s.resetDials);
 
   if (!snapshot) return <div className="h-24" />;
 
@@ -89,6 +91,14 @@ export function Readout({
           )}
         </div>
       </div>
+      {(whatIfPrice != null || elapsedDays > 0 || ivScale !== 1) && (
+        <button
+          onClick={resetDials}
+          className="hud pointer-events-auto mt-2 flex items-center gap-1.5 rounded-md border border-border/80 px-2 py-1 !text-[9px] text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+        >
+          <RotateCcw className="size-2.5" aria-hidden /> reset scenario (r)
+        </button>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useCockpit } from "@/lib/cockpit/store";
 import {
   payoffExtremes,
@@ -11,6 +12,7 @@ import {
 import type { LabLeg } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
 import { fmtUsd, fmtSignedUsd, fmtPct, fmtDate } from "@/lib/format";
+import { Term } from "@/components/learn/Term";
 
 /** Right stack, lower — view-aware readouts. History view: volatility
  *  context. Payoff/map: position stats + a greeks micro-strip. */
@@ -38,11 +40,11 @@ export function StatStack({
       <Rows
         title="volatility"
         rows={[
-          ["options expect", snapshot.iv30 ? fmtPct(snapshot.iv30, 0) : "—"],
-          ["stock delivered (20d)", snapshot.hv20 ? fmtPct(snapshot.hv20, 0) : "—"],
+          [<Term key="iv" id="iv">options expect</Term>, snapshot.iv30 ? fmtPct(snapshot.iv30, 0) : "—"],
+          [<Term key="hv" id="hv">stock delivered (20d)</Term>, snapshot.hv20 ? fmtPct(snapshot.hv20, 0) : "—"],
           ["typical year", snapshot.hv252 ? fmtPct(snapshot.hv252, 0) : "—"],
           [
-            `expected by ${fmtDate(monthly.date)}`,
+            <Term key="em" id="expected-move">{`expected by ${fmtDate(monthly.date)}`}</Term>,
             em ? `±${fmtUsd(em, { cents: false })}` : "—",
           ],
         ]}
@@ -75,20 +77,20 @@ export function StatStack({
             "loss",
           ],
           [
-            bes.length === 1 ? "breakeven" : "breakevens",
+            <Term key="be" id="breakeven">{bes.length === 1 ? "breakeven" : "breakevens"}</Term>,
             bes.length ? bes.map((b) => fmtUsd(b, { cents: false })).join(" · ") : "—",
           ],
-          ["est. win odds", stockOnly ? "—" : fmtPct(pop, 0)],
+          [<Term key="pop" id="pop">est. win odds</Term>, stockOnly ? "—" : fmtPct(pop, 0)],
         ]}
       />
       {!stockOnly && (
         <Rows
           title="greeks · the dials, named"
           rows={[
-            ["Δ delta / $1", fmtSignedUsd(g.delta, { cents: false })],
-            ["Γ gamma / $1", `${g.gamma >= 0 ? "+" : "−"}${Math.abs(g.gamma).toFixed(1)}Δ`],
-            ["Θ theta / day", fmtSignedUsd(g.theta / 365, { cents: false })],
-            ["V vega / 1pt", fmtSignedUsd(g.vega / 100, { cents: false })],
+            [<Term key="d" id="delta">Δ delta / $1</Term>, fmtSignedUsd(g.delta, { cents: false })],
+            [<Term key="g" id="gamma">Γ gamma / $1</Term>, `${g.gamma >= 0 ? "+" : "−"}${Math.abs(g.gamma).toFixed(1)}Δ`],
+            [<Term key="t" id="theta">Θ theta / day</Term>, fmtSignedUsd(g.theta / 365, { cents: false })],
+            [<Term key="v" id="vega">V vega / 1pt</Term>, fmtSignedUsd(g.vega / 100, { cents: false })],
           ]}
         />
       )}
@@ -101,14 +103,14 @@ function Rows({
   rows,
 }: {
   title: string;
-  rows: Array<[string, string, ("gain" | "loss")?]>;
+  rows: Array<[React.ReactNode, string, ("gain" | "loss")?]>;
 }) {
   return (
     <div className="pointer-events-auto select-none">
       <div className="hud mb-1.5 !text-[9px] !tracking-[0.2em] text-muted-foreground/70">{title}</div>
       <dl className="space-y-1">
-        {rows.map(([k, v, tone]) => (
-          <div key={k} className="flex items-baseline justify-between gap-4">
+        {rows.map(([k, v, tone], i) => (
+          <div key={i} className="flex items-baseline justify-between gap-4">
             <dt className="text-[10.5px] text-muted-foreground">{k}</dt>
             <dd
               className={`figures text-[11.5px] ${

@@ -108,9 +108,9 @@ export function DialStack({
       {dirty && (
         <button
           onClick={resetDials}
-          className="hud mt-3 flex items-center gap-1 !text-[9px] text-muted-foreground transition-colors hover:text-foreground"
+          className="hud mt-3 flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 !text-[9.5px] text-secondary-foreground transition-colors hover:border-primary/50 hover:text-foreground"
         >
-          <RotateCcw className="size-2.5" aria-hidden /> reset (r)
+          <RotateCcw className="size-3" aria-hidden /> reset dials (r)
         </button>
       )}
     </div>

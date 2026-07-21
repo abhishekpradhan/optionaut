@@ -214,6 +214,15 @@ function MobilePanel({
         <div className="flex flex-col gap-5">
           {view !== "history" && <DialStack snapshot={snapshot} legs={legs} dte={dte} />}
           <StatStack snapshot={snapshot} legs={legs} dte={dte} />
+          <button
+            onClick={() => {
+              setOpen(false);
+              useCockpit.getState().setOverlay("help");
+            }}
+            className="hud flex items-center justify-center gap-1.5 rounded-md border border-border py-2 !text-[9.5px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            controls &amp; help
+          </button>
         </div>
       </div>
     </div>

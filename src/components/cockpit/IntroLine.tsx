@@ -42,7 +42,7 @@ export function IntroLine() {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-44 z-20 flex flex-col items-center gap-1.5 px-4 text-center">
       <div className="hud !text-[11px] !tracking-[0.3em] text-secondary-foreground">
-        pick a ticker · twist the dials · name the forces
+        pick a ticker · drag a strike · twist the dials · name the forces
       </div>
       <div className="hud !text-[9.5px] text-muted-foreground/70">
         press <span className="text-primary">t</span> for the grand tour · <span className="text-primary">?</span> for controls

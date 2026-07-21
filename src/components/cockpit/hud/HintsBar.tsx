@@ -11,7 +11,7 @@ export function HintsBar({ snapshot }: { snapshot: Snapshot | null }) {
     <div className="pointer-events-auto flex select-none flex-col items-end gap-1 text-right">
       <button
         onClick={() => setOverlay("about")}
-        className="hud max-w-[52vw] truncate rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground transition-colors hover:text-foreground sm:max-w-none"
+        className="hud max-w-[52vw] truncate rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline sm:max-w-none"
         title="How the numbers are made"
       >
         educational · delayed snapshot
@@ -19,7 +19,7 @@ export function HintsBar({ snapshot }: { snapshot: Snapshot | null }) {
       </button>
       <button
         onClick={() => setOverlay("help")}
-        className="hud hidden rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground/60 transition-colors hover:text-foreground md:block"
+        className="hud hidden rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground/60 underline-offset-2 transition-colors hover:text-foreground hover:underline md:block"
         title="All controls (?)"
       >
         h/p/m views · [ ] expiry · drag strikes · ? help

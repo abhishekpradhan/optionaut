@@ -349,7 +349,7 @@ export function PayoffChart({
             <g onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag}>
               {handles.map((h) => {
                 const yPos = innerH + 44;
-                const w = 58;
+                const w = 66;
                 return (
                   <g key={h.role} transform={`translate(${x(h.strike)},${yPos})`}
                     tabIndex={0} role="slider"
@@ -375,6 +375,11 @@ export function PayoffChart({
                       fill="var(--secondary-foreground)">
                       {`${h.side > 0 ? "+" : "−"}${h.kind === "call" ? "C" : "P"} ${h.strike}`}
                     </text>
+                    {/* drag affordance: the pill advertises its axis */}
+                    <path d={`M ${-w / 2 + 5} 0 L ${-w / 2 + 8.5} -3 L ${-w / 2 + 8.5} 3 Z`}
+                      fill="var(--muted-foreground)" opacity={0.65} />
+                    <path d={`M ${w / 2 - 5} 0 L ${w / 2 - 8.5} -3 L ${w / 2 - 8.5} 3 Z`}
+                      fill="var(--muted-foreground)" opacity={0.65} />
                   </g>
                 );
               })}

@@ -4,7 +4,7 @@ import { useCockpit } from "@/lib/cockpit/store";
 import { strategyById } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
 import { fmtDate } from "@/lib/format";
-import { Info } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 /** Top-left: who and where you are, Universe-Atlas corner style. */
 export function ContextBar({ snapshot }: { snapshot: Snapshot | null }) {
@@ -47,11 +47,11 @@ export function ContextBar({ snapshot }: { snapshot: Snapshot | null }) {
             )}
             <button
               onClick={() => setOverlay("guide")}
-              className="ml-0.5 rounded p-0.5 text-muted-foreground transition-colors hover:text-primary"
-              aria-label="How this strategy works"
-              title="How this works (i)"
+              className="ml-1 flex shrink-0 items-center gap-1 rounded-md border border-border/80 bg-background/40 px-2 py-0.5 !text-[9.5px] transition-colors hover:border-[color:var(--warn)]/50 hover:text-foreground"
+              title="How this strategy works — and how it bites (i)"
             >
-              <Info className="size-3.5" aria-hidden />
+              <AlertTriangle className="size-3" style={{ color: "var(--warn)" }} aria-hidden />
+              what can bite?
             </button>
           </>
         )}
