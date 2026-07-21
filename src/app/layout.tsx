@@ -14,19 +14,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  // "Options Lab" is a working title — final product name is an open
-  // decision in PLAN.md's parking lot.
-  metadataBase: new URL("https://trading-helper-app.vercel.app"),
+  metadataBase: new URL("https://optionaut.vercel.app"),
   title: {
-    default: "Options Lab — see what a trade really does",
-    template: "%s — Options Lab",
+    default: "Optionaut — learn options by flying them",
+    template: "%s — Optionaut",
   },
   description:
-    "A free, visual guide to trading. Pick a stock, explore every strategy from buying shares to iron condors, and understand the mechanics by touching them. Educational only — not investment advice.",
+    "A free, cinematic instrument for understanding trading. Pick a stock, fly every strategy from buying shares to iron condors — drag strikes, fast-forward time, crush volatility. Educational only — not investment advice.",
   openGraph: {
-    title: "Options Lab — see what a trade really does",
+    title: "Optionaut — learn options by flying them",
     description:
-      "Drag strikes, fast-forward time, crush volatility — an interactive, educational playground for options intuition. Free, no signup.",
+      "Drag strikes, fast-forward time, crush volatility — an interactive, educational cockpit for options intuition. Free, no signup, every crash is free.",
     type: "website",
   },
   twitter: {

@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import { useCockpit } from "@/lib/cockpit/store";
-import { PayoffChart } from "@/components/lab/PayoffChart";
-import { Heatmap } from "@/components/lab/Heatmap";
-import { PriceCone } from "@/components/overview/PriceCone";
+import { PayoffChart } from "@/components/charts/PayoffChart";
+import { Heatmap } from "@/components/charts/Heatmap";
+import { PriceCone } from "@/components/charts/PriceCone";
 import { strategyById, type LabLeg } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
 

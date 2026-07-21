@@ -1,8 +1,8 @@
-# Product Plan — trading-helper-app
+# Product Plan — Optionaut
 
 **Status:** M0–M4 built and verified (2026-07-20) — ready for first Vercel deploy. v2 (M5) next.
 **Last updated:** 2026-07-20
-**Working title:** `trading-helper-app` (product name TBD — see Parking Lot)
+**Name:** Optionaut (decided D9) · repo `github.com/abhishekpradhan/optionaut`
 
 ---
 
@@ -188,12 +188,13 @@ Principles:
 | D6 | Stack per §6 | ✅ Accepted alongside D1–D4 |
 | D7 | Visual bar raised to "video-game quality" (2026-07-21), reference: universeatlas.org. First pass (V1–V3: atmosphere/glow/3D terrain) kept the scrolling-website shell — user feedback: wrong. The atmosphere/glow/HUD language stays; the 3D terrain is CUT (spectacle < clarity; the flat map view wins). | ✅ Revised by D8 |
 | D8 | **The Cockpit** (2026-07-21, user-confirmed): the app is ONE full-screen instrument, no scrolling document anywhere. Center stage = an informative chart in three view modes (HISTORY candles+cone · PAYOFF diagram · MAP heatmap) that morph in place. HUD at the edges: top-left context line, top-right key hints + honesty chip, bottom-left giant live P/L readout, bottom chip rails (tickers, strategies, views, TOUR), right dial+stat stack (view-aware: vol context in history, position stats otherwise). Ticker/strategy switches morph the scene — never a page-load feel; URLs sync quietly (replaceState) so /t/SYM and /lab/SYM/STRAT deep links still work as static shells around the cockpit. Teaching = TOUR mode (caption cards + action gates driving the real instrument, adapted from the unit lessons); guides/glossary/about become glass overlays; persistent EDUCATIONAL·NOT ADVICE chip replaces the footer disclaimer. Lessons pages, MiniLab, card gallery, site header/footer, and three.js are removed. | ✅ Built & verified 2026-07-21 (all views, keyboard map, tours sheet, mobile dials sheet) |
+| D9 | **Name: Optionaut** (2026-07-21, user-picked from four candidates) — option + astronaut; the learner is the pilot, matching the cockpit/tours/fly-it language. Repo renamed `optionaut`; package, metadata, wordmark, and docs updated. Check domain/trademark availability before public launch. | ✅ Done |
 
 ---
 
 ## 11. Parking lot
 
-- Product name + domain (candidates to brainstorm: something around "see/understand," not "profit/win")
+- ~~Product name~~ → **Optionaut** (D9). Still open: domain purchase + trademark check before public launch.
 - Paper-trading portfolio with fake money; quizzes/progress tracking (both deliberately parked per D4); historical crash replays (2008/2020) as deeper scenario sims; mobile-first pass; i18n
 - CRR binomial pricing as an advanced lesson; futures/crypto later (explicitly out of scope for v1)
 

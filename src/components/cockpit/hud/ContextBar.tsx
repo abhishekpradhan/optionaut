@@ -30,7 +30,7 @@ export function ContextBar({ snapshot }: { snapshot: Snapshot | null }) {
           }`}
         />
         <span className="font-mono text-[13px] font-bold tracking-[0.22em] text-foreground">
-          OPTIONS LAB
+          OPTIONAUT
         </span>
       </div>
       <div className="hud mt-1.5 flex flex-wrap items-center gap-x-2 !text-[10.5px]">

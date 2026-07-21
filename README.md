@@ -1,8 +1,9 @@
-# Options Lab (`trading-helper-app`)
+# Optionaut
 
-An explorable, visual guide to trading — pick a stock, see everything you could do with it
-(from buying shares to iron condors), and *understand* it by dragging strikes, scrubbing
-time, and crushing volatility while the profit picture responds.
+**Learn options by flying them.** A free, cinematic, full-screen instrument for
+understanding trading — pick a stock, fly everything you could do with it (from buying
+shares to iron condors), and *understand* it by dragging strikes, scrubbing time, and
+crushing volatility while the profit picture responds. Every crash is free.
 
 **Free · no signup · educational only.** This app never places trades and never gives
 investment advice. Product plan, research, and roadmap live in [PLAN.md](./PLAN.md).

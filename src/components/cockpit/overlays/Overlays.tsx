@@ -147,7 +147,7 @@ function GlossarySheet() {
 function AboutSheet({ snapshot }: { snapshot: Snapshot | null }) {
   return (
     <>
-      <SheetTitle kicker="what this is">Options Lab</SheetTitle>
+      <SheetTitle kicker="what this is">Optionaut</SheetTitle>
       <div className="space-y-3.5 text-[13.5px] leading-relaxed text-muted-foreground">
         <p>
           A free, no-signup instrument for understanding how trading actually works — from
@@ -173,8 +173,8 @@ function AboutSheet({ snapshot }: { snapshot: Snapshot | null }) {
         </p>
         <p>
           <span className="font-medium text-secondary-foreground">The fine print, plainly.</span>{" "}
-          Options involve a high degree of risk and are not suitable for all investors. Options
-          Lab is not an investment advisor, broker, or dealer. Nothing here is investment
+          Options involve a high degree of risk and are not suitable for all investors.
+          Optionaut is not an investment advisor, broker, or dealer. Nothing here is investment
           advice, a recommendation, or a solicitation to buy or sell any security. The
           strategies shown can and do lose money — several exist to demonstrate exactly how.
           Before trading for real, read your broker&apos;s{" "}
