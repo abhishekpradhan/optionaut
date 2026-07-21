@@ -191,6 +191,10 @@ export function Heatmap({
 
           {/* y axis: prices */}
           <svg width={margin.left + padX} height={height} className="absolute left-0 top-0 figures">
+            <text x={margin.left + padX - 8} y={margin.top - 9} textAnchor="end"
+              fontSize={8.5} letterSpacing={1.2} fill="var(--muted-foreground)" opacity={0.85}>
+              STOCK PRICE
+            </text>
             {[0, Math.round(ROWS * 0.25), Math.round(ROWS * 0.5), Math.round(ROWS * 0.75), ROWS - 1].map(
               (r) => (
                 <text key={r} x={margin.left + padX - 8} y={margin.top + r * CELL_H + CELL_H / 2}

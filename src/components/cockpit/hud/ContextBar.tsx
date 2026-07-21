@@ -33,7 +33,7 @@ export function ContextBar({ snapshot }: { snapshot: Snapshot | null }) {
           OPTIONAUT
         </span>
       </div>
-      <div className="hud mt-1.5 flex flex-wrap items-center gap-x-2 !text-[10.5px]">
+      <div className="hud mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 !text-[10.5px]">
         <span className="text-secondary-foreground">{ticker}</span>
         {snapshot && <span className="text-muted-foreground/60">{snapshot.name}</span>}
         {view !== "history" && def && (
@@ -56,6 +56,19 @@ export function ContextBar({ snapshot }: { snapshot: Snapshot | null }) {
           </>
         )}
       </div>
+      {/* the WHY, always visible — not a hover secret */}
+      {view !== "history" && def && (
+        <p
+          className="mt-1 max-w-xl truncate text-[11.5px] leading-snug text-muted-foreground"
+          title={def.tagline}
+        >
+          <span className="text-secondary-foreground/80">
+            {def.outlook === "bigmove" ? "big move" : def.outlook} · {def.risk} risk
+          </span>
+          {" — "}
+          {def.tagline}
+        </p>
+      )}
     </div>
   );
 }

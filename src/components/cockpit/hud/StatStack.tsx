@@ -88,7 +88,14 @@ export function StatStack({
           title="greeks · the dials, named"
           rows={[
             [<Term key="d" id="delta">Δ delta / $1</Term>, fmtSignedUsd(g.delta, { cents: false })],
-            [<Term key="g" id="gamma">Γ gamma / $1</Term>, `${g.gamma >= 0 ? "+" : "−"}${Math.abs(g.gamma).toFixed(1)}Δ`],
+            [
+              <Term key="g" id="gamma">Γ gamma / $1</Term>,
+              <React.Fragment key="gv">
+                {g.gamma >= 0 ? "+" : "−"}
+                {Math.abs(g.gamma).toFixed(1)}
+                <span className="ml-1 text-muted-foreground/70">Δ</span>
+              </React.Fragment>,
+            ],
             [<Term key="t" id="theta">Θ theta / day</Term>, fmtSignedUsd(g.theta / 365, { cents: false })],
             [<Term key="v" id="vega">V vega / 1pt</Term>, fmtSignedUsd(g.vega / 100, { cents: false })],
           ]}
@@ -103,7 +110,7 @@ function Rows({
   rows,
 }: {
   title: string;
-  rows: Array<[React.ReactNode, string, ("gain" | "loss")?]>;
+  rows: Array<[React.ReactNode, React.ReactNode, ("gain" | "loss")?]>;
 }) {
   return (
     <div className="pointer-events-auto select-none">

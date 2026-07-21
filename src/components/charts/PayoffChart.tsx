@@ -361,6 +361,16 @@ export function PayoffChart({
                   {fmtUsd(t, { cents: false })}
                 </text>
               ))}
+              {/* axis names, HUD-voiced */}
+              <text x={-margin.left + 8} y={-11} fontSize={8.5} letterSpacing={1.4}
+                fill="var(--muted-foreground)" opacity={0.85}>
+                PROFIT / LOSS
+              </text>
+              <text x={innerW + margin.right - 8} y={-11} textAnchor="end"
+                fontSize={8.5} letterSpacing={1.2}
+                fill="var(--muted-foreground)" opacity={0.85}>
+                STOCK PRICE →
+              </text>
             </g>
 
             {/* hover capture */}
