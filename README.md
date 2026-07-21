@@ -100,8 +100,11 @@ and every commit to `main` deploys to production.
 - [x] Nightly market-data refresh pipeline with validation gates
 - [x] [optionaut.org](https://optionaut.org) + push-to-deploy
 - [ ] Shareable strategy URLs — the full setup encoded in the link
+- [ ] Any-symbol search — on-demand delayed snapshots for any listed ticker
+      (same keyless Cboe source, CDN-cached serverless route; curated ten stay
+      bundled as instant defaults)
 - [ ] Scenario simulators — IV-crush earnings replay, position-sizing trials
-- [ ] Live delayed-data mode (Alpaca free tier)
+- [ ] Optional: live-freshness mode via a brokerage data API
 
 The full decision log (D1–D10) with the *why* behind the shape of the product lives in
 [`PLAN.md`](PLAN.md).

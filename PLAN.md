@@ -196,6 +196,7 @@ Principles:
 ## 11. Parking lot
 
 - ~~Product name~~ → **Optionaut** (D9). ~~Domain~~ → **optionaut.org** registered via Vercel 2026-07-21, live with auto-TLS; `optionaut.vercel.app` remains as a secondary alias. Trademark search still recommended before heavy promotion.
+- **Any-symbol search** (user-requested 2026-07-21, sequenced after shareable URLs): on-demand snapshot route (`/api/snapshot/[symbol]`) reusing the capture script's Cboe transform, CDN-cached ~15–30 min per symbol, same snapshot shape the cockpit already consumes — still zero keys. UI: search chip in the ticker rail (`/` key), recently-viewed symbols persisted locally alongside the bundled curated ten. Routing: `/t/*` and `/lab/*` gain a dynamic fallback (attempt on-demand load before 404) so shared links work for any ticker. Notes: ticker-only display for non-curated names; divYield defaults ~0 for unknowns (greeks barely care); this demotes the Alpaca live mode to optional (Cboe-on-demand covers breadth; Alpaca would only add intraday freshness).
 - Paper-trading portfolio with fake money; quizzes/progress tracking (both deliberately parked per D4); historical crash replays (2008/2020) as deeper scenario sims; mobile-first pass; i18n
 - CRR binomial pricing as an advanced lesson; futures/crypto later (explicitly out of scope for v1)
 
