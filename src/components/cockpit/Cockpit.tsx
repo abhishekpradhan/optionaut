@@ -14,6 +14,7 @@ import { Stage } from "./Stage";
 import { Overlays } from "./overlays/Overlays";
 import { TourMode } from "./tour/TourMode";
 import { IntroLine } from "./IntroLine";
+import { MobileGate } from "./MobileGate";
 
 export interface CockpitInitial {
   ticker?: string;
@@ -163,8 +164,8 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
         )}
       </div>
 
-      {/* bottom: readout + rails */}
-      <div className="flex flex-col gap-2.5 px-4 pb-3 pt-1 sm:px-5">
+      {/* bottom: readout + rails (safe-area aware for notched phones) */}
+      <div className="flex flex-col gap-2.5 px-4 pt-1 sm:px-5 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         <Readout snapshot={snapshot} legs={legs} dte={dte} />
         <ChipRails />
       </div>
@@ -183,6 +184,7 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
       <IntroLine />
       <Overlays snapshot={snapshot} />
       {tour && <TourMode snapshot={snapshot} />}
+      <MobileGate />
     </div>
   );
 }

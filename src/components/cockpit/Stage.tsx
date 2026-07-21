@@ -54,6 +54,34 @@ export function Stage({
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
+  // Pinch = the touch twin of wheel-zoom: two pointers on the stage
+  // scale the price domain around their spread.
+  const pointers = React.useRef(new Map<number, { x: number; y: number }>());
+  const pinch = React.useRef<{ dist: number; scale: number } | null>(null);
+  const pinchDist = () => {
+    const [a, b] = [...pointers.current.values()];
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  };
+  const onPointerDown = (e: React.PointerEvent) => {
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.current.size === 2) {
+      pinch.current = { dist: pinchDist(), scale: useCockpit.getState().domainScale };
+    }
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!pointers.current.has(e.pointerId)) return;
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const s = useCockpit.getState();
+    if (pinch.current && pointers.current.size === 2 && s.view !== "history") {
+      const d = pinchDist();
+      if (d > 12) s.setDomainScale(pinch.current.scale * (pinch.current.dist / d));
+    }
+  };
+  const onPointerEnd = (e: React.PointerEvent) => {
+    pointers.current.delete(e.pointerId);
+    if (pointers.current.size < 2) pinch.current = null;
+  };
+
   const chartH = Math.max(h - 8, 200);
   const pick = (price: number, day: number) => {
     setWhatIfPrice(price);
@@ -64,7 +92,12 @@ export function Stage({
     <div
       ref={ref}
       id="main"
-      className="relative h-full w-full min-w-0"
+      className="relative h-full w-full min-w-0 touch-none"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerEnd}
+      onPointerCancel={onPointerEnd}
+      onPointerLeave={onPointerEnd}
       aria-label="Chart stage"
     >
       {h > 0 && def && (

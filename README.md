@@ -30,6 +30,9 @@ Plus **TOUR mode** — six guided flights that drive the real instrument with ac
 per-strategy "what can bite" guides, and a full keyboard map (`?` in the app).
 12 strategies × 10 tickers, all on real captured option chains.
 
+Built for **desktop and landscape tablets** (pinch-to-zoom included); phones get an
+honest boarding-pass page with an "enter anyway" hatch.
+
 ## Quickstart
 
 No API keys, no environment variables, no accounts — the data ships with the repo.
