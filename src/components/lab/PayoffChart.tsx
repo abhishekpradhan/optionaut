@@ -193,7 +193,7 @@ export function PayoffChart({
   const daysLeft = Math.max(dte - elapsedDays, 0);
   const nowLabel = elapsedDays <= 0 ? "Today" : daysLeft === 0 ? "At expiry" : `In ${elapsedDays}d`;
 
-  const ticksX = x.ticks(6);
+  const ticksX = x.ticks(innerW < 460 ? 3 : 6);
   const ticksY = y.ticks(5);
 
   return (

@@ -91,8 +91,7 @@ export default async function LessonPage({ params }: { params: Promise<Params> }
       </nav>
 
       <p className="mt-10 text-center text-xs leading-relaxed text-muted-foreground">
-        Educational only — not investment advice. Lesson widgets use synthetic round-number
-        pricing from the same model as the Lab.
+        Lesson widgets use synthetic round-number pricing from the same model as the Lab.
       </p>
     </main>
   );

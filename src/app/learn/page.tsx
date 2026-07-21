@@ -54,9 +54,6 @@ export default function LearnIndex() {
         ))}
       </ol>
 
-      <p className="mt-12 border-t border-border pt-4 text-center text-xs leading-relaxed text-muted-foreground">
-        Educational only — not investment advice.
-      </p>
     </main>
   );
 }

@@ -77,7 +77,7 @@ export function PriceCone({ snapshot }: Props) {
     return `${upper.join(" ")} ${lower.join(" ")}`;
   };
 
-  // Month tick positions across the past region.
+  // Month tick positions across the past region; thinned when narrow.
   const monthTicks: Array<{ i: number; label: string }> = [];
   let lastMonth = "";
   candles.forEach((c, i) => {
@@ -91,6 +91,8 @@ export function PriceCone({ snapshot }: Props) {
         });
     }
   });
+  const shownMonthTicks =
+    innerW < 480 ? monthTicks.filter((_, idx) => idx % 2 === 0) : monthTicks;
 
   const hoverInfo = React.useMemo(() => {
     if (hover == null) return null;
@@ -198,7 +200,7 @@ export function PriceCone({ snapshot }: Props) {
             </g>
 
             {/* month ticks */}
-            {monthTicks.map((m) => (
+            {shownMonthTicks.map((m) => (
               <text key={m.i} x={x(m.i)} y={innerH + 18} textAnchor="middle" fontSize={10.5}
                 fill="var(--muted-foreground)">
                 {m.label}

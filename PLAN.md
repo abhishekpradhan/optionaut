@@ -1,6 +1,6 @@
 # Product Plan — trading-helper-app
 
-**Status:** Plan locked (v1.0, 2026-07-20) — ready to build, starting with M0
+**Status:** M0–M4 built and verified (2026-07-20) — ready for first Vercel deploy. v2 (M5) next.
 **Last updated:** 2026-07-20
 **Working title:** `trading-helper-app` (product name TBD — see Parking Lot)
 
@@ -167,11 +167,11 @@ Principles:
 
 ## 9. Milestones (each ends demo-able)
 
-- **M0 — Foundations:** scaffold (create-next-app: TS/Tailwind/App Router), design tokens, repo hygiene, **Black-Scholes math module with golden-value tests**, snapshot-capture script + first data bundle.
-- **M1 — The Lab, single strategy:** payoff diagram engine (expiry + T+0) for *long call* on real snapshot data, draggable strike, the three sliders, stat panel. **The "wow" demo.**
-- **M2 — Breadth:** security overview page (price chart, expected-move cone, IV context) + strategy gallery + all 12 v1 strategies running through the same engine + greeks strip.
-- **M3 — The teaching layer:** tooltip/glossary system with concept gating, guided intro per strategy, "what goes wrong" boxes, price×time heatmap, units 1–6 lesson flow.
-- **M4 — Polish & ship:** landing page, empty/edge states, a11y pass, disclaimer/about, deploy to Vercel, share with friends.
+- ✅ **M0 — Foundations** (2026-07-20): scaffold, dark tokens (palette CVD-validated), Black-Scholes engine w/ 37 tests, Cboe snapshot capture for 10 tickers.
+- ✅ **M1 — The Lab** (2026-07-20): payoff engine (expiry + T+0), draggable/keyboard strike pills, three dials, stat panel, crosshair tooltip. Leg IVs solved from mids for exact internal consistency.
+- ✅ **M2 — Breadth** (2026-07-20): overview page (candles→expected-move cone w/ dual-mode hover, vol tiles), gallery with live payoff sparklines, all 12 strategies, greeks strip. (Deviation: hand-rolled SVG candles; dropped lightweight-charts.)
+- ✅ **M3 — Teaching layer** (2026-07-20): ~40-term gated glossary + Term popovers, guide bands ("The idea" / "What can bite") for all 12, clickable price×time heatmap, lessons for units 1–6 + 10 on the MiniLab widget, site nav.
+- ✅ **M4 — Polish** (2026-07-20): landing page w/ animated hero, About (methodology + disclaimers), global footer, 404/error pages, favicon, skip-link + reduced-motion, OG metadata, README. Deploy handoff: user imports repo in Vercel (zero-config static).
 - **M5 (v2) — Live mode, sims & sharing:** Alpaca proxy + caching, scenario simulators (IV-crush replay, position-sizing trials), shareable strategy URLs (Lab state encoded in the link), more strategies.
 
 ---

@@ -210,11 +210,6 @@ export function StrategyLab({ symbol, strategyId }: { symbol: string; strategyId
         </div>
       )}
 
-      <p className="mt-8 border-t border-border pt-4 text-center text-xs leading-relaxed text-muted-foreground">
-        Educational only. Options involve a high degree of risk and are not suitable for all
-        investors. Nothing here is investment advice or a recommendation of any security or
-        strategy. Prices are a delayed snapshot, not live markets.
-      </p>
     </Shell>
   );
 }
