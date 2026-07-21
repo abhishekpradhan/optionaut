@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useCockpit, type ViewMode, type OverlayKind, type TourRef } from "@/lib/cockpit/store";
 import { useSnapshot } from "@/lib/data/snapshot";
+import manifest from "@/data/manifest.json";
 import { strategyById, buildPosition, defaultExpIndex } from "@/lib/options/strategies";
 import { ContextBar } from "./hud/ContextBar";
 import { HintsBar } from "./hud/HintsBar";
@@ -48,7 +49,7 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
   const setTour = useCockpit((s) => s.setTour);
   const resetDials = useCockpit((s) => s.resetDials);
 
-  const { snapshot } = useSnapshot(ticker);
+  const { snapshot, error } = useSnapshot(ticker);
   const def = strategyById(strategyId);
 
   const legs = React.useMemo(
@@ -115,8 +116,8 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
         case "ArrowRight": {
           if (!e.shiftKey) return;
           e.preventDefault();
-          const list = ["AAPL", "MSFT", "NVDA", "TSLA", "AMZN", "GOOGL", "AMD", "DIS", "SPY", "QQQ"];
-          const i = list.indexOf(s.ticker);
+          const list = manifest.map((m) => m.symbol);
+          const i = Math.max(list.indexOf(s.ticker), 0);
           const next = list[(i + (e.key === "ArrowRight" ? 1 : list.length - 1)) % list.length];
           setTicker(next);
           return;
@@ -130,7 +131,7 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
   // ——— back/forward support ———
   React.useEffect(() => {
     const onPop = () => {
-      const m = window.location.pathname.match(/^\/(t|lab)\/([A-Z]+)(?:\/([a-z-]+))?/);
+      const m = window.location.pathname.match(/^\/(t|lab)\/([A-Z0-9.]+)(?:\/([a-z-]+))?/);
       if (!m) return;
       const st = useCockpit.getState();
       if (m[2] !== st.ticker) st.setTicker(m[2]);
@@ -170,11 +171,38 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
         <ChipRails />
       </div>
 
-      {!snapshot && (
-        <div className="hud absolute inset-0 flex items-center justify-center">
-          loading snapshot…
-        </div>
-      )}
+      {!snapshot &&
+        (error ? (
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <div className="panel stage-enter flex max-w-sm flex-col items-center gap-3 p-6 text-center">
+              <div className="hud !text-[9.5px] text-primary">unknown callsign</div>
+              <p className="text-[13px] leading-relaxed text-muted-foreground">
+                No data for{" "}
+                <span className="figures font-semibold text-foreground">{ticker}</span>. The
+                hangar stocks six simulated securities — for a real one, bring your own
+                numbers.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setOverlay("custom")}
+                  className="hud rounded-md border border-primary/60 bg-accent px-3 py-1.5 !text-[9.5px] transition-colors hover:border-primary"
+                >
+                  + add your data
+                </button>
+                <button
+                  onClick={() => setTicker(manifest[0].symbol)}
+                  className="hud rounded-md border border-border px-3 py-1.5 !text-[9.5px] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                >
+                  fly {manifest[0].symbol}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="hud absolute inset-0 flex items-center justify-center">
+            loading snapshot…
+          </div>
+        ))}
 
       {/* small screens: the dials live in a slide-up sheet */}
       {snapshot && (

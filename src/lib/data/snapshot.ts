@@ -2,11 +2,16 @@
 
 import { useEffect, useState } from "react";
 import type { Snapshot, OptionQuote } from "./types";
+import { getCustomMarket } from "./customMarkets";
 
 const cache = new Map<string, Promise<Snapshot>>();
 
 export function fetchSnapshot(symbol: string): Promise<Snapshot> {
   const key = symbol.toUpperCase();
+  // the user's own securities take precedence and are never cached in
+  // memory (they can be edited or deleted at any moment)
+  const custom = getCustomMarket(key);
+  if (custom) return Promise.resolve(custom);
   if (!cache.has(key)) {
     const p = fetch(`/snapshots/${key}.json`).then((res) => {
       if (!res.ok) {

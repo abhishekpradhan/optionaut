@@ -2,11 +2,11 @@
 
 import { useCockpit } from "@/lib/cockpit/store";
 import type { Snapshot } from "@/lib/data/types";
-import { fmtDateLong } from "@/lib/format";
 
 /** Top-right: the honesty chip and the keyboard whisper. */
 export function HintsBar({ snapshot }: { snapshot: Snapshot | null }) {
   const setOverlay = useCockpit((s) => s.setOverlay);
+  const custom = snapshot?.source === "custom";
   return (
     <div className="pointer-events-auto flex select-none flex-col items-end gap-1 text-right">
       <button
@@ -14,8 +14,9 @@ export function HintsBar({ snapshot }: { snapshot: Snapshot | null }) {
         className="hud max-w-[52vw] truncate rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline sm:max-w-none"
         title="How the numbers are made"
       >
-        educational · delayed snapshot
-        {snapshot ? ` · ${fmtDateLong(snapshot.capturedAt.slice(0, 10))}` : ""} · not advice
+        {custom
+          ? "educational · your data · this browser only · not advice"
+          : "educational · simulated market · fictional securities · not advice"}
       </button>
       <button
         onClick={() => setOverlay("help")}

@@ -45,6 +45,11 @@ export function Readout({
               {em ? ` · ±${fmtUsd(em, { cents: false })} by 30d` : ""}
             </div>
           )}
+          {snapshot.source === "custom" && (
+            <div className="text-muted-foreground/60">
+              price history is illustrative — generated around your numbers
+            </div>
+          )}
         </div>
       </div>
     );

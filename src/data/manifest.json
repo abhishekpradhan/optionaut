@@ -1,92 +1,62 @@
 [
   {
-    "symbol": "AAPL",
-    "name": "Apple",
-    "spot": 327.06,
-    "changePct": 0.14,
-    "iv30": 0.2943,
-    "hv252": 0.2446,
-    "capturedAt": "2026-07-21T18:44:03.114Z"
+    "symbol": "COSMOS",
+    "name": "Cosmos Composite Index Fund",
+    "spot": 612,
+    "changePct": 1.11,
+    "iv30": 0.14,
+    "hv252": 0.1163,
+    "capturedAt": "2026-07-21T00:00:00.000Z",
+    "simulated": true
   },
   {
-    "symbol": "MSFT",
-    "name": "Microsoft",
-    "spot": 398.72,
-    "changePct": -0.89,
-    "iv30": 0.457,
-    "hv252": 0.2766,
-    "capturedAt": "2026-07-21T18:44:04.063Z"
+    "symbol": "AURION",
+    "name": "Aurion Systems",
+    "spot": 418,
+    "changePct": 0.73,
+    "iv30": 0.24,
+    "hv252": 0.1965,
+    "capturedAt": "2026-07-21T00:00:00.000Z",
+    "simulated": true
   },
   {
-    "symbol": "NVDA",
-    "name": "NVIDIA",
-    "spot": 206.23,
-    "changePct": 1.45,
-    "iv30": 0.3878,
-    "hv252": 0.3576,
-    "capturedAt": "2026-07-21T18:44:04.792Z"
+    "symbol": "HEARTH",
+    "name": "Hearth & Home Utilities",
+    "spot": 68,
+    "changePct": 0.24,
+    "iv30": 0.18,
+    "hv252": 0.1317,
+    "capturedAt": "2026-07-21T00:00:00.000Z",
+    "simulated": true
   },
   {
-    "symbol": "TSLA",
-    "name": "Tesla",
-    "spot": 379.99,
-    "changePct": 2.82,
-    "iv30": 0.4833,
-    "hv252": 0.4473,
-    "capturedAt": "2026-07-21T18:44:05.739Z"
+    "symbol": "VOLTRA",
+    "name": "Voltra Semiconductor",
+    "spot": 127,
+    "changePct": 0.37,
+    "iv30": 0.72,
+    "hv252": 0.6181,
+    "capturedAt": "2026-07-21T00:00:00.000Z",
+    "simulated": true
   },
   {
-    "symbol": "AMZN",
-    "name": "Amazon",
-    "spot": 248.53,
-    "changePct": -0.58,
-    "iv30": 0.4301,
-    "hv252": 0.3114,
-    "capturedAt": "2026-07-21T18:44:06.790Z"
+    "symbol": "NIMBUS",
+    "name": "Nimbus Motors",
+    "spot": 262,
+    "changePct": 2.74,
+    "iv30": 0.52,
+    "hv252": 0.4496,
+    "capturedAt": "2026-07-21T00:00:00.000Z",
+    "simulated": true
   },
   {
-    "symbol": "GOOGL",
-    "name": "Alphabet",
-    "spot": 348.81,
-    "changePct": -0.9,
-    "iv30": 0.3923,
-    "hv252": 0.3015,
-    "capturedAt": "2026-07-21T18:44:08.091Z"
-  },
-  {
-    "symbol": "AMD",
-    "name": "Advanced Micro Devices",
-    "spot": 542.08,
-    "changePct": 7.65,
-    "iv30": 0.8617,
-    "hv252": 0.6773,
-    "capturedAt": "2026-07-21T18:44:09.157Z"
-  },
-  {
-    "symbol": "DIS",
-    "name": "Walt Disney",
-    "spot": 96.38,
-    "changePct": -0.03,
-    "iv30": 0.3672,
-    "hv252": 0.2527,
-    "capturedAt": "2026-07-21T18:44:10.144Z"
-  },
-  {
-    "symbol": "SPY",
-    "name": "SPDR S&P 500 ETF",
-    "spot": 748.13,
-    "changePct": 0.81,
-    "iv30": 0.1356,
-    "hv252": 0.1262,
-    "capturedAt": "2026-07-21T18:44:11.428Z"
-  },
-  {
-    "symbol": "QQQ",
-    "name": "Invesco QQQ Trust",
-    "spot": 709.12,
-    "changePct": 1.88,
-    "iv30": 0.2377,
-    "hv252": 0.1876,
-    "capturedAt": "2026-07-21T18:44:12.956Z"
+    "symbol": "PULSAR",
+    "name": "Pulsar Biotherapeutics",
+    "spot": 46,
+    "changePct": 8.18,
+    "iv30": 0.95,
+    "hv252": 0.6454,
+    "capturedAt": "2026-07-21T00:00:00.000Z",
+    "simulated": true
   }
 ]

@@ -35,7 +35,17 @@ export function ContextBar({ snapshot }: { snapshot: Snapshot | null }) {
       </div>
       <div className="hud mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 !text-[10.5px]">
         <span className="text-secondary-foreground">{ticker}</span>
-        {snapshot && <span className="text-muted-foreground/60">{snapshot.name}</span>}
+        {snapshot && snapshot.name !== snapshot.symbol && (
+          <span className="text-muted-foreground/60">{snapshot.name}</span>
+        )}
+        {snapshot?.source === "custom" && (
+          <span
+            className="rounded border border-dashed border-border px-1.5 py-px !text-[8.5px] text-muted-foreground"
+            title="Added by you — stored only in this browser"
+          >
+            yours
+          </span>
+        )}
         {view !== "history" && def && (
           <>
             <span aria-hidden className="text-muted-foreground/40">·</span>

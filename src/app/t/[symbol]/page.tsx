@@ -18,7 +18,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { symbol } = await params;
   const entry = manifest.find((m) => m.symbol === symbol.toUpperCase());
-  if (!entry) return {};
+  if (!entry) {
+    return {
+      title: `${symbol.toUpperCase()} · your data`,
+      description:
+        "A security you added yourself — stored only in your browser, priced by our math.",
+    };
+  }
   return {
     title: `${entry.symbol} · ${entry.name}`,
     description: `${entry.name} in the instrument: price history, the market's expected range, and twelve strategies to fly. Educational only.`,
@@ -28,6 +34,8 @@ export async function generateMetadata({
 export default async function TickerPage({ params }: { params: Promise<Params> }) {
   const { symbol } = await params;
   const sym = symbol.toUpperCase();
-  if (!manifest.some((m) => m.symbol === sym)) notFound();
+  // Unknown symbols still render — they may live in the visitor's own
+  // browser (custom markets); the cockpit shows its no-data state if not.
+  if (!/^[A-Z0-9.]{1,12}$/.test(sym)) notFound();
   return <Cockpit initial={{ ticker: sym, view: "history" }} />;
 }

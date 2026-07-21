@@ -22,10 +22,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { symbol, strategy } = await params;
   const def = strategyById(strategy);
-  const entry = manifest.find((m) => m.symbol === symbol.toUpperCase());
-  if (!def || !entry) return {};
+  if (!def) return {};
   return {
-    title: `${def.name} on ${entry.symbol}`,
+    title: `${def.name} on ${symbol.toUpperCase()}`,
     description: `${def.tagline} Fly it in the instrument: payoff, map, dials, greeks.`,
   };
 }
@@ -33,7 +32,9 @@ export async function generateMetadata({
 export default async function LabPage({ params }: { params: Promise<Params> }) {
   const { symbol, strategy } = await params;
   const sym = symbol.toUpperCase();
-  if (!strategyById(strategy) || !manifest.some((m) => m.symbol === sym)) {
+  // Strategy must be real; the symbol may be one of the visitor's own
+  // custom markets, so let the cockpit resolve it client-side.
+  if (!strategyById(strategy) || !/^[A-Z0-9.]{1,12}$/.test(sym)) {
     notFound();
   }
   return <Cockpit initial={{ ticker: sym, strategyId: strategy, view: "payoff" }} />;

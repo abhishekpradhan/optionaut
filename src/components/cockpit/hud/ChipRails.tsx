@@ -5,7 +5,8 @@ import { useCockpit, type ViewMode } from "@/lib/cockpit/store";
 import { STRATEGIES } from "@/lib/options/strategies";
 import manifest from "@/data/manifest.json";
 import { useSnapshot } from "@/lib/data/snapshot";
-import { TrendingUp, TrendingDown, MoveHorizontal, Zap, BookOpen } from "lucide-react";
+import { useCustomMarkets } from "@/lib/data/customMarkets";
+import { TrendingUp, TrendingDown, MoveHorizontal, Zap, BookOpen, Plus } from "lucide-react";
 import type { Outlook } from "@/lib/options/strategies";
 
 /** Bottom rails: the Universe-Atlas place chips, but for markets.
@@ -71,12 +72,15 @@ function Chip({
   onClick,
   children,
   accent,
+  dashed,
   title,
 }: {
   active?: boolean;
   onClick: () => void;
   children: React.ReactNode;
   accent?: boolean;
+  /** user-supplied securities: quieter, hand-added look */
+  dashed?: boolean;
   title?: string;
 }) {
   return (
@@ -84,7 +88,7 @@ function Chip({
       onClick={onClick}
       title={title}
       aria-pressed={active}
-      className={`hud shrink-0 whitespace-nowrap rounded-md border px-2.5 py-1.5 !text-[9.5px] transition-all ${
+      className={`hud shrink-0 whitespace-nowrap rounded-md border px-2.5 py-1.5 !text-[9.5px] transition-all ${dashed ? "border-dashed" : ""} ${
         active
           ? "border-primary/70 bg-accent text-foreground shadow-[0_0_14px_-2px_rgba(57,135,229,0.5)]"
           : accent
@@ -109,6 +113,7 @@ export function ChipRails() {
   const setMobilePanel = useCockpit((s) => s.setMobilePanel);
   const overlay = useCockpit((s) => s.overlay);
   const { snapshot } = useSnapshot(ticker);
+  const customs = useCustomMarkets();
 
   return (
     <div className="pointer-events-auto flex select-none flex-col gap-1.5">
@@ -135,6 +140,28 @@ export function ChipRails() {
             {m.symbol}
           </Chip>
         ))}
+        {customs.map((c) => (
+          <Chip
+            key={c.symbol}
+            dashed
+            active={c.symbol === ticker}
+            onClick={() => setTicker(c.symbol)}
+            title={`${c.name} — your data, stored in this browser`}
+          >
+            {c.symbol}
+          </Chip>
+        ))}
+        <Chip
+          accent
+          active={overlay === "custom"}
+          onClick={() => setOverlay(overlay === "custom" ? null : "custom")}
+          title="Add your own security — your numbers or a chain you download yourself"
+        >
+          <span className="mr-0.5 inline-block translate-y-px">
+            <Plus className="size-3" aria-hidden />
+          </span>
+          data
+        </Chip>
         <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" />
         {(["history", "payoff", "map"] as ViewMode[]).map((v) => (
           <Chip key={v} active={view === v} onClick={() => setView(v)} title={`${v} view (${v[0]})`}>

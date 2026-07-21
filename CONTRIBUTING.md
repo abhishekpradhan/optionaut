@@ -8,9 +8,9 @@ conventions, and the rules that keep the product honest.
 ```bash
 npm install
 npm run dev        # dev server on :3000
-npm test           # Vitest — the options-math suite must stay green
+npm test           # Vitest — options math + CSV parser suites must stay green
 npm run lint       # ESLint (React Compiler rules enabled)
-npm run build      # static build; should produce ~147 pages with no type errors
+npm run build      # static build with no type errors
 ```
 
 No environment variables or API keys are needed. Node ≥ 20.9.
@@ -22,10 +22,12 @@ src/app/                  # routes — every page renders the full-screen <Cockp
 src/components/cockpit/   # the instrument: stage, HUD, overlays, tours
 src/components/charts/    # PayoffChart, Heatmap, PriceCone (pure SVG/canvas)
 src/lib/options/          # Black-Scholes engine, position math, strategy definitions
+src/lib/sim/market.ts     # the simulated market: archetypes, histories, chain generator
+src/lib/data/             # snapshot loading, custom (user-added) markets, Cboe CSV parser
 src/lib/cockpit/store.ts  # the one Zustand store driving everything
 src/lib/learn/            # glossary + per-strategy guides (the teaching copy)
-scripts/capture-snapshot.mjs  # refreshes bundled market data
-public/snapshots/         # captured chains + history (the app's only data source)
+scripts/generate-market.mjs   # regenerates the bundled simulated market
+public/snapshots/         # the generated fixtures (the app's bundled data)
 ```
 
 ## Ground rules
@@ -45,31 +47,29 @@ public/snapshots/         # captured chains + history (the app's only data sourc
 6. **Full-screen instrument, no document scroll.** New surfaces are views, overlays, or
    HUD elements — not scrolling pages (PLAN.md decision D8).
 
-## Refreshing market data
+## The simulated market
 
-Normally you don't: the **Refresh market data** workflow
-(`.github/workflows/refresh-data.yml`) recaptures and commits on trading nights, and
-can be run on demand from the Actions tab (`workflow_dispatch`). Expect data commits
-authored by `github-actions[bot]`.
-
-Manual runs still work and use the exact same validation:
+The bundled securities are fictional by design — see decision D11 in `PLAN.md` for
+the licensing research behind that call. The archetypes (spot, IV, skew, term
+structure, dividend, drift, seed) live in `src/lib/sim/market.ts`; the fixtures in
+`public/snapshots/` are generated from them:
 
 ```bash
-node scripts/capture-snapshot.mjs        # all 10 tickers + manifest
-node scripts/capture-snapshot.mjs AAPL   # one ticker (manifest untouched)
+node --experimental-strip-types scripts/generate-market.mjs
 ```
 
-The script refuses to ship bad data: each snapshot must pass sanity checks before its
-file is written, a failed capture keeps the previous good snapshot, and the manifest
-is only rewritten when all ten tickers resolve with at least eight fresh — otherwise
-it exits nonzero (which is what turns the workflow red). If you touch the capture or
-validation logic, run a full manual capture and eyeball the summary line before
-pushing. Data comes from Cboe's public delayed endpoints; keep request volume polite.
+Generation is seeded and deterministic — same archetypes in, same market out. If you
+change an archetype or the generator, regenerate and commit the fixtures in the same
+change. Two rules for new securities: symbols must be **six letters or more** (real
+US listings max out at five — collisions stay impossible), and personalities should
+earn their place by teaching something the existing six don't.
+
+User-added securities (the `+ data` chip) never touch the repo or any server: they
+live in the visitor's localStorage only. Keep it that way — shipping or proxying real
+quote data would put the project inside exchange licensing rules (again, D11).
 
 ## Commits
 
 Present-tense summary line, body explaining *why*. CI (lint + tests + build) must
-pass. Two pipeline facts to know: bot data commits skip CI (GitHub doesn't re-trigger
-workflows for `GITHUB_TOKEN` pushes — Vercel's build still gates those deploys), and
-every commit to `main` deploys to production via Vercel's Git integration, so treat
-`main` as live.
+pass. Every commit to `main` deploys to production via Vercel's Git integration, so
+treat `main` as live.

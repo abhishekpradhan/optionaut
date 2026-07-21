@@ -14,7 +14,7 @@ import type { OptionKind } from "@/lib/options/types";
  *  shows derives from this + the loaded snapshot. */
 
 export type ViewMode = "history" | "payoff" | "map";
-export type OverlayKind = "guide" | "glossary" | "about" | "help" | "tours" | null;
+export type OverlayKind = "guide" | "glossary" | "about" | "help" | "tours" | "custom" | null;
 
 export interface TourRef {
   id: string;
@@ -58,7 +58,7 @@ interface CockpitState {
 }
 
 export const useCockpit = create<CockpitState>((set, get) => ({
-  ticker: "AAPL",
+  ticker: "AURION",
   strategyId: "long-call",
   view: "payoff",
   expIndex: 0,

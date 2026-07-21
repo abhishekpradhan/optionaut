@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: "%s — Optionaut",
   },
   description:
-    "A free, cinematic instrument for understanding trading. Pick a stock, fly every strategy from buying shares to iron condors — drag strikes, fast-forward time, crush volatility. Educational only — not investment advice.",
+    "A free, cinematic instrument for understanding trading. Fly every strategy from buying shares to iron condors on a simulated market — drag strikes, fast-forward time, crush volatility. Educational only — not investment advice.",
   openGraph: {
     title: "Optionaut — learn options by flying them",
     description:
