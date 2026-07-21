@@ -136,7 +136,12 @@ export function ChipRails() {
       {/* tickers + views + tour */}
       <Rail>
         {manifest.map((m) => (
-          <Chip key={m.symbol} active={m.symbol === ticker} onClick={() => setTicker(m.symbol)} title={m.name}>
+          <Chip
+            key={m.symbol}
+            active={m.symbol === ticker}
+            onClick={() => setTicker(m.symbol)}
+            title={m.blurb ? `${m.name} — ${m.blurb}` : m.name}
+          >
             {m.symbol}
           </Chip>
         ))}

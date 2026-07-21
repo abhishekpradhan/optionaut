@@ -63,6 +63,13 @@ export function PriceCone({ snapshot, height = 380 }: Props) {
   const bodyW = Math.max(Math.min(step * 0.62, 7), 1.5);
   const todayX = x(candles.length - 1);
 
+  // The right margin is shared by price ticks and the cone's ±$ labels;
+  // a tick whose y lands inside a cone label block gets its text hidden
+  // (the grid line stays) so the two never overprint.
+  const coneLabelAnchors = [y(spot + coneAt(maxDte, 1)), y(spot + coneAt(maxDte, 2))];
+  const tickLabelHidden = (ty: number) =>
+    coneLabelAnchors.some((a) => ty > a - 14 && ty < a + 26);
+
   // Cone polygon points (in trading-day x units, calendar-day sigma).
   const conePts = (sd: number) => {
     const N = 32;
@@ -129,10 +136,12 @@ export function PriceCone({ snapshot, height = 380 }: Props) {
             {y.ticks(5).map((t) => (
               <g key={t}>
                 <line x1={0} x2={innerW} y1={y(t)} y2={y(t)} stroke="var(--grid-line)" />
-                <text x={innerW + 8} y={y(t)} dy="0.32em" fontSize={10.5}
-                  className="figures" fill="var(--muted-foreground)">
-                  {fmtUsd(t, { cents: false })}
-                </text>
+                {!tickLabelHidden(y(t)) && (
+                  <text x={innerW + 8} y={y(t)} dy="0.32em" fontSize={10.5}
+                    className="figures" fill="var(--muted-foreground)">
+                    {fmtUsd(t, { cents: false })}
+                  </text>
+                )}
               </g>
             ))}
 

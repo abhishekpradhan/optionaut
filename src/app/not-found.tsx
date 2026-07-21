@@ -2,19 +2,28 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-4 py-24 text-center">
-      <p className="figures text-5xl font-bold text-muted-foreground/50">404</p>
-      <h1 className="mt-4 text-xl font-bold tracking-tight">Out of the money.</h1>
-      <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-        This page doesn&apos;t exist — it expired worthless. Your capital, however, is intact.
-      </p>
-      <div className="mt-6 flex gap-3 text-sm">
-        <Link href="/" className="rounded-lg bg-primary px-4 py-2 font-semibold text-primary-foreground">
-          Home
-        </Link>
-        <Link href="/learn" className="rounded-lg border border-border px-4 py-2 text-secondary-foreground">
-          The path
-        </Link>
+    <main id="main" className="flex flex-1 items-center justify-center p-4">
+      <div className="panel stage-enter flex max-w-md flex-col items-center gap-3 p-8 text-center">
+        <div className="hud !text-[9.5px] text-primary">flight plan not found</div>
+        <p className="figures text-5xl font-bold tracking-tight text-foreground">404</p>
+        <p className="text-[13px] leading-relaxed text-muted-foreground">
+          There&apos;s nothing at this address — like an option nobody wrote. The whole
+          instrument lives on one screen, so you can&apos;t be far off course.
+        </p>
+        <div className="mt-2 flex flex-wrap justify-center gap-2">
+          <Link
+            href="/"
+            className="hud rounded-md border border-primary/60 bg-accent px-3.5 py-2 !text-[9.5px] transition-colors hover:border-primary"
+          >
+            back to the cockpit
+          </Link>
+          <Link
+            href="/learn"
+            className="hud rounded-md border border-border px-3.5 py-2 !text-[9.5px] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+          >
+            ✦ take a tour
+          </Link>
+        </div>
       </div>
     </main>
   );

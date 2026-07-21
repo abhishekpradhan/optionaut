@@ -2,6 +2,7 @@
   {
     "symbol": "COSMOS",
     "name": "Cosmos Composite Index Fund",
+    "blurb": "The broad market in one fund. Calm, diversified, the baseline everything else is measured against.",
     "spot": 612,
     "changePct": 1.11,
     "iv30": 0.14,
@@ -12,6 +13,7 @@
   {
     "symbol": "AURION",
     "name": "Aurion Systems",
+    "blurb": "The megacap everyone owns. Steady compounder; options are cheap because surprises are rare.",
     "spot": 418,
     "changePct": 0.73,
     "iv30": 0.24,
@@ -22,6 +24,7 @@
   {
     "symbol": "HEARTH",
     "name": "Hearth & Home Utilities",
+    "blurb": "A dividend blue-chip that moves like furniture. The covered-call classroom.",
     "spot": 68,
     "changePct": 0.24,
     "iv30": 0.18,
@@ -32,6 +35,7 @@
   {
     "symbol": "VOLTRA",
     "name": "Voltra Semiconductor",
+    "blurb": "AI-chip darling. Huge expectations, huge implied vol — drama is permanently priced in.",
     "spot": 127,
     "changePct": 0.37,
     "iv30": 0.72,
@@ -42,6 +46,7 @@
   {
     "symbol": "NIMBUS",
     "name": "Nimbus Motors",
+    "blurb": "Cult-favorite EV maker. Swings hard both ways; the strangle-and-condor playground.",
     "spot": 262,
     "changePct": 2.74,
     "iv30": 0.52,
@@ -52,6 +57,7 @@
   {
     "symbol": "PULSAR",
     "name": "Pulsar Biotherapeutics",
+    "blurb": "One drug, one trial, one binary date. Front-month IV is a fire alarm — the IV-crush lesson lives here.",
     "spot": 46,
     "changePct": 8.18,
     "iv30": 0.95,

@@ -31,6 +31,7 @@ for (const a of ARCHETYPES) {
   manifest.push({
     symbol: snap.symbol,
     name: snap.name,
+    blurb: snap.blurb,
     spot: snap.spot,
     changePct: snap.changePct,
     iv30: snap.iv30,

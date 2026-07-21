@@ -14,6 +14,18 @@ import manifest from "@/data/manifest.json";
 import { fmtUsd, fmtPct } from "@/lib/format";
 import { Trash2, Upload, Wand2 } from "lucide-react";
 
+/** Small circled step marker for the upload walkthrough. */
+function StepNum({ n }: { n: number }) {
+  return (
+    <span
+      aria-hidden
+      className="figures flex size-5 shrink-0 items-center justify-center rounded-full border border-primary/50 text-[10px] text-primary"
+    >
+      {n}
+    </span>
+  );
+}
+
 /** "Your data" sheet: build a security from your own numbers, or upload
  *  a chain you fetched yourself. Everything stays in this browser. */
 export function CustomSheet() {
@@ -53,6 +65,9 @@ export function CustomSheet() {
   const [upSymbol, setUpSymbol] = React.useState("");
   const [upSpot, setUpSpot] = React.useState("");
   const [upError, setUpError] = React.useState<string | null>(null);
+  const [cboeTicker, setCboeTicker] = React.useState("");
+  const cboeSlug = cboeTicker.trim().toLowerCase();
+  const cboeReady = /^[a-z0-9.^]{1,10}$/.test(cboeSlug);
 
   const ingest = (text: string) => {
     try {
@@ -63,7 +78,7 @@ export function CustomSheet() {
         return;
       }
       setParsed(p);
-      setUpSymbol(p.symbol ?? "");
+      setUpSymbol(p.symbol ?? cboeTicker.trim().toUpperCase());
       setUpSpot(p.spot ? String(p.spot) : "");
       setUpError(null);
     } catch {
@@ -137,15 +152,51 @@ export function CustomSheet() {
       <h3 className="mt-6 flex items-center gap-2 text-sm font-semibold text-secondary-foreground">
         <Upload className="size-4 text-primary" aria-hidden /> Upload a real chain
       </h3>
-      <ol className="mt-1.5 list-decimal space-y-0.5 pl-5 text-[12px] leading-relaxed text-muted-foreground">
-        <li>
-          Go to Cboe&apos;s delayed quotes page and <em>type the ticker yourself</em> —
-          cboe.com → Delayed Quotes (manual lookup for personal use is what their terms allow).
-        </li>
-        <li>Open the options chain and use their <span className="text-secondary-foreground">Download CSV</span>.</li>
-        <li>Drop the file here (or paste its contents). It stays on this device.</li>
-      </ol>
-      <div className="mt-2.5 flex flex-wrap items-center gap-2">
+      <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
+        Fetching quotes for you would make us a data redistributor — but Cboe lets{" "}
+        <em>you</em>{" "}
+        look any ticker up for personal use. Three steps:
+      </p>
+      <div className="mt-2.5 space-y-2.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <StepNum n={1} />
+          <input
+            className={`${input} !w-40`}
+            placeholder="Real ticker, e.g. AAPL"
+            aria-label="Ticker to look up on Cboe"
+            value={cboeTicker}
+            onChange={(e) => setCboeTicker(e.target.value)}
+          />
+          {cboeReady ? (
+            <a
+              href={`https://www.cboe.com/delayed_quotes/${encodeURIComponent(cboeSlug)}/quote_table`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-md border border-primary/60 bg-accent px-3.5 py-1.5 text-[13px] font-medium transition-colors hover:border-primary"
+            >
+              open {cboeSlug.toUpperCase()} on Cboe ↗
+            </a>
+          ) : (
+            <span aria-hidden className="cursor-default rounded-md border border-border px-3.5 py-1.5 text-[13px] text-muted-foreground/50">
+              open it on Cboe ↗
+            </span>
+          )}
+        </div>
+        <div className="flex items-start gap-2 text-[12px] leading-relaxed text-muted-foreground">
+          <StepNum n={2} />
+          <span>
+            That page has the full options chain —{" "}
+            <span className="text-secondary-foreground">Download CSV</span>{" "}
+            sits at the bottom of it (widen the expiration filters first if you want more
+            months).
+          </span>
+        </div>
+        <div className="flex items-start gap-2 text-[12px] leading-relaxed text-muted-foreground">
+          <StepNum n={3} />
+          <span>Drop the file below — it never leaves this device.</span>
+        </div>
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
         <label className="cursor-pointer rounded-md border border-border px-3.5 py-1.5 text-[13px] transition-colors hover:border-primary/50">
           Choose CSV…
           <input

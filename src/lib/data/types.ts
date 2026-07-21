@@ -67,6 +67,8 @@ export interface Snapshot {
 export interface ManifestEntry {
   symbol: string;
   name: string;
+  /** one-line personality, shown in chip tooltips and the history HUD */
+  blurb?: string;
   spot: number;
   changePct: number;
   iv30: number | null;
