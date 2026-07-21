@@ -66,21 +66,8 @@ export function ContextBar({ snapshot }: { snapshot: Snapshot | null }) {
           </>
         )}
       </div>
-      {/* the WHY, always visible — not a hover secret. In history view the
-          same slot introduces the security instead of the strategy. */}
-      {view !== "history" && def && (
-        <p
-          className="mt-1 max-w-xl truncate text-[11.5px] leading-snug text-muted-foreground"
-          title={def.tagline}
-        >
-          <span className="text-secondary-foreground/80">
-            {def.outlook === "bigmove" ? "big move" : def.outlook} · {def.risk} risk
-          </span>
-          {" — "}
-          {def.tagline}
-        </p>
-      )}
-      {view === "history" && snapshot?.blurb && (
+      {/* who this security is — always on screen, never a hover secret */}
+      {snapshot?.blurb && (
         <p
           className="mt-1 max-w-xl truncate text-[11.5px] leading-snug text-muted-foreground"
           title={snapshot.blurb}
@@ -90,6 +77,19 @@ export function ContextBar({ snapshot }: { snapshot: Snapshot | null }) {
           </span>
           {" — "}
           {snapshot.blurb}
+        </p>
+      )}
+      {/* the strategy's WHY, below it in the flying views */}
+      {view !== "history" && def && (
+        <p
+          className="mt-0.5 max-w-xl truncate text-[11.5px] leading-snug text-muted-foreground"
+          title={def.tagline}
+        >
+          <span className="text-secondary-foreground/80">
+            {def.outlook === "bigmove" ? "big move" : def.outlook} · {def.risk} risk
+          </span>
+          {" — "}
+          {def.tagline}
         </p>
       )}
     </div>
