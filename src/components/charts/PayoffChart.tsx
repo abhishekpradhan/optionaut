@@ -3,7 +3,8 @@
 import * as React from "react";
 import { scaleLinear } from "d3-scale";
 import { line as d3line, area as d3area, curveLinear } from "d3-shape";
-import { payoffAtExpiry, markToMarket, breakevens, expectedMove } from "@/lib/options/position";
+import { payoffAtExpiry, markToMarket, breakevens } from "@/lib/options/position";
+import { payoffPriceDomain } from "@/lib/viz/domain";
 import { strikeCandidates, type LabLeg, type StrategyDef } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
 import type { MarketCtx, OptionKind } from "@/lib/options/types";
@@ -80,36 +81,42 @@ export function PayoffChart({
   const spot = snapshot.spot;
 
   // ----- domains ---------------------------------------------------------
+  // Snapped to the tick grid (shared with the price dial's range) so the
+  // plot always ends on labeled gridlines and the dial matches the plot.
   const strikes = legs.filter((l) => l.kind !== "stock").map((l) => l.strike);
-  const em = expectedMove(spot, snapshot.iv30 ?? 0.3, Math.max(dte, 7));
-  const span =
-    Math.min(Math.max((2.6 * em) / spot, 0.16), 0.5) * domainScale;
-  const rawLo = Math.min(spot * (1 - span), ...(strikes.length ? [Math.min(...strikes) * 0.96] : []));
-  const rawHi = Math.max(spot * (1 + span), ...(strikes.length ? [Math.max(...strikes) * 1.04] : []));
-  // Snap the domain to the tick grid so the plot never ends on a naked
-  // unlabeled band — every edge lands on a gridline, like history view.
-  const probe = scaleLinear().domain([rawLo, rawHi]).ticks(6);
-  const xStep = probe.length > 1 ? probe[1] - probe[0] : Math.max((rawHi - rawLo) / 6, 1);
-  const xLo = Math.floor(rawLo / xStep) * xStep;
-  const xHi = Math.ceil(rawHi / xStep) * xStep;
+  const { lo: xLo, hi: xHi } = payoffPriceDomain(
+    spot,
+    snapshot.iv30 ?? 0.3,
+    dte,
+    strikes,
+    domainScale,
+  );
 
-  const { xs, expiryPts, nowPts } = React.useMemo(() => {
+  const { xs, expiryPts, nowPts, envMin, envMax } = React.useMemo(() => {
     const xs: number[] = [];
     const expiryPts: Array<[number, number]> = [];
     const nowPts: Array<[number, number]> = [];
+    // The y-envelope includes the t=0 curve so scrubbing time never
+    // rescales the chart — the melt happens inside a stable frame.
+    let envMin = 0;
+    let envMax = 0;
     for (let i = 0; i < GRID_N; i++) {
       const S = xLo + ((xHi - xLo) * i) / (GRID_N - 1);
       xs.push(S);
-      expiryPts.push([S, payoffAtExpiry(legs, S)]);
-      nowPts.push([S, markToMarket(legs, S, elapsedDays, ctx, ivScale)]);
+      const exp = payoffAtExpiry(legs, S);
+      const now = markToMarket(legs, S, elapsedDays, ctx, ivScale);
+      expiryPts.push([S, exp]);
+      nowPts.push([S, now]);
+      const now0 = elapsedDays > 0 ? markToMarket(legs, S, 0, ctx, ivScale) : now;
+      envMin = Math.min(envMin, exp, now, now0);
+      envMax = Math.max(envMax, exp, now, now0);
     }
-    return { xs, expiryPts, nowPts };
+    return { xs, expiryPts, nowPts, envMin, envMax };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [legs, elapsedDays, ivScale, xLo, xHi, snapshot]);
 
-  const yVals = [...expiryPts, ...nowPts].map((p) => p[1]);
-  const yMin = Math.min(...yVals, 0);
-  const yMax = Math.max(...yVals, 0);
+  const yMin = envMin;
+  const yMax = envMax;
   const yPad = Math.max((yMax - yMin) * 0.06, 40);
 
   const x = scaleLinear().domain([xLo, xHi]).range([0, innerW]);
@@ -195,12 +202,19 @@ export function PayoffChart({
     ? { S: xs[hoverX], now: nowPts[hoverX][1], exp: expiryPts[hoverX][1] }
     : null;
 
-  const whatIfIdx = whatIfPrice != null
-    ? Math.round(((whatIfPrice - xLo) / (xHi - xLo)) * (GRID_N - 1))
-    : null;
-  const whatIf = whatIfIdx != null && whatIfIdx >= 0 && whatIfIdx < GRID_N
-    ? { S: xs[whatIfIdx], now: nowPts[whatIfIdx][1], exp: expiryPts[whatIfIdx][1] }
-    : null;
+  // Exact, not grid-snapped: the marker glides smoothly and always
+  // agrees with the readout's numbers; clamped so wheel-zoom can't
+  // strand it off-plot.
+  const whatIf = React.useMemo(() => {
+    if (whatIfPrice == null) return null;
+    const S = Math.min(Math.max(whatIfPrice, xLo), xHi);
+    return {
+      S,
+      now: markToMarket(legs, S, elapsedDays, ctx, ivScale),
+      exp: payoffAtExpiry(legs, S),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [whatIfPrice, xLo, xHi, legs, elapsedDays, ivScale]);
 
   const daysLeft = Math.max(dte - elapsedDays, 0);
   const nowLabel = elapsedDays <= 0 ? "Today" : daysLeft === 0 ? "At expiry" : `In ${elapsedDays}d`;

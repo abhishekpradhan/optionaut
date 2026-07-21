@@ -91,14 +91,18 @@ export function Readout({
           )}
         </div>
       </div>
-      {(whatIfPrice != null || elapsedDays > 0 || ivScale !== 1) && (
-        <button
-          onClick={resetDials}
-          className="hud pointer-events-auto mt-2 flex items-center gap-1.5 rounded-md border border-border/80 px-2 py-1 !text-[9px] text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
-        >
-          <RotateCcw className="size-2.5" aria-hidden /> reset scenario (r)
-        </button>
-      )}
+      {/* always rendered, only visible when dirty — popping in and out
+          would resize the stage mid-drag */}
+      <button
+        onClick={resetDials}
+        aria-hidden={!(whatIfPrice != null || elapsedDays > 0 || ivScale !== 1)}
+        tabIndex={whatIfPrice != null || elapsedDays > 0 || ivScale !== 1 ? 0 : -1}
+        className={`hud pointer-events-auto mt-2 flex items-center gap-1.5 rounded-md border border-border/80 px-2 py-1 !text-[9px] text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground ${
+          whatIfPrice != null || elapsedDays > 0 || ivScale !== 1 ? "" : "invisible"
+        }`}
+      >
+        <RotateCcw className="size-2.5" aria-hidden /> reset scenario (r)
+      </button>
     </div>
   );
 }

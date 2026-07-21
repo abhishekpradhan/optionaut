@@ -1,6 +1,7 @@
 "use client";
 
 import { useCockpit } from "@/lib/cockpit/store";
+import { payoffPriceDomain } from "@/lib/viz/domain";
 import { Slider } from "@/components/ui/slider";
 import { RotateCcw } from "lucide-react";
 import type { Snapshot } from "@/lib/data/types";
@@ -33,6 +34,16 @@ export function DialStack({
   const priceStep = spot > 400 ? 1 : spot > 100 ? 0.5 : 0.25;
   const optionLegs = legs.filter((l) => l.kind !== "stock");
   const stockOnly = legs.length > 0 && optionLegs.length === 0;
+  // The dial's range IS the payoff plot's domain — dragging to an end
+  // stop lands exactly on the chart's edge gridline.
+  const domainScale = useCockpit((s) => s.domainScale);
+  const dom = payoffPriceDomain(
+    spot,
+    snapshot.iv30 ?? 0.3,
+    dte,
+    optionLegs.map((l) => l.strike),
+    domainScale,
+  );
   const repIv = optionLegs.length
     ? optionLegs.reduce((a, l) => a + l.iv, 0) / optionLegs.length
     : snapshot.iv30 ?? 0.3;
@@ -72,7 +83,7 @@ export function DialStack({
           }
         >
           <Slider aria-label="What-if stock price"
-            min={Math.round(spot * 0.65)} max={Math.round(spot * 1.35)} step={priceStep}
+            min={Math.ceil(dom.lo)} max={Math.floor(dom.hi)} step={priceStep}
             value={[price]}
             onValueChange={(v) => {
               const val = oneOf(v);
@@ -105,14 +116,15 @@ export function DialStack({
         )}
       </div>
 
-      {dirty && (
-        <button
-          onClick={resetDials}
-          className="hud mt-3 flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 !text-[9.5px] text-secondary-foreground transition-colors hover:border-primary/50 hover:text-foreground"
-        >
-          <RotateCcw className="size-3" aria-hidden /> reset dials (r)
-        </button>
-      )}
+      {/* always rendered — appearing/disappearing would shift the stack */}
+      <button
+        onClick={resetDials}
+        aria-hidden={!dirty}
+        tabIndex={dirty ? 0 : -1}
+        className={`hud mt-3 flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 !text-[9.5px] text-secondary-foreground transition-colors hover:border-primary/50 hover:text-foreground ${dirty ? "" : "invisible"}`}
+      >
+        <RotateCcw className="size-3" aria-hidden /> reset dials (r)
+      </button>
     </div>
   );
 }
