@@ -3,38 +3,28 @@
 import * as React from "react";
 
 /**
- * The void the app lives in: a slow-drifting starfield with nebula
- * washes, vignette, and film grain. Fixed behind all content, cheap
- * (one 2d canvas, ~220 points), paused when the tab is hidden, and
- * static under prefers-reduced-motion.
+ * The void the app lives in: nebula washes, vignette, film grain, and a
+ * faint static dust of stars. Deliberately dim and motionless — bright
+ * or twinkling points inside a chart read as data, so the stars stay at
+ * texture level, drawn once (zero per-frame cost).
  */
 
 interface Star {
-  x: number; // 0..1
+  x: number;
   y: number;
   r: number;
-  a: number; // base alpha
-  tw: number; // twinkle speed
-  ph: number; // phase
-  drift: number;
+  a: number;
 }
 
 function makeStars(n: number, seed = 7): Star[] {
-  // deterministic LCG so SSR/CSR agree if ever needed
   let s = seed;
   const rnd = () => ((s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296);
-  return Array.from({ length: n }, () => {
-    const big = rnd() > 0.92;
-    return {
-      x: rnd(),
-      y: rnd(),
-      r: big ? 1.1 + rnd() * 0.9 : 0.4 + rnd() * 0.7,
-      a: big ? 0.5 + rnd() * 0.35 : 0.12 + rnd() * 0.3,
-      tw: 0.2 + rnd() * 0.9,
-      ph: rnd() * Math.PI * 2,
-      drift: 0.002 + rnd() * 0.006,
-    };
-  });
+  return Array.from({ length: n }, () => ({
+    x: rnd(),
+    y: rnd(),
+    r: 0.3 + rnd() * 0.55,
+    a: 0.05 + rnd() * 0.11,
+  }));
 }
 
 const GRAIN =
@@ -49,66 +39,27 @@ export function Atmosphere() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const stars = makeStars(220);
-    let raf = 0;
-    let running = true;
-
-    const resize = () => {
+    const stars = makeStars(140);
+    const draw = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.floor(window.innerWidth * dpr);
-      canvas.height = Math.floor(window.innerHeight * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const draw = (t: number) => {
       const w = window.innerWidth;
       const h = window.innerHeight;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#cfe0f7";
       for (const st of stars) {
-        const tw = reduce ? 1 : 0.72 + 0.28 * Math.sin(t * 0.001 * st.tw + st.ph);
-        const x = reduce ? st.x : (st.x + t * 0.00001 * st.drift) % 1;
-        ctx.globalAlpha = st.a * tw;
-        ctx.fillStyle = "#cfe0f7";
+        ctx.globalAlpha = st.a;
         ctx.beginPath();
-        ctx.arc(x * w, st.y * h, st.r, 0, Math.PI * 2);
+        ctx.arc(st.x * w, st.y * h, st.r, 0, Math.PI * 2);
         ctx.fill();
       }
       ctx.globalAlpha = 1;
     };
-
-    if (reduce) {
-      draw(0);
-    } else {
-      const loop = (t: number) => {
-        if (!running) return;
-        draw(t);
-        raf = requestAnimationFrame(loop);
-      };
-      raf = requestAnimationFrame(loop);
-    }
-
-    const onVis = () => {
-      running = !document.hidden;
-      if (running && !reduce) raf = requestAnimationFrame((t) => {
-        const loop = (tt: number) => {
-          if (!running) return;
-          draw(tt);
-          raf = requestAnimationFrame(loop);
-        };
-        loop(t);
-      });
-    };
-    document.addEventListener("visibilitychange", onVis);
-
-    return () => {
-      running = false;
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
-      document.removeEventListener("visibilitychange", onVis);
-    };
+    draw();
+    window.addEventListener("resize", draw);
+    return () => window.removeEventListener("resize", draw);
   }, []);
 
   return (
@@ -126,7 +77,7 @@ export function Atmosphere() {
         className="absolute bottom-[-30vh] left-1/4 h-[60vh] w-[70vw] rounded-full opacity-[0.06]"
         style={{ background: "radial-gradient(closest-side, #9085e9, transparent 70%)" }}
       />
-      {/* stars */}
+      {/* star dust */}
       <canvas ref={ref} className="absolute inset-0" />
       {/* vignette */}
       <div

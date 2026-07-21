@@ -204,15 +204,53 @@
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
-/* Soft edges hint that a rail keeps going. */
-.rail-fade {
-  mask-image: linear-gradient(
-    90deg,
-    transparent 0,
-    black 14px,
-    black calc(100% - 28px),
-    transparent 100%
-  );
+/* View entrances — all compositor-driven CSS, all replayed when the
+   stage remounts (view / ticker / strategy change). */
+.candle-in {
+  opacity: 0;
+  animation: candle-in 0.3s ease-out both;
+}
+@keyframes candle-in {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+  }
+}
+.cone-sweep {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: cone-sweep 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+@keyframes cone-sweep {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+  }
+}
+.fade-late {
+  animation: fade-late 0.45s ease-out 0.85s both;
+}
+@keyframes fade-late {
+  from {
+    opacity: 0;
+  }
+}
+.map-reveal {
+  animation: map-reveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes map-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
 }
 
 /* Dials glow under the hand. */

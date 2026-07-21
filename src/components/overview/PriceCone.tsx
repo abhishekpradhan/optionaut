@@ -136,13 +136,13 @@ export function PriceCone({ snapshot, height = 380 }: Props) {
               </g>
             ))}
 
-            {/* candles */}
+            {/* candles — rising in as a wave from the left */}
             {candles.map((c, i) => {
               const up = c.c >= c.o;
               const color = up ? "var(--gain)" : "var(--loss)";
               const cx = x(i);
               return (
-                <g key={c.d}>
+                <g key={c.d} className="candle-in" style={{ animationDelay: `${i * 3}ms` }}>
                   <line x1={cx} x2={cx} y1={y(c.h)} y2={y(c.l)} stroke={color} strokeWidth={1} opacity={0.9} />
                   <rect
                     x={cx - bodyW / 2}
@@ -156,11 +156,14 @@ export function PriceCone({ snapshot, height = 380 }: Props) {
               );
             })}
 
-            {/* the cone — uncertainty wears neutral ink, not gain/loss */}
-            <polygon points={conePts(2)} fill="var(--foreground)" opacity={0.05} />
-            <polygon points={conePts(1)} fill="var(--foreground)" opacity={0.09} />
-            <line x1={todayX} x2={innerW} y1={y(spot)} y2={y(spot)}
-              stroke="var(--muted-foreground)" strokeWidth={1} strokeDasharray="2 4" opacity={0.7} />
+            {/* the cone — uncertainty wears neutral ink, not gain/loss;
+                it sweeps open from today once the candles have landed */}
+            <g className="cone-sweep">
+              <polygon points={conePts(2)} fill="var(--foreground)" opacity={0.05} />
+              <polygon points={conePts(1)} fill="var(--foreground)" opacity={0.09} />
+              <line x1={todayX} x2={innerW} y1={y(spot)} y2={y(spot)}
+                stroke="var(--muted-foreground)" strokeWidth={1} strokeDasharray="2 4" opacity={0.7} />
+            </g>
 
             {/* today divider */}
             <line x1={todayX} x2={todayX} y1={-6} y2={innerH} stroke="var(--axis-line)" strokeWidth={1} />
@@ -169,6 +172,7 @@ export function PriceCone({ snapshot, height = 380 }: Props) {
             </text>
 
             {/* expiry markers on the centerline; labels skip when crowded */}
+            <g className="fade-late">
             {(() => {
               const marks = snapshot.expirations
                 .filter((e) => e.dte <= maxDte)
@@ -191,9 +195,10 @@ export function PriceCone({ snapshot, height = 380 }: Props) {
                 );
               });
             })()}
+            </g>
 
             {/* cone edge labels */}
-            <g fontSize={10.5} fill="var(--secondary-foreground)" className="chart-label">
+            <g fontSize={10.5} fill="var(--secondary-foreground)" className="chart-label fade-late">
               <text x={innerW + 8} y={y(spot + coneAt(maxDte, 1)) + 4}>
                 ±{fmtUsd(coneAt(maxDte, 1), { cents: false })}
               </text>

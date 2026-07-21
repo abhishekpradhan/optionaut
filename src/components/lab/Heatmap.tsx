@@ -53,7 +53,7 @@ export function Heatmap({
   const spot = snapshot.spot;
   const ctx = { r: snapshot.riskFreeRate, q: snapshot.divYield };
   const cols = Math.min(dte + 1, 44);
-  const margin = { left: 56, right: 10, top: 8, bottom: 30 };
+  const margin = { left: 56, right: 10, top: 30, bottom: 30 };
   const plotW = Math.max(width - margin.left - margin.right, 60);
   const plotH = ROWS * CELL_H;
   const height = plotH + margin.top + margin.bottom;
@@ -100,14 +100,16 @@ export function Heatmap({
     if (!c2) return;
     c2.scale(dpr, dpr);
     const cw = plotW / cols;
+    // bigger cells earn a bigger surface gap; color caps below full
+    // saturation so large flat regions don't turn into solid slabs
+    const gap = CELL_H >= 11 ? 2 : 1;
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < cols; c++) {
         const v = grid.g[r][c];
         const t = Math.min(Math.abs(v) / grid.maxAbs, 1);
-        // sqrt eases small values into visibility without lying about sign
-        const eased = Math.sqrt(t);
+        const eased = Math.sqrt(t) * 0.88;
         c2.fillStyle = v >= 0 ? toGain(eased) : toLoss(eased);
-        c2.fillRect(c * cw + 0.5, r * CELL_H + 0.5, cw - 1, CELL_H - 1);
+        c2.fillRect(c * cw + gap / 2, r * CELL_H + gap / 2, cw - gap, CELL_H - gap);
       }
     }
   }, [grid, plotW, plotH, cols, width, CELL_H]);
@@ -136,7 +138,10 @@ export function Heatmap({
     <div ref={ref} className="relative w-full select-none" style={{ height }}>
       {width > 0 && (
         <>
-          <div style={{ position: "absolute", left: margin.left, top: margin.top }}>
+          <div
+            className="map-reveal"
+            style={{ position: "absolute", left: margin.left, top: margin.top }}
+          >
             <canvas
               ref={canvasRef}
               style={{ width: plotW, height: plotH, cursor: "pointer", display: "block", borderRadius: 6 }}

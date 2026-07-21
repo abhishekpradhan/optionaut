@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useCockpit, type ViewMode } from "@/lib/cockpit/store";
 import { STRATEGIES } from "@/lib/options/strategies";
 import manifest from "@/data/manifest.json";
@@ -23,6 +24,47 @@ const OUTLOOK_COLOR: Record<Outlook, string> = {
   sideways: "var(--outlook-sideways)",
   bigmove: "var(--outlook-bigmove)",
 };
+
+/** A horizontal chip row whose edge fades appear only when there is
+ *  actually more to scroll in that direction — no eaten first chips. */
+function Rail({ children }: { children: React.ReactNode }) {
+  const ref = React.useRef<HTMLDivElement | null>(null);
+  const [edges, setEdges] = React.useState({ l: false, r: false });
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const check = () =>
+      setEdges({
+        l: el.scrollLeft > 4,
+        r: el.scrollWidth - el.clientWidth - el.scrollLeft > 4,
+      });
+    check();
+    el.addEventListener("scroll", check, { passive: true });
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", check);
+      ro.disconnect();
+    };
+  }, []);
+  const mask =
+    edges.l && edges.r
+      ? "linear-gradient(90deg, transparent 0, black 22px, black calc(100% - 26px), transparent 100%)"
+      : edges.l
+        ? "linear-gradient(90deg, transparent 0, black 22px)"
+        : edges.r
+          ? "linear-gradient(90deg, black calc(100% - 26px), transparent 100%)"
+          : undefined;
+  return (
+    <div
+      ref={ref}
+      className="scrollbar-none flex items-center gap-1.5 overflow-x-auto"
+      style={mask ? { maskImage: mask, WebkitMaskImage: mask } : undefined}
+    >
+      {children}
+    </div>
+  );
+}
 
 function Chip({
   active,
@@ -70,7 +112,7 @@ export function ChipRails() {
   return (
     <div className="pointer-events-auto flex select-none flex-col gap-1.5">
       {/* strategies */}
-      <div className="scrollbar-none rail-fade flex items-center gap-1.5 overflow-x-auto pb-0.5">
+      <Rail>
         {STRATEGIES.map((s) => (
           <Chip
             key={s.id}
@@ -84,9 +126,9 @@ export function ChipRails() {
             {s.name}
           </Chip>
         ))}
-      </div>
+      </Rail>
       {/* tickers + views + tour */}
-      <div className="scrollbar-none rail-fade flex items-center gap-1.5 overflow-x-auto">
+      <Rail>
         {manifest.map((m) => (
           <Chip key={m.symbol} active={m.symbol === ticker} onClick={() => setTicker(m.symbol)} title={m.name}>
             {m.symbol}
@@ -111,7 +153,7 @@ export function ChipRails() {
             dials
           </Chip>
         </span>
-      </div>
+      </Rail>
     </div>
   );
 }

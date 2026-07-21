@@ -68,7 +68,10 @@ export function Stage({
       aria-label="Chart stage"
     >
       {h > 0 && def && (
-        <div key={view} className="stage-enter absolute inset-0">
+        <div
+          key={`${view}:${snapshot.symbol}:${strategyId}`}
+          className="stage-enter absolute inset-0"
+        >
           {view === "history" && <PriceCone snapshot={snapshot} height={chartH} />}
           {view === "payoff" && (
             <>
