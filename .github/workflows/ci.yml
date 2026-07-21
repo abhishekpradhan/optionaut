@@ -14,6 +14,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # the lockfile is authored by npm 11; npm 10 (node 22's default)
+      # can't reconcile its optional-dependency entries
+      - run: npm install -g npm@11
       - run: npm ci
       - run: npm run lint
       - run: npm test
