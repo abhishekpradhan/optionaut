@@ -5,6 +5,7 @@ import { useCockpit } from "@/lib/cockpit/store";
 import { PayoffChart } from "@/components/charts/PayoffChart";
 import { Heatmap } from "@/components/charts/Heatmap";
 import { PriceCone } from "@/components/charts/PriceCone";
+import { payoffPriceDomain } from "@/lib/viz/domain";
 import { strategyById, type LabLeg } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
 
@@ -39,6 +40,34 @@ export function Stage({
     return () => ro.disconnect();
   }, []);
 
+  // Zoom bookkeeping: after any zoom, pull the what-if marker back
+  // inside the newly visible domain so the marker, readout, and dial
+  // never disagree while zoomed in.
+  const domainMeta = React.useRef<{ spot: number; iv: number; dte: number; strikes: number[] }>({
+    spot: 0, iv: 0.3, dte: 30, strikes: [],
+  });
+  React.useEffect(() => {
+    domainMeta.current = {
+      spot: snapshot.spot,
+      iv: snapshot.iv30 ?? 0.3,
+      dte,
+      strikes: legs.filter((l) => l.kind !== "stock").map((l) => l.strike),
+    };
+  }, [snapshot, legs, dte]);
+
+  const applyZoomTo = React.useCallback((scale: number) => {
+    const s = useCockpit.getState();
+    if (s.view === "history") return;
+    s.setDomainScale(scale);
+    const after = useCockpit.getState();
+    if (after.whatIfPrice != null) {
+      const m = domainMeta.current;
+      const dom = payoffPriceDomain(m.spot, m.iv, m.dte, m.strikes, after.domainScale);
+      const clamped = Math.min(Math.max(after.whatIfPrice, dom.lo), dom.hi);
+      if (clamped !== after.whatIfPrice) after.setWhatIfPrice(clamped);
+    }
+  }, []);
+
   // Native non-passive wheel listener: React's synthetic onWheel is
   // passive, so preventDefault there is silently ignored.
   React.useEffect(() => {
@@ -48,11 +77,11 @@ export function Stage({
       const s = useCockpit.getState();
       if (s.view === "history") return;
       e.preventDefault();
-      s.setDomainScale(s.domainScale * (e.deltaY > 0 ? 1.07 : 0.93));
+      applyZoomTo(s.domainScale * (e.deltaY > 0 ? 1.07 : 0.93));
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, []);
+  }, [applyZoomTo]);
 
   // Pinch = the touch twin of wheel-zoom: two pointers on the stage
   // scale the price domain around their spread.
@@ -74,7 +103,7 @@ export function Stage({
     const s = useCockpit.getState();
     if (pinch.current && pointers.current.size === 2 && s.view !== "history") {
       const d = pinchDist();
-      if (d > 12) s.setDomainScale(pinch.current.scale * (pinch.current.dist / d));
+      if (d > 12) applyZoomTo(pinch.current.scale * (pinch.current.dist / d));
     }
   };
   const onPointerEnd = (e: React.PointerEvent) => {

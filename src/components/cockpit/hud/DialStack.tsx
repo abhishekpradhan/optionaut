@@ -34,15 +34,15 @@ export function DialStack({
   const priceStep = spot > 400 ? 1 : spot > 100 ? 0.5 : 0.25;
   const optionLegs = legs.filter((l) => l.kind !== "stock");
   const stockOnly = legs.length > 0 && optionLegs.length === 0;
-  // The dial's range IS the payoff plot's domain — dragging to an end
-  // stop lands exactly on the chart's edge gridline.
-  const domainScale = useCockpit((s) => s.domainScale);
+  // The dial's range is the NATURAL (unzoomed) plot domain, and stays
+  // pinned there: zoom is a view operation and must never rewrite a
+  // control's range under the user's thumb.
   const dom = payoffPriceDomain(
     spot,
     snapshot.iv30 ?? 0.3,
     dte,
     optionLegs.map((l) => l.strike),
-    domainScale,
+    1,
   );
   const repIv = optionLegs.length
     ? optionLegs.reduce((a, l) => a + l.iv, 0) / optionLegs.length

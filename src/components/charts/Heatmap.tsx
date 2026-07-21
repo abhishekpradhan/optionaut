@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { markToMarket, expectedMove } from "@/lib/options/position";
+import { markToMarket } from "@/lib/options/position";
 import { RAMP_NEUTRAL, toGain, toLoss } from "@/lib/viz/ramp";
+import { payoffPriceDomain } from "@/lib/viz/domain";
 import type { LabLeg } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
 import { fmtUsd, fmtSignedUsd } from "@/lib/format";
@@ -62,11 +63,15 @@ export function Heatmap({
   const plotH = ROWS * CELL_H;
   const height = plotH + margin.top + margin.bottom;
 
-  const em = expectedMove(spot, snapshot.iv30 ?? 0.3, Math.max(dte, 7));
-  const span =
-    Math.min(Math.max((2.2 * em) / spot, 0.14), 0.42) * domainScale;
-  const pLo = spot * (1 - span);
-  const pHi = spot * (1 + span);
+  // Same domain function as the payoff plot and the price dial: the
+  // map's rows, the plot's x-axis, and the dial all describe one range.
+  const { lo: pLo, hi: pHi } = payoffPriceDomain(
+    spot,
+    snapshot.iv30 ?? 0.3,
+    dte,
+    legs.filter((l) => l.kind !== "stock").map((l) => l.strike),
+    domainScale,
+  );
 
   const priceAt = React.useCallback(
     (r: number) => pHi - ((pHi - pLo) * r) / (ROWS - 1),
