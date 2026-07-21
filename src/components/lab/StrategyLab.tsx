@@ -6,11 +6,14 @@ import { useSnapshot } from "@/lib/data/snapshot";
 import { useLabStore } from "@/lib/lab/store";
 import { strategyById, buildPosition, type Outlook } from "@/lib/options/strategies";
 import { TickerHeader } from "@/components/shared/TickerHeader";
+import { STRATEGY_GUIDES } from "@/lib/learn/strategyGuides";
 import { PayoffChart } from "./PayoffChart";
 import { Controls } from "./Controls";
 import { StatPanel } from "./StatPanel";
 import { GreeksStrip } from "./GreeksStrip";
+import { Heatmap, HeatmapLegend } from "./Heatmap";
 import { fmtDate } from "@/lib/format";
+import { AlertTriangle } from "lucide-react";
 
 const OUTLOOK: Record<Outlook, { label: string; icon: React.ReactNode; color: string }> = {
   bullish: { label: "Bullish", icon: <TrendingUp className="size-3.5" aria-hidden />, color: "var(--outlook-bullish)" },
@@ -31,6 +34,8 @@ export function StrategyLab({ symbol, strategyId }: { symbol: string; strategyId
   const init = useLabStore((s) => s.init);
   const setExpIndex = useLabStore((s) => s.setExpIndex);
   const setStrike = useLabStore((s) => s.setStrike);
+  const setWhatIfPrice = useLabStore((s) => s.setWhatIfPrice);
+  const setElapsedDays = useLabStore((s) => s.setElapsedDays);
   const ready = useLabStore((s) => s.symbol === symbol && s.strategyId === strategyId);
 
   React.useEffect(() => {
@@ -141,6 +146,69 @@ export function StrategyLab({ symbol, strategyId }: { symbol: string; strategyId
           />
         </div>
       </div>
+
+      {/* teaching layer: the idea, the shape, the honest part */}
+      {STRATEGY_GUIDES[def.id] && (
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          <div className="panel p-5">
+            <h2 className="text-sm font-semibold tracking-wide text-secondary-foreground">
+              The idea
+            </h2>
+            <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
+              {STRATEGY_GUIDES[def.id].idea}
+            </p>
+            <h3 className="mt-4 text-[12px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Reading the shape
+            </h3>
+            <p className="mt-1.5 text-[13.5px] leading-relaxed text-muted-foreground">
+              {STRATEGY_GUIDES[def.id].diagram}
+            </p>
+          </div>
+          <div className="panel p-5" style={{ borderColor: "color-mix(in oklab, var(--warn) 25%, transparent)" }}>
+            <h2 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-secondary-foreground">
+              <AlertTriangle className="size-4" style={{ color: "var(--warn)" }} aria-hidden />
+              What can bite
+            </h2>
+            <ul className="mt-2 space-y-3">
+              {STRATEGY_GUIDES[def.id].gotchas.map((g) => (
+                <li key={g.title} className="text-[13px] leading-relaxed">
+                  <span className="font-medium text-secondary-foreground">{g.title}.</span>{" "}
+                  <span className="text-muted-foreground">{g.body}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {/* every price, every day */}
+      {usesOptions && (
+        <div className="panel mt-4 p-4 sm:p-5">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="text-sm font-semibold tracking-wide text-secondary-foreground">
+                Every price, every day
+              </h2>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Your P/L across the whole map. Click anywhere to set the dials to that scenario.
+              </p>
+            </div>
+            <HeatmapLegend />
+          </div>
+          <Heatmap
+            snapshot={snapshot}
+            legs={legs}
+            dte={exp.dte}
+            ivScale={ivScale}
+            elapsedDays={elapsedDays}
+            whatIfPrice={whatIfPrice}
+            onPick={(price, day) => {
+              setWhatIfPrice(price);
+              setElapsedDays(day);
+            }}
+          />
+        </div>
+      )}
 
       <p className="mt-8 border-t border-border pt-4 text-center text-xs leading-relaxed text-muted-foreground">
         Educational only. Options involve a high degree of risk and are not suitable for all
