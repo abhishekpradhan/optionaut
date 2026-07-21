@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/banner.svg" alt="Optionaut — learn options by flying them" width="100%" />
+</p>
+
 # Optionaut
 
 **Learn options by flying them.** A free, cinematic, full-screen instrument for
@@ -5,52 +9,78 @@ understanding trading — pick a stock, fly everything you could do with it (fro
 shares to iron condors), and *understand* it by dragging strikes, scrubbing time, and
 crushing volatility while the profit picture responds. Every crash is free.
 
-**Free · no signup · educational only.** This app never places trades and never gives
-investment advice. Product plan, research, and roadmap live in [PLAN.md](./PLAN.md).
+> **Educational only.** Options involve a high degree of risk and are not suitable for
+> all investors. Optionaut is not a brokerage and nothing in it is investment advice, a
+> recommendation, or a solicitation. Several strategies are included specifically to
+> demonstrate how money is lost.
 
-## What's inside
+## The instrument
 
-**One full-screen instrument** (no scrolling website — inspired by universeatlas.org):
-a chart-filled stage with HUD at the edges, chip rails for tickers/strategies, a giant
-live P/L readout, and three view modes that morph in place:
+One full-screen cockpit — no scrolling website. A chart fills the stage, the UI floats
+at the edges, and three views morph in place:
 
-- **HISTORY** — six months of candles flowing into the options-implied expected-move cone.
-- **PAYOFF** — the neon expiry/today diagram with draggable strike pills and the three
-  dials (price / time / volatility — secretly delta, theta, vega).
-- **MAP** — the clickable price×time P/L heatmap; click any cell to jump the dials there.
+- **HISTORY** — months of candles flowing into the options-implied *expected-move cone*.
+- **PAYOFF** — the neon expiry/today diagram with draggable strike pills and three dials
+  (price / time / volatility — which are secretly delta, theta, and vega).
+- **MAP** — the price×time P/L heatmap; click any cell to jump the whole cockpit to that
+  scenario.
 
-Plus **TOUR mode** (guided flights of the real instrument with action gates), a
-concept-gated glossary behind every dotted term, per-strategy "what can bite" guides,
-and a full keyboard map (`?` in-app). 12 strategies × 10 tickers.
+Plus **TOUR mode** — six guided flights that drive the real instrument with action gates
+("drag the time dial yourself…") — a concept-gated glossary behind every dotted term,
+per-strategy "what can bite" guides, and a full keyboard map (`?` in the app).
+12 strategies × 10 tickers, all on real captured option chains.
 
-## How it works
+## Quickstart
 
-- **Data**: bundled snapshots of Cboe's public delayed quotes (`public/snapshots/`),
-  captured by `node scripts/capture-snapshot.mjs` — real chains, deliberately frozen,
-  clearly labeled. No API keys, no rate limits, no live data.
-- **Math**: hand-written Black-Scholes-Merton engine (`src/lib/options/`) — pricing,
-  analytic greeks, Newton+bisection IV solving — unit-tested against textbook values,
-  put-call parity, finite differences, and IV round-trips. Leg IVs are solved from entry
-  mids so every displayed number is internally consistent.
-- **Stack**: Next.js 16 (App Router, fully static output) · React 19 · Tailwind 4 ·
-  shadcn/ui · Motion · hand-rolled SVG/canvas charts on d3 scales · Zustand.
-
-## Develop
+No API keys, no environment variables, no accounts — the data ships with the repo.
 
 ```bash
 npm install
 npm run dev        # http://localhost:3000
 npm test           # options-math test suite (Vitest)
-npm run build      # static production build
-node scripts/capture-snapshot.mjs   # refresh market-data snapshots
+npm run lint
+npm run build      # 147 static pages
 ```
 
-## Deploy
+## How the numbers are made
 
-Push to `main` and import the repo in [Vercel](https://vercel.com/new) — zero config
-(fully static, no env vars, no functions beyond static serving).
+- **Market data** is a bundled snapshot of [Cboe's public delayed quotes](https://www.cboe.com/delayed_quotes/)
+  (chains, IV, OI, volume, price history), captured by `scripts/capture-snapshot.mjs`
+  into `public/snapshots/`. Refresh anytime with `node scripts/capture-snapshot.mjs`.
+  Data is deliberately frozen and labeled as a dated snapshot in the UI — never live,
+  never executable. Optionaut is not affiliated with Cboe.
+- **All interactive math is computed client-side** by a hand-written Black-Scholes-Merton
+  engine ([`src/lib/options/`](src/lib/options)) — pricing, analytic greeks, and implied
+  vol via Newton-Raphson with bisection fallback. It is validated in
+  [`blackScholes.test.ts`](src/lib/options/blackScholes.test.ts) against textbook golden
+  values (Hull), put-call parity to 1e-9, finite-difference agreement on every greek, and
+  IV round-trips across a wide moneyness/tenor grid. Known, disclosed idealizations:
+  European-style model for American-style options; entries assume mid fills;
+  probability-of-profit assumes risk-neutral lognormal dynamics.
+- **Profit is blue, loss is red — deliberately not green/red.** Roughly 1 in 12 men
+  can't reliably distinguish the pair finance defaults to. The diverging palette is
+  validated for common color-vision deficiencies, and meaning is never carried by color
+  alone.
 
----
+## Stack
 
-> Options involve a high degree of risk and are not suitable for all investors. Everything
-> in this project is for educational purposes only and is not investment advice.
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · shadcn/ui ·
+Zustand · d3-scale/shape/interpolate · custom SVG + canvas charts · Vitest.
+Fully static output — deploys anywhere that serves files (built for Vercel).
+
+## Project docs
+
+- [`PLAN.md`](PLAN.md) — the living product plan: research findings, the decision log
+  (D1–D9) that explains *why* the app is shaped this way, teaching principles, roadmap.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — dev setup, conventions, and how to refresh data.
+
+## Credits
+
+- Visual language inspired by [Universe Atlas](https://universeatlas.org/).
+- Delayed market data from Cboe's public endpoints, used educationally with attribution.
+- Built with [Next.js](https://nextjs.org), [shadcn/ui](https://ui.shadcn.com),
+  [d3](https://d3js.org), and [Lucide](https://lucide.dev) icons.
+
+## License
+
+[MIT](LICENSE) © 2026 Abhishek Pradhan

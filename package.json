@@ -39,5 +39,12 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.10"
-  }
+  },
+  "description": "Learn options by flying them — a free, cinematic, educational instrument for understanding options trading",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhishekpradhan/optionaut.git"
+  },
+  "homepage": "https://github.com/abhishekpradhan/optionaut"
 }
