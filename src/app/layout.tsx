@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://optionaut.vercel.app"),
+  metadataBase: new URL("https://optionaut.org"),
   title: {
     default: "Optionaut — learn options by flying them",
     template: "%s — Optionaut",

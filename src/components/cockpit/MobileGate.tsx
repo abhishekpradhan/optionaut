@@ -33,7 +33,7 @@ export function MobileGate() {
   };
 
   const share = async () => {
-    const url = "https://optionaut.vercel.app";
+    const url = "https://optionaut.org";
     try {
       if (navigator.share) {
         await navigator.share({ title: "Optionaut", url });

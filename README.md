@@ -9,7 +9,7 @@ understanding trading — pick a stock, fly everything you could do with it (fro
 shares to iron condors), and *understand* it by dragging strikes, scrubbing time, and
 crushing volatility while the profit picture responds. Every crash is free.
 
-**Live at [optionaut.vercel.app](https://optionaut.vercel.app).**
+**Live at [optionaut.org](https://optionaut.org).**
 
 > **Educational only.** Options involve a high degree of risk and are not suitable for
 > all investors. Optionaut is not a brokerage and nothing in it is investment advice, a

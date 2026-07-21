@@ -195,7 +195,7 @@ Principles:
 
 ## 11. Parking lot
 
-- ~~Product name~~ → **Optionaut** (D9). Still open: domain purchase + trademark check before public launch.
+- ~~Product name~~ → **Optionaut** (D9). ~~Domain~~ → **optionaut.org** registered via Vercel 2026-07-21, live with auto-TLS; `optionaut.vercel.app` remains as a secondary alias. Trademark search still recommended before heavy promotion.
 - Paper-trading portfolio with fake money; quizzes/progress tracking (both deliberately parked per D4); historical crash replays (2008/2020) as deeper scenario sims; mobile-first pass; i18n
 - CRR binomial pricing as an advanced lesson; futures/crypto later (explicitly out of scope for v1)
 
