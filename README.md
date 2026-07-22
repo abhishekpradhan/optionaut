@@ -11,6 +11,7 @@ Every crash is free.
 
 [![optionaut.org](https://img.shields.io/website?url=https%3A%2F%2Foptionaut.org&style=flat-square&label=optionaut.org&up_message=live&up_color=3987e5&down_message=down)](https://optionaut.org)
 [![CI](https://img.shields.io/github/actions/workflow/status/abhishekpradhan/optionaut/ci.yml?style=flat-square&label=ci)](https://github.com/abhishekpradhan/optionaut/actions/workflows/ci.yml)
+[![Market calendar](https://img.shields.io/github/actions/workflow/status/abhishekpradhan/optionaut/refresh-calendar.yml?style=flat-square&label=market%20calendar)](https://github.com/abhishekpradhan/optionaut/actions/workflows/refresh-calendar.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
 [**Fly it →**](https://optionaut.org) · [Take a tour](https://optionaut.org/learn) · [Roadmap](#status--roadmap) · [Contributing](CONTRIBUTING.md)
