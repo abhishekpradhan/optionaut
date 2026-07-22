@@ -14,7 +14,15 @@ import type { OptionKind } from "@/lib/options/types";
  *  shows derives from this + the loaded snapshot. */
 
 export type ViewMode = "history" | "payoff" | "map";
-export type OverlayKind = "guide" | "glossary" | "about" | "help" | "tours" | "custom" | null;
+export type OverlayKind =
+  | "guide"
+  | "glossary"
+  | "about"
+  | "help"
+  | "tours"
+  | "custom"
+  | "sizing"
+  | null;
 
 export interface TourRef {
   id: string;

@@ -7,6 +7,7 @@ import { STRATEGY_GUIDES } from "@/lib/learn/strategyGuides";
 import { GLOSSARY } from "@/lib/learn/glossary";
 import { TOURS } from "../tour/tours";
 import { CustomSheet } from "./CustomSheet";
+import { SizingSheet } from "./SizingSheet";
 import type { Snapshot } from "@/lib/data/types";
 import { fmtDateLong } from "@/lib/format";
 import { X, AlertTriangle, Search, Play } from "lucide-react";
@@ -47,6 +48,7 @@ export function Overlays({ snapshot }: { snapshot: Snapshot | null }) {
           {overlay === "help" && <HelpSheet />}
           {overlay === "tours" && <ToursSheet />}
           {overlay === "custom" && <CustomSheet />}
+          {overlay === "sizing" && <SizingSheet snapshot={snapshot} />}
         </div>
       </div>
     </div>
@@ -211,6 +213,7 @@ function HelpSheet() {
     ["scroll · pinch stage", "zoom the price range"],
     ["r", "reset the dials"],
     ["i", "how this strategy works"],
+    ["s", "position sizing — trials against your account"],
     ["g", "glossary"],
     ["t", "tours"],
     ["esc", "close overlay / exit tour"],

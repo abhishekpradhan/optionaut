@@ -40,9 +40,10 @@ at the edges as a HUD, and three views morph in place (`H` / `P` / `M`):
 </p>
 
 <p align="center">
-  <img src="docs/shot-tours.png" alt="Tour mode: six guided flights that drive the real instrument" width="100%" />
-  <em>TOUR mode — six guided flights that drive the real instrument, with action gates
-  ("drag the time dial yourself…"). Ten minutes from zero to iron condor.</em>
+  <img src="docs/shot-tours.png" alt="Tour mode: seven guided flights that drive the real instrument" width="100%" />
+  <em>TOUR mode — seven guided flights that drive the real instrument, with action gates
+  ("drag the time dial yourself…"). Ten minutes from zero to iron condor, then an
+  earnings-night IV-crush replay flown from both sides.</em>
 </p>
 
 Plus the **MAP** view (a clickable price×time P/L heatmap — click any cell to jump the
@@ -111,8 +112,11 @@ production.
 - [x] Bring your own security — quick-build from your numbers, or upload Cboe's CSV
       (stored only in your browser)
 - [x] [optionaut.org](https://optionaut.org) + push-to-deploy
-- [ ] Shareable strategy URLs — the full setup encoded in the link
-- [ ] Scenario simulators — IV-crush earnings replay, position-sizing trials
+- [x] Shareable strategy URLs — the full setup (strikes, expiry, dials) encoded in the link
+- [x] Scenario simulators — earnings-night IV-crush replay (a tour flown from both
+      sides) and position-sizing trials (Monte Carlo outcomes vs. your account)
+- [ ] More strategies — calendars, diagonals, ratio spreads
+- [ ] Historical crash replays as deeper scenario sims
 
 The full decision log (D1–D11) with the *why* behind the shape of the product lives in
 [`PLAN.md`](PLAN.md).

@@ -6,7 +6,7 @@ import { STRATEGIES } from "@/lib/options/strategies";
 import manifest from "@/data/manifest.json";
 import { useSnapshot } from "@/lib/data/snapshot";
 import { useCustomMarkets } from "@/lib/data/customMarkets";
-import { TrendingUp, TrendingDown, MoveHorizontal, Zap, BookOpen, Plus } from "lucide-react";
+import { TrendingUp, TrendingDown, MoveHorizontal, Zap, BookOpen, Plus, Scale } from "lucide-react";
 import type { Outlook } from "@/lib/options/strategies";
 
 /** Bottom rails: the Universe-Atlas place chips, but for markets.
@@ -192,6 +192,18 @@ export function ChipRails() {
           </span>
           glossary
         </Chip>
+        {view !== "history" && (
+          <Chip
+            active={overlay === "sizing"}
+            onClick={() => setOverlay(overlay === "sizing" ? null : "sizing")}
+            title="How many contracts? Trials against your account (s)"
+          >
+            <span className="mr-1 inline-block translate-y-px">
+              <Scale className="size-3" aria-hidden />
+            </span>
+            sizing
+          </Chip>
+        )}
         <span className="lg:hidden">
           <Chip
             active={mobilePanel}

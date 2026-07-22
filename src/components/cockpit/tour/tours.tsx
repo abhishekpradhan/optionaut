@@ -312,6 +312,115 @@ export const TOURS: Tour[] = [
       },
     ],
   },
+  {
+    id: "earnings-night",
+    title: "Earnings night",
+    tagline: "Replay the IV crush — from both sides of the trade.",
+    steps: [
+      {
+        setup: (s) => {
+          if (s.ticker !== "PULSAR") s.setTicker("PULSAR");
+          s.setStrategy("long-straddle", null);
+          base(s);
+          s.setExpIndex(0);
+        },
+        caption: (
+          <>
+            PULSAR: one drug, one trial, results tonight. <Term id="iv">Implied volatility</Term>{" "}
+            is a fire alarm — the market is openly pricing a violent move, it just doesn&apos;t
+            know the direction. Neither do you, so you&apos;ve bought the{" "}
+            <em>straddle</em>{" "}on the nearest expiry: call plus put, profit
+            either way. Note what it costs bottom-left. That premium is mostly{" "}
+            <em>event</em>, not time.
+          </>
+        ),
+      },
+      {
+        gate: { check: (s) => (s.whatIfPrice ?? 0) >= 52.9, hint: "drag the price dial up ~15%" },
+        caption: (
+          <>
+            Commit to a prediction first: the drug <em>works</em>, the stock gaps up 15–20%
+            overnight, and the straddle prints money… right? Drag the{" "}
+            <strong>price dial</strong>{" "}up about 15% and read the P/L. Remember that number —
+            it&apos;s tonight&apos;s fantasy, priced at <em>tonight&apos;s</em>{" "}volatility.
+          </>
+        ),
+      },
+      {
+        setup: (s) => { s.setElapsedDays(1); s.setIvScale(0.55); },
+        caption: (
+          <>
+            Morning. The news is out — and <em>certainty killed the alarm</em>. One day passed
+            and implied volatility collapsed (the dial now reads ×0.55, a normal-sized
+            post-event crush). Same 15% gap, dramatically less profit. The difference between
+            last night&apos;s fantasy and this number is the{" "}
+            <Term id="iv-crush">IV crush</Term>: you were long{" "}
+            <Term id="vega">vega</Term>{" "}through the one moment vega was guaranteed to fall.
+          </>
+        ),
+      },
+      {
+        gate: { check: (s) => s.ivScale <= 0.5, hint: "drag volatility to ×0.50" },
+        caption: (
+          <>
+            The crush was <em>already in the price</em>{" "}— sellers demanded that fat premium
+            precisely because they knew uncertainty dies at 8am. Feel the sensitivity yourself:
+            drag <strong>volatility</strong>{" "}the last notch to ×0.50 and watch the readout
+            sag further. Buying options into a known event means the move must beat the crush{" "}
+            <em>and</em>{" "}the premium.
+          </>
+        ),
+      },
+      {
+        setup: (s) => {
+          s.setStrategy("iron-condor", null);
+          base(s);
+          s.setExpIndex(0);
+          // park the shorts about one expected move out — the delta
+          // defaults sit so far away at this IV that the credit gets thin
+          s.hydrateShared({
+            overrides: { putWing: 39, putShort: 41, callShort: 51, callWing: 53 },
+          });
+        },
+        caption: (
+          <>
+            Now fly the other side of the same night. The <em>iron condor sells</em>{" "}the
+            drama — we&apos;ve parked the short strikes about one{" "}
+            <Term id="expected-move">expected move</Term>{" "}out. For promising PULSAR stays
+            between them through the readout, you collect the credit bottom-left — nearly
+            half the width of the wings, because at this IV nobody believes in
+            &quot;between&quot;.
+          </>
+        ),
+      },
+      {
+        gate: {
+          check: (s) => s.elapsedDays >= 1 && s.ivScale <= 0.6,
+          hint: "advance time +1d, crush vol to ≤ ×0.60",
+        },
+        caption: (
+          <>
+            Rerun the morning from the short side: push <strong>time</strong>{" "}forward one day
+            and drag <strong>volatility</strong>{" "}down to ×0.60. The same crush that ate the
+            straddle now <em>pays you</em>{" "}— green before the stock even picks a direction.
+            The crush is symmetric; only your side of it changes.
+          </>
+        ),
+      },
+      {
+        caption: (
+          <>
+            Before the condor feels like free money: drag the <strong>price dial</strong>{" "}to
+            either edge. A real binary outcome can gap straight through your shorts, and the
+            gap doesn&apos;t care what happened to volatility. That&apos;s the whole trade-off
+            of earnings night — buyers need the move to beat the crush, sellers need the crush
+            to beat the move, and the premium is where the market votes. Neither side is free;
+            now you&apos;ve flown both.
+          </>
+        ),
+      },
+    ],
+  },
 ];
 
 export const tourById = new Map(TOURS.map((t) => [t.id, t]));

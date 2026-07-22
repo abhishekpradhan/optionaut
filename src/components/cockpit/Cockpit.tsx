@@ -83,6 +83,9 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
     const s = useCockpit.getState();
     const d = strategyById(s.strategyId);
     if (!d) return;
+    // During a tour, the tour's own step setups drive the expiry —
+    // don't fight them when a ticker switch lands its snapshot.
+    if (s.tour) return;
     const shared = sharedConsumed.current ? null : sharedInit;
     sharedConsumed.current = true;
     const defIdx = defaultExpIndex(snapshot, d);
@@ -179,7 +182,7 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
       const s = useCockpit.getState();
       // While a sheet is open, only escape and the sheet toggles work —
       // the stage shouldn't change under a modal.
-      if (s.overlay && !["Escape", "t", "g", "i", "?"].includes(e.key)) return;
+      if (s.overlay && !["Escape", "t", "g", "i", "s", "?"].includes(e.key)) return;
       switch (e.key) {
         case "Escape":
           if (s.tour) setTour(null);
@@ -197,6 +200,7 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
         case "t": setOverlay(s.overlay === "tours" ? null : "tours"); return;
         case "g": setOverlay(s.overlay === "glossary" ? null : "glossary"); return;
         case "i": setOverlay(s.overlay === "guide" ? null : "guide"); return;
+        case "s": setOverlay(s.overlay === "sizing" ? null : "sizing"); return;
         case "?": setOverlay(s.overlay === "help" ? null : "help"); return;
         case "r": resetDials(); return;
         case "ArrowLeft":
