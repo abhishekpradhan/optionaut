@@ -8,7 +8,7 @@ conventions, and the rules that keep the product honest.
 ```bash
 npm install
 npm run dev        # dev server on :3000
-npm test           # Vitest — options math + CSV parser suites must stay green
+npm test           # Vitest — options math, CSV parser, strategy suites stay green
 npm run lint       # ESLint (React Compiler rules enabled)
 npm run build      # static build with no type errors
 ```

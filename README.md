@@ -106,7 +106,7 @@ Optionaut is **v1, live, and actively developed** — every commit to `main` dep
 production.
 
 - [x] The Cockpit — full-screen instrument, three morphing views, HUD, keyboard map
-- [x] TOUR mode — six guided flights with action gates
+- [x] TOUR mode — seven guided flights with action gates
 - [x] Hand-written, test-anchored options-math engine
 - [x] Simulated market — six fictional archetype securities, generated and deterministic
 - [x] Bring your own security — quick-build from your numbers, or upload Cboe's CSV

@@ -17,7 +17,7 @@ A free, no-signup, visually stunning web app that teaches complete beginners how
 **What this is NOT (hard boundaries):**
 - Not a brokerage, and never connects to one. No order routing, no accounts.
 - Not investment advice. It teaches *mechanics and trade-offs*, never "you should buy X." Every strategy view carries an educational disclaimer (see §10).
-- Not a real-time analytics terminal. Data is delayed/illustrative and labeled as such.
+- Not a real-time analytics terminal. The bundled market is simulated/fictional (D11) and labeled as such; anything real is user-supplied and stays in their browser.
 
 ---
 
@@ -109,14 +109,24 @@ This mirrors the consensus ordering across tastylive, Option Alpha, OIC/OCC, and
 
 ## 5. Data strategy
 
-### v1 — zero keys, zero rate limits, zero runtime dependencies
+> **Superseded by D11 (2026-07-21).** The sections below record the original
+> plan for historical context. Current reality: the bundled market is
+> **simulated** — six fictional archetype securities generated deterministically
+> by `src/lib/sim/market.ts` — and real securities are **bring-your-own**
+> (quick-build from typed numbers, or a manually-downloaded Cboe CSV), stored
+> localStorage-only. Licensing research concluded there is no affordable legal
+> path to publicly serving real chains; see the D11 entry in §10 for the full
+> reasoning. The "v2 live data" plan below is dead — Alpaca's terms prohibit
+> redistribution at any tier.
+
+### v1 (historical) — zero keys, zero rate limits, zero runtime dependencies
 
 - **Bundled snapshots:** real option chains + price history for the ~10 curated tickers, captured from Cboe's delayed-quotes JSON endpoint (free, keyless, includes bid/ask, OI, volume, IV, greeks) via a small capture script we run manually; shipped as static JSON. Labeled clearly: "snapshot from <date> — educational, not live."
 - **All options math computed client-side:** hand-written Black-Scholes module (~150 lines TS): pricing, analytic greeks, IV solve via Newton-Raphson (Corrado-Miller seed, bisection fallback), continuous dividend yield. Unit-tested against published values. This makes every slider instant and works offline.
   - Known, disclosed approximation: US equity options are American-style; BS is European. Fine for education; note it in the glossary. (Possible later: CRR binomial toggle as its own lesson.)
 - **Risk-free rate:** bundled at capture time (Treasury 3-mo par yield; ±25bp barely moves greeks).
 
-### v2 — live delayed data, still free
+### v2 (historical — killed by D11) — live delayed data, still free
 
 - **Primary: Alpaca Basic (free)** — 200 req/min; real-time IEX stock quotes + bars; options chain endpoint returns quotes **with greeks + IV** on the free plan. Server-side keys in Vercel env.
 - **Never called from the client.** All market data flows through `app/api/market/*` route handlers with per-endpoint cache TTLs (quotes ~5 min, daily candles 24 h, metadata 7 d) + CDN `s-maxage`/`stale-while-revalidate`, so any burst of visitors collapses to ≤1 upstream call per TTL per symbol. Free-tier quotas and Vercel Hobby limits (1M invocations/mo) stay safe.
@@ -160,7 +170,7 @@ Principles:
 ## 8. Compliance & ethics stance
 
 - **Educational only.** Persistent footer + per-strategy disclaimer, modeled on the category standard: *"Options involve a high degree of risk and are not suitable for all investors. [App] is not an investment advisor. The calculations, information, and opinions on this site are for educational purposes only and are not investment advice or a recommendation of any security or strategy."*
-- Data labeled delayed/snapshot wherever shown. TradingView attribution on price charts. No personalized recommendations, no "top trades today," no performance promises, no dark patterns.
+- The market is labeled simulated/fictional wherever shown; user-supplied data is labeled "yours · this browser only." Charts are hand-rolled (no third-party chart library, no attribution obligations). No personalized recommendations, no "top trades today," no performance promises, no dark patterns.
 - We *lead* with risk: "what goes wrong" is a first-class section, not fine print.
 
 ---
