@@ -49,4 +49,14 @@ jobs:
             exit 0
           fi
           git commit -m "Advance the fictional calendar to $(date -u +%F)"
-          git push
+          # GitHub's ref service occasionally rejects a push transiently
+          # ("fatal error in commit_refs") — retry with backoff, rebasing
+          # in case main moved underneath us.
+          for i in 1 2 3 4; do
+            git push && exit 0
+            echo "push attempt $i failed; retrying"
+            sleep $((i * 20))
+            git pull --rebase || true
+          done
+          echo "push failed after 4 attempts"
+          exit 1
