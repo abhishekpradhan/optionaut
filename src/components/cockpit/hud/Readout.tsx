@@ -60,17 +60,20 @@ export function Readout({
   const pl = legs.length ? markToMarket(legs, price, elapsedDays, ctx, ivScale) : 0;
   const cost = legs.length ? netEntryCost(legs) : 0;
   const stockOnly = legs.length > 0 && legs.every((l) => l.kind === "stock");
-  const scenario =
-    whatIfPrice == null && elapsedDays === 0 && ivScale === 1
-      ? "as priced, right now"
-      : `${fmtUsd(price, { cents: false })}${elapsedDays > 0 ? ` · +${elapsedDays}d` : " · today"}${
-          ivScale !== 1 && !stockOnly ? ` · iv ×${ivScale.toFixed(2)}` : ""
-        }`;
+  const pristine = whatIfPrice == null && elapsedDays === 0 && ivScale === 1;
+  // The scenario line answers "under what assumptions is that number
+  // true?" — phrased as the question a person would actually ask.
+  const scenario = pristine
+    ? "if you closed right now — nothing has moved yet"
+    : `if the stock is ${fmtUsd(price, { cents: false })}${
+        elapsedDays > 0 ? ` · after ${elapsedDays}d` : " · today"
+      }${ivScale !== 1 && !stockOnly ? ` · vol ×${ivScale.toFixed(2)}` : ""}`;
 
   return (
     <div className="pointer-events-none select-none">
+      <div className="hud !text-[9px] text-muted-foreground/70">your profit / loss</div>
       <div
-        className={`figures font-semibold tracking-tight ${
+        className={`figures mt-0.5 font-semibold tracking-tight ${
           pl > 0.5
             ? "text-gain num-glow-gain"
             : pl < -0.5
@@ -88,8 +91,8 @@ export function Readout({
             <>100 shares · {fmtUsd(snapshot.spot * 100, { cents: false })} notional · no expiry, no decay</>
           ) : (
             <>
-              {cost >= 0 ? "paid" : "collected"} {fmtUsd(Math.abs(cost), { cents: false })} ·{" "}
-              {dte}d contract · per 1-lot
+              you {cost >= 0 ? "paid" : "were paid"} {fmtUsd(Math.abs(cost), { cents: false })}{" "}
+              {cost >= 0 ? "to open" : "up front"} · expires in {dte}d · one contract per leg
             </>
           )}
         </div>
