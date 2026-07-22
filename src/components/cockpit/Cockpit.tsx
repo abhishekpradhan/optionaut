@@ -4,7 +4,15 @@ import * as React from "react";
 import { useCockpit, type ViewMode, type OverlayKind, type TourRef } from "@/lib/cockpit/store";
 import { useSnapshot } from "@/lib/data/snapshot";
 import manifest from "@/data/manifest.json";
-import { strategyById, buildPosition, defaultExpIndex } from "@/lib/options/strategies";
+import {
+  strategyById,
+  buildPosition,
+  defaultExpIndex,
+  strikeCandidates,
+} from "@/lib/options/strategies";
+import { parseShareParams, deviationParams } from "@/lib/cockpit/shareUrl";
+import { payoffPriceDomain } from "@/lib/viz/domain";
+import type { OptionKind } from "@/lib/options/types";
 import { ContextBar } from "./hud/ContextBar";
 import { HintsBar } from "./hud/HintsBar";
 import { Readout } from "./hud/Readout";
@@ -60,25 +68,104 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
   const dte = exp?.dte ?? 30;
 
   // When a snapshot arrives (first load / ticker change), settle on the
-  // strategy's pedagogical default expiry. Manual picks stick afterwards.
+  // strategy's pedagogical default expiry — unless the URL carried a
+  // shared setup, which is restored wholesale exactly once.
   const symbol = snapshot?.symbol;
+  // Read the share params during the first client render (state
+  // initializers may touch window; refs may not) — the quiet URL sync
+  // below rewrites the address before any effect could read it.
+  const [sharedInit] = React.useState(() =>
+    typeof window === "undefined" ? null : parseShareParams(window.location.search),
+  );
+  const sharedConsumed = React.useRef(false);
   React.useEffect(() => {
     if (!snapshot) return;
     const s = useCockpit.getState();
     const d = strategyById(s.strategyId);
     if (!d) return;
-    const i = defaultExpIndex(snapshot, d);
-    if (s.expIndex !== i) setExpIndex(i);
+    const shared = sharedConsumed.current ? null : sharedInit;
+    sharedConsumed.current = true;
+    const defIdx = defaultExpIndex(snapshot, d);
+    if (!shared) {
+      if (s.expIndex !== defIdx) setExpIndex(defIdx);
+      return;
+    }
+
+    // expiry: nearest dte survives the monthly calendar regeneration
+    let expIdx = defIdx;
+    if (shared.e != null) {
+      snapshot.expirations.forEach((e, idx) => {
+        if (Math.abs(e.dte - shared.e!) < Math.abs(snapshot.expirations[expIdx].dte - shared.e!)) {
+          expIdx = idx;
+        }
+      });
+    }
+    const exp = snapshot.expirations[expIdx];
+
+    // strikes: positional in strikeOrder, snapped to this chain's candidates
+    const overrides: Record<string, number> = {};
+    if (shared.k && exp) {
+      d.strikeOrder.forEach((role, idx) => {
+        const raw = shared.k![idx];
+        if (raw == null) return;
+        const tmpl = d.legs.find((l) => (l.role === "atmPut" ? "atm" : l.role) === role);
+        if (!tmpl || tmpl.kind === "stock") return;
+        const ks = strikeCandidates(exp, tmpl.kind as OptionKind);
+        if (!ks.length) return;
+        overrides[role] = ks.reduce((p, c) => (Math.abs(c - raw) < Math.abs(p - raw) ? c : p));
+      });
+    }
+
+    // dials, clamped to what the controls can actually reach
+    const legs = buildPosition(d, snapshot, expIdx, overrides);
+    const dom = payoffPriceDomain(
+      snapshot.spot,
+      snapshot.iv30 ?? 0.3,
+      exp?.dte ?? 30,
+      legs.map((l) => l.strike).filter((k) => k > 0),
+      1,
+    );
+    useCockpit.getState().hydrateShared({
+      expIndex: expIdx,
+      overrides,
+      whatIfPrice:
+        shared.p != null ? Math.min(Math.max(shared.p, dom.lo), dom.hi) : null,
+      elapsedDays:
+        shared.d != null ? Math.min(Math.max(Math.round(shared.d), 0), exp?.dte ?? 0) : 0,
+      ivScale: shared.v != null ? Math.min(Math.max(shared.v, 0.5), 1.8) : 1,
+      view: shared.map ? "map" : s.view,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [symbol]);
 
   // ——— quiet URL sync ———
+  // The path names the flight; query params carry only what deviates from
+  // defaults, so a refresh (or copied address) keeps your exact tweaks.
+  const whatIfPrice = useCockpit((s) => s.whatIfPrice);
+  const elapsedDays = useCockpit((s) => s.elapsedDays);
+  const ivScale = useCockpit((s) => s.ivScale);
   React.useEffect(() => {
     const path = view === "history" ? `/t/${ticker}` : `/lab/${ticker}/${strategyId}`;
-    if (window.location.pathname !== path) {
-      window.history.replaceState(null, "", path);
+    let qs = "";
+    if (view !== "history" && snapshot && def && snapshot.symbol === ticker) {
+      qs = deviationParams({
+        def,
+        snapshot,
+        expIndex,
+        expiryIsDefault: expIndex === defaultExpIndex(snapshot, def),
+        overrides,
+        legs,
+        whatIfPrice,
+        elapsedDays,
+        ivScale,
+        view,
+      }).toString();
     }
-  }, [ticker, strategyId, view]);
+    const url = `${path}${qs ? `?${qs}` : ""}`;
+    if (window.location.pathname + window.location.search !== url) {
+      window.history.replaceState(null, "", url);
+    }
+  }, [ticker, strategyId, view, snapshot, def, expIndex, overrides, legs, whatIfPrice, elapsedDays, ivScale]);
 
   // ——— keyboard map ———
   const snapshotRef = React.useRef(snapshot);

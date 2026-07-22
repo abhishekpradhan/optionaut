@@ -41,6 +41,13 @@ interface CockpitState {
   glossaryTerm: string | null;
 
   init: (partial: Partial<Pick<CockpitState, "ticker" | "strategyId" | "view" | "overlay" | "tour">>) => void;
+  /** Restore a shared setup in one atomic step (setExpIndex would wipe
+   *  the overrides it arrives with). */
+  hydrateShared: (
+    partial: Partial<
+      Pick<CockpitState, "expIndex" | "overrides" | "whatIfPrice" | "elapsedDays" | "ivScale" | "view">
+    >,
+  ) => void;
   setTicker: (t: string) => void;
   setStrategy: (id: string, snapshot: Snapshot | null) => void;
   setView: (v: ViewMode) => void;
@@ -73,6 +80,8 @@ export const useCockpit = create<CockpitState>((set, get) => ({
   glossaryTerm: null,
 
   init: (partial) => set({ ...partial }),
+
+  hydrateShared: (partial) => set({ ...partial }),
 
   setTicker: (t) =>
     set({

@@ -183,7 +183,21 @@ function genChain(
       for (const kind of ["call", "put"] as OptionKind[]) {
         const iv = smileIv(a.iv, a.skew, a.term, a.spot, K, realDte);
         const theo = bsPrice(kind, { S: a.spot, K, T, r: SIM_RISK_FREE, q: a.divYield, sigma: iv });
-        if (theo < 0.015) continue;
+        if (theo < 0.015) {
+          // real chains still quote the far wings: zero bid, one-tick ask.
+          // Without these rows, short-dte chains get so narrow that 4-leg
+          // strategies (condor wings) can't fit. No r() draws here, so
+          // the rows that existed before stay byte-identical.
+          row[kind === "call" ? "c" : "p"] = {
+            b: 0,
+            a: 0.05,
+            l: null,
+            iv: Math.round(iv * 1e4) / 1e4,
+            oi: Math.round(5 + 40 * Math.exp(-((Math.log(K / a.spot) / 0.2) ** 2))),
+            vol: 0,
+          };
+          continue;
+        }
         const half = Math.max(0.01, theo * 0.015 + 0.02 * Math.sqrt(theo));
         const atmness = Math.exp(-((Math.log(K / a.spot) / 0.15) ** 2));
         const oi = Math.round(40 + atmness * 4200 * (0.6 + r()) * (dte < 40 ? 1.5 : 0.7));

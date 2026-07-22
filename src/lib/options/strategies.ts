@@ -31,6 +31,12 @@ export interface StrategyDef {
   /** roles listed in strictly ascending strike order, for drag clamping */
   strikeOrder: string[];
   defaultDteTarget: number;
+  /** wings that should default to the SAME width from their shorts —
+   *  delta targets alone pick lopsided wings on sparse chains */
+  symmetricWings?: {
+    low: { short: string; wing: string };
+    high: { short: string; wing: string };
+  };
 }
 
 /** A position leg annotated with its strategy role for the UI. */
@@ -205,6 +211,10 @@ export const STRATEGIES: StrategyDef[] = [
     ],
     strikeOrder: ["putWing", "putShort", "callShort", "callWing"],
     defaultDteTarget: 45,
+    symmetricWings: {
+      low: { short: "putShort", wing: "putWing" },
+      high: { short: "callShort", wing: "callWing" },
+    },
   },
 ];
 
@@ -356,22 +366,76 @@ export function buildPosition(
   // wings, long below short in call spreads, …) by pushing later roles
   // outward to the next available strike when defaults collide.
   const byRole = new Map(legs.map((l) => [l.role, l]));
+  const repoint = (leg: LabLeg, k: number) => {
+    const kind = leg.kind as OptionKind;
+    const row = exp.strikes.find((s) => s.k === k);
+    const entry = midPrice(row && quoteFor(row, kind));
+    if (entry == null) return;
+    leg.strike = k;
+    leg.entryPrice = entry;
+    leg.iv = legIv(snapshot, exp, kind, k);
+  };
   for (let i = 1; i < def.strikeOrder.length; i++) {
     const prev = byRole.get(def.strikeOrder[i - 1]);
     const cur = byRole.get(def.strikeOrder[i]);
     if (!prev || !cur || cur.kind === "stock") continue;
     if (cur.strike <= prev.strike) {
-      const kind = cur.kind as OptionKind;
-      const above = strikeCandidates(exp, kind).filter((k) => k > prev.strike);
-      if (above.length) {
-        const k = above[0];
-        const row = exp.strikes.find((s) => s.k === k);
-        const entry = midPrice(row && quoteFor(row, kind));
-        if (entry != null) {
-          cur.strike = k;
-          cur.entryPrice = entry;
-          cur.iv = legIv(snapshot, exp, kind, k);
+      const above = strikeCandidates(exp, cur.kind as OptionKind).filter((k) => k > prev.strike);
+      if (above.length) repoint(cur, above[0]);
+    }
+  }
+
+  // Symmetric wings: unless the user dragged one, both wings sit the same
+  // distance outside their shorts — delta targets alone go lopsided when
+  // one side of the chain is sparser than the other. Pick the pair of
+  // available widths that match each other best (exactly, on any uniform
+  // grid), preferring the tighter pair near the delta-picked width.
+  const sw = def.symmetricWings;
+  if (sw && overrides[sw.low.wing] == null && overrides[sw.high.wing] == null) {
+    const pS = byRole.get(sw.low.short);
+    const pW = byRole.get(sw.low.wing);
+    const cS = byRole.get(sw.high.short);
+    const cW = byRole.get(sw.high.wing);
+    if (pS && pW && cS && cW) {
+      // Thin short-dte chains can delta-pick a short at the very edge of
+      // the quotable strikes, leaving no room outside for its wing (a
+      // degenerate condor). Pull that short inward until the wing fits.
+      if (overrides[sw.high.short] == null) {
+        const ks = strikeCandidates(exp, cW.kind as OptionKind);
+        if (!ks.some((k) => k > cS.strike)) {
+          const lower = ks.filter((k) => k < cS.strike && k > pS.strike);
+          if (lower.length) repoint(cS, lower[lower.length - 1]);
         }
+      }
+      if (overrides[sw.low.short] == null) {
+        const ks = strikeCandidates(exp, pW.kind as OptionKind);
+        if (!ks.some((k) => k < pS.strike)) {
+          const higher = ks.filter((k) => k > pS.strike && k < cS.strike);
+          if (higher.length) repoint(pS, higher[0]);
+        }
+      }
+    }
+    if (pS && pW && cS && cW && pS.strike - pW.strike !== cW.strike - cS.strike) {
+      const target = Math.min(pS.strike - pW.strike, cW.strike - cS.strike);
+      const putWidths = strikeCandidates(exp, pW.kind as OptionKind)
+        .filter((k) => k < pS.strike)
+        .map((k) => pS.strike - k);
+      const callWidths = strikeCandidates(exp, cW.kind as OptionKind)
+        .filter((k) => k > cS.strike)
+        .map((k) => k - cS.strike);
+      let best: { p: number; c: number; err: number; off: number } | null = null;
+      for (const wp of putWidths) {
+        for (const wc of callWidths) {
+          const err = Math.abs(wp - wc);
+          const off = Math.abs(Math.min(wp, wc) - target);
+          if (!best || err < best.err || (err === best.err && off < best.off)) {
+            best = { p: wp, c: wc, err, off };
+          }
+        }
+      }
+      if (best) {
+        repoint(pW, pS.strike - best.p);
+        repoint(cW, cS.strike + best.c);
       }
     }
   }
