@@ -60,9 +60,12 @@ node --experimental-strip-types scripts/generate-market.mjs
 
 Generation is seeded and deterministic — same archetypes in, same market out. If you
 change an archetype or the generator, regenerate and commit the fixtures in the same
-change. Two rules for new securities: symbols must be **six letters or more** (real
-US listings max out at five — collisions stay impossible), and personalities should
-earn their place by teaching something the existing six don't.
+change. The **refresh-calendar** workflow bumps `BASE_DATE` monthly and regenerates,
+so expiry dates stay in the future without anyone touching it — expect occasional
+fixture commits from `github-actions[bot]`. Two rules for new securities: symbols
+must be **six letters or more** (real US listings max out at five — collisions stay
+impossible), and personalities should earn their place by teaching something the
+existing six don't.
 
 User-added securities (the `+ data` chip) never touch the repo or any server: they
 live in the visitor's localStorage only. Keep it that way — shipping or proxying real

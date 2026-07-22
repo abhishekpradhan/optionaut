@@ -1,0 +1,52 @@
+# The simulated market's calendar hangs off BASE_DATE in
+# scripts/generate-market.mjs. Left alone, its expiry dates would drift
+# into the past as real time passes. Once a month this bumps the base
+# date to today and regenerates the fixtures — fully deterministic, no
+# external data, none of the licensing baggage a real data feed carries
+# (PLAN.md D11). The test suite runs against the new calendar before
+# anything is committed; a red run ships nothing.
+#
+# Note: pushes made with GITHUB_TOKEN don't re-trigger CI (GitHub's loop
+# protection) — Vercel's own build still gates the deploy.
+
+name: Advance the fictional calendar
+
+on:
+  schedule:
+    - cron: "23 7 1 * *" # 1st of each month, 07:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  advance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # npm install, not ci: macOS-authored lockfiles omit Linux-only wasm
+      # optionals that a clean Linux `npm ci` rejects (see ci.yml).
+      - run: npm install
+      - name: Bump the base date and regenerate
+        run: |
+          TODAY=$(date -u +%F)
+          sed -i.bak -E "s/const BASE_DATE = \"[0-9]{4}-[0-9]{2}-[0-9]{2}\"/const BASE_DATE = \"$TODAY\"/" scripts/generate-market.mjs
+          rm scripts/generate-market.mjs.bak
+          grep -n "BASE_DATE" scripts/generate-market.mjs
+          node --experimental-strip-types scripts/generate-market.mjs
+      - name: Run the suite against the new calendar
+        run: npx vitest run
+      - name: Commit if anything moved
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "calendar already current"
+            exit 0
+          fi
+          git commit -m "Advance the fictional calendar to $(date -u +%F)"
+          git push

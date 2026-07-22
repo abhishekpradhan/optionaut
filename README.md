@@ -123,9 +123,15 @@ The full decision log (D1–D11) with the *why* behind the shape of the product 
   test suite, and a full production build. (It uses `npm install` rather than
   `npm ci` deliberately: macOS-authored lockfiles omit Linux-only wasm optional
   dependencies that a clean Linux `npm ci` rejects.)
+- **[Advance the fictional calendar](.github/workflows/refresh-calendar.yml)** — once
+  a month it bumps the simulated market's base date and regenerates the fixtures, so
+  expiry dates never drift into the past. Fully deterministic, no external data; the
+  test suite runs against the new calendar before anything is committed.
 
 Deployment is Vercel's Git integration: every commit to `main` deploys to production
-automatically; a failed build leaves the previous deployment live.
+automatically; a failed build leaves the previous deployment live. (Pushes made by
+the calendar workflow's `GITHUB_TOKEN` don't re-trigger CI — GitHub's loop
+protection — but Vercel's own build still gates those deploys.)
 
 ## Stack
 

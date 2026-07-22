@@ -33,9 +33,17 @@ export const metadata: Metadata = {
     description:
       "Drag strikes, fast-forward time, crush volatility — an interactive, educational cockpit for options intuition. Free, no signup, every crash is free.",
     type: "website",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Optionaut — learn options by flying them. A neon iron-condor payoff diagram on a dark cockpit background.",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
   },
 };
 

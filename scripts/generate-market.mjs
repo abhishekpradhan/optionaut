@@ -7,7 +7,8 @@
  * Deterministic: each archetype has a fixed seed, so re-running produces
  * identical fixtures unless the archetypes themselves change. The base
  * date only anchors the fictional calendar (history end + expiry grid);
- * bump it occasionally so expiries stay in the future.
+ * the refresh-calendar workflow bumps it monthly so expiries stay in
+ * the future — no external data involved.
  */
 import { writeFile, mkdir, readdir, unlink } from "node:fs/promises";
 import path from "node:path";
