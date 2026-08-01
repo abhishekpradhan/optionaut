@@ -15,7 +15,7 @@ import path from "node:path";
 import { ARCHETYPES, generateSnapshot } from "../src/lib/sim/market.ts";
 
 const ROOT = new URL("..", import.meta.url).pathname;
-const BASE_DATE = "2026-07-22"; // fictional "today" the calendar hangs from
+const BASE_DATE = "2026-08-01"; // fictional "today" the calendar hangs from
 
 const outDir = path.join(ROOT, "public/snapshots");
 await mkdir(outDir, { recursive: true });
