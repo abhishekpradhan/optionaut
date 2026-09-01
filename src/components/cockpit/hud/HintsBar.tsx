@@ -95,7 +95,7 @@ export function HintsBar({ snapshot }: { snapshot: Snapshot | null }) {
         className="hud flex items-center gap-1 rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground/60 underline-offset-2 transition-colors hover:text-foreground hover:underline"
         title="Open source, MIT — read it, fork it, star it"
       >
-        <GithubMark className="size-3" /> open source
+        <GithubMark className="size-3" /> github
       </a>
     </div>
   );
