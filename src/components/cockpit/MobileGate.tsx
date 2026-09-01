@@ -108,6 +108,15 @@ export function MobileGate() {
           <button onClick={() => setOverlay("about")} className="hud !text-[10px] text-muted-foreground transition-colors hover:text-foreground">
             about
           </button>
+          <span aria-hidden className="h-3 w-px bg-border" />
+          <a
+            href="https://github.com/abhishekpradhan/optionaut"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hud !text-[10px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            github
+          </a>
         </div>
       </div>
 

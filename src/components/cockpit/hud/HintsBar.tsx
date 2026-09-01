@@ -4,6 +4,7 @@ import * as React from "react";
 import { useCockpit } from "@/lib/cockpit/store";
 import { strategyById, buildPosition, defaultExpIndex } from "@/lib/options/strategies";
 import { buildShareUrl } from "@/lib/cockpit/shareUrl";
+import { GithubMark } from "@/components/shared/GithubMark";
 import type { Snapshot } from "@/lib/data/types";
 import { Link2, Check } from "lucide-react";
 
@@ -87,6 +88,15 @@ export function HintsBar({ snapshot }: { snapshot: Snapshot | null }) {
           )}
         </button>
       )}
+      <a
+        href="https://github.com/abhishekpradhan/optionaut"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hud flex items-center gap-1 rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground/60 underline-offset-2 transition-colors hover:text-foreground hover:underline"
+        title="Open source, MIT — read it, fork it, star it"
+      >
+        <GithubMark className="size-3" /> open source
+      </a>
     </div>
   );
 }

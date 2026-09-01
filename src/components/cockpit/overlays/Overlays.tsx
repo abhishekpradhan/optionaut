@@ -189,6 +189,20 @@ function AboutSheet({ snapshot }: { snapshot: Snapshot | null }) {
           deficiencies, and meaning is never carried by color alone.
         </p>
         <p>
+          <span className="font-medium text-secondary-foreground">Open source.</span>{" "}
+          The whole instrument — the pricing engine and its tests, the fictional-market
+          generator, every chart — is MIT-licensed at{" "}
+          <a
+            href="https://github.com/abhishekpradhan/optionaut"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline-offset-2 hover:underline"
+          >
+            github.com/abhishekpradhan/optionaut
+          </a>
+          . Read it, fork it, or file an issue when something bites the wrong way.
+        </p>
+        <p>
           <span className="font-medium text-secondary-foreground">The fine print, plainly.</span>{" "}
           Options involve a high degree of risk and are not suitable for all investors.
           Optionaut is not an investment advisor, broker, or dealer. Nothing here is investment
