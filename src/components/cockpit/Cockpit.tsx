@@ -248,8 +248,11 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
         ) : (
           <div className="flex-1" />
         )}
+        {/* safe-centered: centered when it fits, top-aligned when the
+            viewport is short — plain justify-center overflows both ways
+            and pushes the expiry pills up under the HUD */}
         {snapshot && (
-          <aside className="hidden w-60 shrink-0 flex-col justify-center gap-6 pr-1 lg:flex">
+          <aside className="hidden min-h-0 w-60 shrink-0 flex-col justify-center-safe gap-5 overflow-y-auto pr-1 lg:flex">
             {view !== "history" && <DialStack snapshot={snapshot} legs={legs} dte={dte} />}
             <StatStack snapshot={snapshot} legs={legs} dte={dte} />
           </aside>
