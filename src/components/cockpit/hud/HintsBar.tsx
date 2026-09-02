@@ -6,7 +6,7 @@ import { strategyById, buildPosition, defaultExpIndex } from "@/lib/options/stra
 import { buildShareUrl } from "@/lib/cockpit/shareUrl";
 import { GithubMark } from "@/components/shared/GithubMark";
 import type { Snapshot } from "@/lib/data/types";
-import { Link2, Check } from "lucide-react";
+import { Link2, Check, Coffee } from "lucide-react";
 
 /** Top-right: the honesty chip, the keyboard whisper, and the share link. */
 export function HintsBar({ snapshot }: { snapshot: Snapshot | null }) {
@@ -88,15 +88,28 @@ export function HintsBar({ snapshot }: { snapshot: Snapshot | null }) {
           )}
         </button>
       )}
-      <a
-        href="https://github.com/abhishekpradhan/optionaut"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hud flex items-center gap-1 rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground/60 underline-offset-2 transition-colors hover:text-foreground hover:underline"
-        title="Open source, MIT — read it, fork it, star it"
-      >
-        <GithubMark className="size-3" /> github
-      </a>
+      {/* outbound: the code, and the tip jar — one quiet row */}
+      <div className="flex items-center gap-2">
+        <a
+          href="https://github.com/abhishekpradhan/optionaut"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hud flex items-center gap-1 rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground/60 underline-offset-2 transition-colors hover:text-foreground hover:underline"
+          title="Open source, MIT — read it, fork it, star it"
+        >
+          <GithubMark className="size-3" /> github
+        </a>
+        <span aria-hidden className="text-muted-foreground/40">·</span>
+        <a
+          href="https://buymeacoffee.com/abhishekpradhan"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hud flex items-center gap-1 rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground/60 underline-offset-2 transition-colors hover:text-foreground hover:underline"
+          title="Free, forever. If it saved you a real-money mistake, buy me a coffee."
+        >
+          <Coffee className="size-3" aria-hidden /> buy me a coffee
+        </a>
+      </div>
     </div>
   );
 }

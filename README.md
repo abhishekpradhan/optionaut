@@ -14,7 +14,7 @@ Every crash is free.
 [![Market calendar](https://img.shields.io/github/actions/workflow/status/abhishekpradhan/optionaut/refresh-calendar.yml?style=flat-square&label=market%20calendar)](https://github.com/abhishekpradhan/optionaut/actions/workflows/refresh-calendar.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-[**Fly it →**](https://optionaut.org) · [Take a tour](https://optionaut.org/learn) · [Roadmap](#status--roadmap) · [Contributing](CONTRIBUTING.md)
+[**Fly it →**](https://optionaut.org) · [Take a tour](https://optionaut.org/learn) · [Roadmap](#status--roadmap) · [Contributing](CONTRIBUTING.md) · [☕ Buy me a coffee](https://buymeacoffee.com/abhishekpradhan)
 
 </div>
 

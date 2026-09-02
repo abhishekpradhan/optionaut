@@ -203,6 +203,20 @@ function AboutSheet({ snapshot }: { snapshot: Snapshot | null }) {
           . Read it, fork it, or file an issue when something bites the wrong way.
         </p>
         <p>
+          <span className="font-medium text-secondary-foreground">Free, forever.</span>{" "}
+          No ads, no accounts, no upsell — Optionaut costs a domain name and some coffee. If
+          it saved you from a real-money mistake, you can{" "}
+          <a
+            href="https://buymeacoffee.com/abhishekpradhan"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline-offset-2 hover:underline"
+          >
+            buy me a coffee
+          </a>
+          . Entirely optional; the instrument flies the same either way.
+        </p>
+        <p>
           <span className="font-medium text-secondary-foreground">The fine print, plainly.</span>{" "}
           Options involve a high degree of risk and are not suitable for all investors.
           Optionaut is not an investment advisor, broker, or dealer. Nothing here is investment

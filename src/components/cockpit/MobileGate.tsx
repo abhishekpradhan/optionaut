@@ -100,7 +100,7 @@ export function MobileGate() {
         >
           Enter the cockpit anyway →
         </button>
-        <div className="mt-1 flex items-center justify-center gap-4">
+        <div className="mt-1 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
           <button onClick={() => setOverlay("glossary")} className="hud !text-[10px] text-muted-foreground transition-colors hover:text-foreground">
             glossary
           </button>
@@ -116,6 +116,15 @@ export function MobileGate() {
             className="hud !text-[10px] text-muted-foreground transition-colors hover:text-foreground"
           >
             github
+          </a>
+          <span aria-hidden className="h-3 w-px bg-border" />
+          <a
+            href="https://buymeacoffee.com/abhishekpradhan"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hud !text-[10px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            buy me a coffee
           </a>
         </div>
       </div>
