@@ -1,6 +1,7 @@
 "use client";
 
-import { create } from "zustand";
+import { useSyncExternalStore } from "react";
+import { createStore } from "zustand/vanilla";
 import type { Snapshot } from "@/lib/data/types";
 import {
   strategyById,
@@ -72,7 +73,27 @@ interface CockpitState {
   openGlossaryAt: (termId: string) => void;
 }
 
-export const useCockpit = create<CockpitState>((set, get) => ({
+type CockpitData = Pick<
+  CockpitState,
+  | "ticker"
+  | "strategyId"
+  | "view"
+  | "expIndex"
+  | "overrides"
+  | "whatIfPrice"
+  | "elapsedDays"
+  | "ivScale"
+  | "domainScale"
+  | "overlay"
+  | "tour"
+  | "mobilePanel"
+  | "glossaryTerm"
+>;
+
+/** Cold-start state. On the server `init` restores it before applying a
+ *  page's own seed, so prerendered pages (which all share this module)
+ *  never inherit each other's scene. */
+const DEFAULTS: CockpitData = {
   ticker: "AURION",
   strategyId: "long-call",
   view: "payoff",
@@ -86,8 +107,13 @@ export const useCockpit = create<CockpitState>((set, get) => ({
   tour: null,
   mobilePanel: false,
   glossaryTerm: null,
+};
 
-  init: (partial) => set({ ...partial }),
+const store = createStore<CockpitState>((set, get) => ({
+  ...DEFAULTS,
+
+  init: (partial) =>
+    set(typeof window === "undefined" ? { ...DEFAULTS, overrides: {}, ...partial } : { ...partial }),
 
   hydrateShared: (partial) => set({ ...partial }),
 
@@ -153,3 +179,19 @@ export const useCockpit = create<CockpitState>((set, get) => ({
   setMobilePanel: (v) => set({ mobilePanel: v }),
   openGlossaryAt: (termId) => set({ overlay: "glossary", glossaryTerm: termId }),
 }));
+
+/** The bound hook plus the store API (getState / subscribe), shaped like
+ *  zustand's own `create` — with one difference: the server snapshot reads
+ *  the live state instead of the initial one. That is what lets the state a
+ *  page seeds through `init` during render reach its prerendered HTML (the
+ *  glossary on /glossary, the right strategy on /lab/…). The client reads
+ *  the same state during hydration, so the markup matches. */
+function useCockpitState<T>(selector: (state: CockpitState) => T): T {
+  return useSyncExternalStore(
+    store.subscribe,
+    () => selector(store.getState()),
+    () => selector(store.getState()),
+  );
+}
+
+export const useCockpit = Object.assign(useCockpitState, store);

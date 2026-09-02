@@ -305,7 +305,7 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
 
       <IntroLine />
       <Overlays snapshot={snapshot} />
-      {tour && <TourMode snapshot={snapshot} />}
+      {tour && <TourMode />}
       <MobileGate />
     </div>
   );

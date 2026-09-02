@@ -3,13 +3,12 @@
 import * as React from "react";
 import { useCockpit } from "@/lib/cockpit/store";
 import { tourById } from "./tours";
-import type { Snapshot } from "@/lib/data/types";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 
 /** The caption card that flies the instrument: non-modal (the stage
  *  stays fully interactive — that's the point), bottom-center, with
  *  cognitive gates that hold Next until the learner does the thing. */
-export function TourMode({ snapshot }: { snapshot: Snapshot | null }) {
+export function TourMode() {
   const tour = useCockpit((s) => s.tour);
   const setTour = useCockpit((s) => s.setTour);
   const setOverlay = useCockpit((s) => s.setOverlay);
@@ -37,7 +36,9 @@ export function TourMode({ snapshot }: { snapshot: Snapshot | null }) {
     return unsub;
   }, [step, stepKey]);
 
-  if (!tour || !def || !step || !snapshot) return null;
+  // Not gated on the snapshot: the caption is part of the page's
+  // prerendered HTML, and the stage catches up when its data lands.
+  if (!tour || !def || !step) return null;
 
   const gateOpen =
     !step.gate || passedKey === stepKey || step.gate.check(useCockpit.getState());

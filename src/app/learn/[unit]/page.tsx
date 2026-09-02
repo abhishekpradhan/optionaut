@@ -27,7 +27,12 @@ export async function generateMetadata({
   const { unit } = await params;
   const tour = TOURS.find((t) => t.id === (LEGACY[unit] ?? unit));
   if (!tour) return {};
-  return { title: `${tour.title} — Tour`, description: tour.tagline };
+  return {
+    title: `${tour.title} — Tour`,
+    description: tour.tagline,
+    // legacy lesson slugs point at the tour that absorbed them
+    alternates: { canonical: `/learn/${tour.id}` },
+  };
 }
 
 export default async function TourPage({ params }: { params: Promise<Params> }) {

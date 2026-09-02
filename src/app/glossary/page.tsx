@@ -3,6 +3,7 @@ import { Cockpit } from "@/components/cockpit/Cockpit";
 
 export const metadata: Metadata = {
   title: "Glossary",
+  alternates: { canonical: "/glossary" },
   description: "Every term in the app, in plain English.",
 };
 

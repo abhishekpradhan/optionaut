@@ -25,6 +25,7 @@ export async function generateMetadata({
   if (!def) return {};
   return {
     title: `${def.name} on ${symbol.toUpperCase()}`,
+    alternates: { canonical: `/lab/${symbol.toUpperCase()}/${def.id}` },
     description: `${def.tagline} Fly it in the instrument: payoff, map, dials, greeks.`,
   };
 }

@@ -3,6 +3,7 @@ import { Cockpit } from "@/components/cockpit/Cockpit";
 
 export const metadata: Metadata = {
   title: "Tours",
+  alternates: { canonical: "/learn" },
   description:
     "Guided tours that fly the real instrument — zero to iron condor, every concept taught by doing it. Free and educational.",
 };

@@ -27,6 +27,7 @@ export async function generateMetadata({
   }
   return {
     title: `${entry.symbol} · ${entry.name}`,
+    alternates: { canonical: `/t/${entry.symbol}` },
     description: `${entry.name} in the instrument: price history, the market's expected range, and twelve strategies to fly. Educational only.`,
   };
 }

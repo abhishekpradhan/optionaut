@@ -23,25 +23,29 @@ Every crash is free.
 > recommendation, or a solicitation. Several strategies are included specifically to
 > demonstrate how money is lost.
 
+<p align="center">
+  <img src="docs/demo.gif" alt="Twenty seconds in the cockpit: dragging strikes, moving the price and volatility dials, running time to expiry, then the map and history views" width="100%" />
+</p>
+
 ## The instrument
 
 One full-screen cockpit — no scrolling website. A chart fills the stage, the UI floats
 at the edges as a HUD, and three views morph in place (`H` / `P` / `M`):
 
 <p align="center">
-  <img src="docs/shot-payoff.png" alt="The payoff view: an iron condor — neon expiry and today curves, draggable strike pills, dials, live greeks" width="100%" />
+  <img src="docs/shot-payoff.webp" alt="The payoff view: an iron condor — neon expiry and today curves, draggable strike pills, dials, live greeks" width="100%" />
   <em>PAYOFF — the neon expiry/today diagram. Drag the strike pills, twist the price /
   time / volatility dials (secretly delta, theta, vega), watch every number recompute.</em>
 </p>
 
 <p align="center">
-  <img src="docs/shot-history.png" alt="The history view: months of candles flowing into the options-implied expected-move cone" width="100%" />
+  <img src="docs/shot-history.webp" alt="The history view: months of candles flowing into the options-implied expected-move cone" width="100%" />
   <em>HISTORY — a year of candles flowing into the options-implied expected-move cone:
   what the market thinks "likely" and "rare" look like, drawn to scale.</em>
 </p>
 
 <p align="center">
-  <img src="docs/shot-tours.png" alt="Tour mode: seven guided flights that drive the real instrument" width="100%" />
+  <img src="docs/shot-tours.webp" alt="Tour mode: seven guided flights that drive the real instrument" width="100%" />
   <em>TOUR mode — seven guided flights that drive the real instrument, with action gates
   ("drag the time dial yourself…"). Ten minutes from zero to iron condor, then an
   earnings-night IV-crush replay flown from both sides.</em>

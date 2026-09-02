@@ -3,6 +3,7 @@ import { Cockpit } from "@/components/cockpit/Cockpit";
 
 export const metadata: Metadata = {
   title: "About",
+  alternates: { canonical: "/about" },
   description:
     "What Optionaut is, how its numbers are computed, and the fine print — an educational instrument, not advice.",
 };
