@@ -4,7 +4,7 @@ import { useCockpit } from "@/lib/cockpit/store";
 import type { Snapshot, Expiration } from "@/lib/data/types";
 import type { LabLeg } from "@/lib/options/strategies";
 import type { MarketCtx, OptionKind } from "@/lib/options/types";
-import { markToMarket, netEntryCost, payoffAtExpiry } from "@/lib/options/position";
+import { markToMarket, netEntryCost, payoffAtExpiry, breakevens } from "@/lib/options/position";
 import { fmtUsd, fmtSignedUsd, fmtSignedPctOf } from "@/lib/format";
 import type { Scene, TourTarget } from "./scene";
 
@@ -382,12 +382,146 @@ export const TOURS: Tour[] = [
         target: "greeks",
         caption: (
           <>
-            Graduation: an <Term id="iron-condor">iron condor</Term>{" "}— four{" "}
+            A preview of graduation: an <Term id="iron-condor">iron condor</Term>{" "}— four{" "}
             <Term id="leg">legs</Term>{" "}selling the middle, buying the <Term id="wing">wings</Term>.
             Look at the greeks: delta near zero (no direction), theta positive (time pays you),
-            vega negative (drama hurts). You can now read any strategy on the rail this way. Fly.
+            vega negative (drama hurts). You can now read any strategy on the rail this way; the
+            next tour assembles this one from pieces you already own.
           </>
         ),
+      },
+    ],
+  },
+  {
+    id: "building-blocks",
+    title: "Building blocks",
+    tagline: "Income, spreads, and the condor assembled from pieces.",
+    minutes: 3,
+    steps: [
+      {
+        scene: { strategy: "covered-call", view: "payoff" },
+        target: "readout",
+        caption: (
+          <>
+            Every strategy on the rail is assembled from pieces you already know. Start with
+            income: own 100 shares and sell a call against them — a{" "}
+            <Term id="covered">covered call</Term>. The premium is yours today (the readout
+            says you were paid); the price of that income is a ceiling on the upside, the flat
+            shelf on the right. Same downside as plain shares, plus a paid-for cap.
+          </>
+        ),
+      },
+      {
+        scene: { strategy: "bull-call-spread", view: "payoff" },
+        target: "strikes",
+        gate: {
+          check: (s) => Object.keys(s.overrides).length > 0,
+          hint: "drag the sold call's pill (−C) to the right",
+        },
+        caption: (
+          <>
+            Now a <Term id="spread">spread</Term>: buy one call and sell another at a higher
+            strike. The sold <Term id="leg">leg</Term>{" "}pays down the bought one, so the ticket
+            is cheaper — and in exchange the upside stops at the second strike. Capped both
+            ways. Drag the sold call&apos;s pill to the right and watch the cost and the cap grow
+            together.
+          </>
+        ),
+        reveal: (s, c) => {
+          const ks = c.legs.map((l) => l.strike).filter((k) => k > 0);
+          if (ks.length < 2) return null;
+          const width = (Math.max(...ks) - Math.min(...ks)) * 100;
+          const cost = netEntryCost(c.legs);
+          const most = width - cost;
+          return (
+            <>
+              Width {usd(width)}, ticket {usd(cost)}: the most you can make is {usd(most)}, about{" "}
+              {(Math.max(most, 0) / Math.max(cost, 1)).toFixed(1)}× what you risk.
+            </>
+          );
+        },
+      },
+      {
+        scene: { strategy: "bull-put-spread", view: "payoff" },
+        target: "readout",
+        caption: (
+          <>
+            Flip the spread: sell the higher put and buy a lower one as protection. Now you are{" "}
+            <em>paid</em>{" "}up front — a <Term id="credit-debit">credit</Term>{" "}— you keep it if
+            the stock stays above the sold strike, and the bought put caps what a crash can
+            take. The same shape as the last one, mirrored: pay now for a capped win, or get
+            paid now and post the width as collateral. Two currencies, one bet.
+          </>
+        ),
+      },
+      {
+        scene: { strategy: "long-strangle", view: "payoff" },
+        target: "price",
+        gate: {
+          check: (s, c) => Math.abs((s.whatIfPrice ?? c.spot) - c.spot) / c.spot >= 0.099,
+          hint: "drag the price dial at least 10% either way",
+        },
+        caption: (
+          <>
+            Now stop picking a direction. A <Term id="strangle">strangle</Term>{" "}buys a put
+            below the stock and a call above it: it pays if the stock moves far enough{" "}
+            <em>either</em>{" "}way. Drag the price dial hard in one direction and notice how far
+            it has to travel before the white line clears zero. Cheap tickets, wide breakevens.
+          </>
+        ),
+        reveal: (s, c) => {
+          const bes = breakevens(c.legs);
+          if (bes.length < 2) return null;
+          const lo = bes[0];
+          const hi = bes[bes.length - 1];
+          return (
+            <>
+              Breakevens at {usd(lo)} and {usd(hi)}: the stock has to move{" "}
+              {fmtSignedPctOf(lo, c.spot)} or {fmtSignedPctOf(hi, c.spot)} by expiry just to get
+              your premium back.
+            </>
+          );
+        },
+      },
+      {
+        scene: { strategy: "iron-condor", view: "payoff" },
+        target: "position",
+        caption: (
+          <>
+            Turn the strangle inside out and add seatbelts. <em>Sell</em>{" "}the strangle —
+            collect the drama premium — then buy a further-out put and call so a crash or a
+            squeeze can&apos;t run away from you. That is an{" "}
+            <Term id="iron-condor">iron condor</Term>: a bull put spread and a bear call spread
+            on the same stock, four <Term id="leg">legs</Term>. Read the position panel: max
+            profit is the credit, max loss is the width of a <Term id="wing">wing</Term>{" "}minus
+            that credit.
+          </>
+        ),
+      },
+      {
+        target: "time",
+        gate: {
+          check: (s, c) => s.elapsedDays >= Math.max(1, Math.round(c.dte * 0.3)),
+          hint: "push the time dial forward",
+        },
+        caption: (
+          <>
+            Push time forward and watch the readout climb: the condor is a machine for
+            collecting the melt from tour 3, at the price of a capped win and a loss that can
+            be several times the credit. Every spread on the rail is some mix of four moves —
+            buy, sell, higher, lower — and now you can read them all.
+          </>
+        ),
+        reveal: (s, c) => {
+          const pl = markToMarket(c.legs, c.spot, s.elapsedDays, c.market, s.ivScale);
+          const credit = -netEntryCost(c.legs);
+          return (
+            <>
+              {s.elapsedDays} days of nothing happening: {susd(pl)} of the {usd(credit)} credit,
+              already yours.
+            </>
+          );
+        },
       },
     ],
   },

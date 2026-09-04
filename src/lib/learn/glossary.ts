@@ -262,6 +262,12 @@ export const GLOSSARY: GlossaryEntry[] = [
     unit: 8,
   },
   {
+    id: "strangle",
+    term: "strangle",
+    short: "A cheaper straddle: buy a put below the stock and a call above it. It pays if the stock moves far enough in either direction — and needs a bigger move than the straddle to get there.",
+    unit: 9,
+  },
+  {
     id: "straddle",
     term: "straddle",
     short: "Buying a call and a put at the same strike and expiry. You are not picking a direction — you are betting the stock moves further than the two premiums combined, either way.",

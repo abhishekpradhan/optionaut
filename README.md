@@ -46,11 +46,12 @@ at the edges as a HUD, and three views morph in place (`H` / `P` / `M`):
 
 <p align="center">
   <img src="docs/shot-tours.webp" alt="Tour mode: seven guided flights that drive the real instrument" width="100%" />
-  <em>TOUR mode — seven guided flights that drive the real instrument from a caption lane
+  <em>TOUR mode — eight guided flights that drive the real instrument from a caption lane
   under the chart: the control each step talks about lights up, action gates hold "next"
   until you have dragged the dial yourself, and the answer to every prediction prompt
-  appears from the live numbers. Your place is saved. About twenty minutes from zero to
-  iron condor, then an earnings-night IV-crush replay flown from both sides.</em>
+  appears from the live numbers. Your place is saved. About twenty-five minutes from zero
+  to an iron condor built from pieces, then an earnings-night IV-crush replay flown from
+  both sides.</em>
 </p>
 
 Plus the **MAP** view (a clickable price×time P/L heatmap — click any cell to jump the
@@ -113,7 +114,7 @@ Optionaut is **v1, live, and actively developed** — every commit to `main` dep
 production.
 
 - [x] The Cockpit — full-screen instrument, three morphing views, HUD, keyboard map
-- [x] TOUR mode — seven guided flights with action gates
+- [x] TOUR mode — eight guided flights with action gates, spotlights, and reveals
 - [x] Hand-written, test-anchored options-math engine
 - [x] Simulated market — six fictional archetype securities, generated and deterministic
 - [x] Bring your own security — quick-build from your numbers, or upload Cboe's CSV

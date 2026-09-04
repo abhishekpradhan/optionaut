@@ -27,6 +27,8 @@ src/lib/data/             # snapshot loading, custom (user-added) markets, Cboe 
 src/lib/cockpit/store.ts  # the one Zustand store driving everything
 src/lib/learn/            # glossary + per-strategy guides (the teaching copy)
 scripts/generate-market.mjs   # regenerates the bundled simulated market
+scripts/record-demo.mjs       # README media: the demo GIF …
+scripts/shots.mjs             # … and the three screenshots, from a headless Chrome
 public/snapshots/         # the generated fixtures (the app's bundled data)
 ```
 
@@ -73,6 +75,8 @@ small and worth knowing before you add a step.
   some caption text, so `<em>sold</em>{" "}put` is the house form. Every term of
   jargon is a `<Term>` (ground rule 3); `npm run dev` warns in the console for an
   unknown id.
+- **The README shot of tour mode** is `docs/shot-tours.webp`; after a visible change, run
+  `node scripts/shots.mjs tours` against a running server and commit the new file.
 - **Progress is the learner's.** Steps and completion persist per browser in
   `localStorage` (`src/lib/cockpit/tourProgress.ts`); reaching a tour's last caption
   counts as done. Keep step ids stable — a saved place is an index into `steps`.
