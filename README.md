@@ -46,9 +46,11 @@ at the edges as a HUD, and three views morph in place (`H` / `P` / `M`):
 
 <p align="center">
   <img src="docs/shot-tours.webp" alt="Tour mode: seven guided flights that drive the real instrument" width="100%" />
-  <em>TOUR mode — seven guided flights that drive the real instrument, with action gates
-  ("drag the time dial yourself…"). About twenty minutes from zero to iron condor, then an
-  earnings-night IV-crush replay flown from both sides.</em>
+  <em>TOUR mode — seven guided flights that drive the real instrument from a caption lane
+  under the chart: the control each step talks about lights up, action gates hold "next"
+  until you have dragged the dial yourself, and the answer to every prediction prompt
+  appears from the live numbers. Your place is saved. About twenty minutes from zero to
+  iron condor, then an earnings-night IV-crush replay flown from both sides.</em>
 </p>
 
 Plus the **MAP** view (a clickable price×time P/L heatmap — click any cell to jump the

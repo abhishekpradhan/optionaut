@@ -311,6 +311,15 @@ export const TOURS: Tour[] = [
         scene: { strategy: "long-call", view: "payoff" },
         target: "volatility",
         gate: { check: (s) => s.ivScale <= 0.7, hint: "crush the volatility dial to ×0.7 or below" },
+        reveal: (s, c) => {
+          const pl = markToMarket(c.legs, c.spot, s.elapsedDays, c.market, s.ivScale);
+          return (
+            <>
+              Volatility at ×{s.ivScale.toFixed(2)}, stock unmoved, same day: {susd(pl)}. Right
+              about everything except the drama premium.
+            </>
+          );
+        },
         caption: (
           <>
             Now the ambush. You bought this call before <Term id="earnings">earnings</Term>. The
@@ -490,6 +499,17 @@ export const TOURS: Tour[] = [
       {
         target: "volatility",
         gate: { check: (s) => s.ivScale <= 0.5, hint: "drag volatility to ×0.50" },
+        reveal: (s, c) => {
+          const p = c.spot * 1.15;
+          const now = markToMarket(c.legs, p, s.elapsedDays, c.market, s.ivScale);
+          const fantasy = markToMarket(c.legs, p, 0, c.market, 1);
+          return (
+            <>
+              Same +15% gap: {susd(fantasy)} last night, {susd(now)} this morning at ×
+              {s.ivScale.toFixed(2)}. The difference is the crush.
+            </>
+          );
+        },
         caption: (
           <>
             The crush was <em>already in the price</em>{" "}— sellers demanded that fat premium

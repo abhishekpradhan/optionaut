@@ -47,6 +47,36 @@ public/snapshots/         # the generated fixtures (the app's bundled data)
 6. **Full-screen instrument, no document scroll.** New surfaces are views, overlays, or
    HUD elements — not scrolling pages (PLAN.md decision D8).
 
+## Writing a tour
+
+Tours live in `src/components/cockpit/tour/tours.tsx`; the machinery around them is
+small and worth knowing before you add a step.
+
+- **Every step declares the scene it expects** — `scene: { ticker, strategy, view,
+  expiry, overrides, reset, dials }` (see `scene.ts`). Scenes are *merged* from step 0
+  up to the current step on every arrival (forward, back, resume, deep link), so a
+  step never shows its caption over the wrong instrument and a learner's detour on
+  the live stage heals at the next step. Naming a ticker or strategy clears the
+  learner's dials and strikes; `reset: true` clears the dials only; everything else is
+  left as the learner had it. The merge is pure and unit-tested (`scene.test.ts`).
+- **Gates and reveals see live numbers.** `gate.check(s, ctx)` and `reveal(s, ctx)`
+  receive the store plus a `TourCtx` built from the loaded chain (`spot`, `dte`, `em`,
+  `legs`, `nearest`, `stepStrike`). Write thresholds relative to `ctx.spot` and
+  `ctx.dte`, never as hard-coded dollars or days — the calendar workflow regenerates
+  the market monthly. A gate always has a quiet "skip" beside it: the caption must
+  read fine without the drag.
+- **Point at the control.** `target: "price" | "time" | … ` (the `TourTarget` union in
+  `scene.ts`) lights the matching `<Spot>` in the HUD. Add a target only if a `Spot`
+  wraps it.
+- **Captions are JSX; spell the space after an inline element as `{" "}`.** This
+  toolchain drops a plain space right after `</em>`, `</strong>`, or `</Term>` in
+  some caption text, so `<em>sold</em>{" "}put` is the house form. Every term of
+  jargon is a `<Term>` (ground rule 3); `npm run dev` warns in the console for an
+  unknown id.
+- **Progress is the learner's.** Steps and completion persist per browser in
+  `localStorage` (`src/lib/cockpit/tourProgress.ts`); reaching a tour's last caption
+  counts as done. Keep step ids stable — a saved place is an index into `steps`.
+
 ## The simulated market
 
 The bundled securities are fictional by design — see decision D11 in `PLAN.md` for
