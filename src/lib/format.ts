@@ -35,6 +35,11 @@ export function fmtSignedPct(x: number, dp = 1): string {
   return x >= 0 ? `+${body}` : `−${body}`;
 }
 
+/** A price as a signed percentage move from a base ("+15.0%", "−14.4%"). */
+export function fmtSignedPctOf(v: number, base: number, dp = 1): string {
+  return fmtSignedPct((v - base) / base, dp);
+}
+
 export function fmtNum(x: number, dp = 2): string {
   return x.toLocaleString("en-US", {
     minimumFractionDigits: dp,

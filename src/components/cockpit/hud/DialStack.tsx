@@ -4,6 +4,8 @@ import { useCockpit } from "@/lib/cockpit/store";
 import { payoffPriceDomain } from "@/lib/viz/domain";
 import { Slider } from "@/components/ui/slider";
 import { RotateCcw } from "lucide-react";
+import { Spot } from "@/components/cockpit/tour/Spot";
+import type { TourTarget } from "@/components/cockpit/tour/tours";
 import type { Snapshot } from "@/lib/data/types";
 import type { LabLeg } from "@/lib/options/strategies";
 import { fmtUsd, fmtPct, fmtDate } from "@/lib/format";
@@ -53,7 +55,7 @@ export function DialStack({
   return (
     <div className="pointer-events-auto select-none">
       {/* expiries — meaningless for plain shares */}
-      <div className={`mb-3 flex flex-wrap justify-end gap-1 ${stockOnly ? "hidden" : ""}`}>
+      <Spot id="expiries" className={`mb-3 flex flex-wrap justify-end gap-1 ${stockOnly ? "hidden" : ""}`}>
         {snapshot.expirations.map((e, i) => (
           <button
             key={e.date}
@@ -68,10 +70,11 @@ export function DialStack({
             {e.dte}d
           </button>
         ))}
-      </div>
+      </Spot>
 
       <div className="space-y-3.5">
         <Dial
+          spot="price"
           label="price"
           value={
             <>
@@ -93,6 +96,7 @@ export function DialStack({
         </Dial>
         {!stockOnly && (
         <Dial
+          spot="time"
           label="time"
           value={
             elapsedDays === 0 ? "today" : elapsedDays >= dte ? `expiry (${fmtDate(snapshot.expirations[expIndex]?.date ?? "")})` : `+${elapsedDays}d · ${dte - elapsedDays}d left`
@@ -103,7 +107,7 @@ export function DialStack({
         </Dial>
         )}
         {!stockOnly && (
-        <Dial label="volatility" value={<>×{ivScale.toFixed(2)} · iv ≈ {fmtPct(repIv * ivScale, 0)}</>}>
+        <Dial spot="volatility" label="volatility" value={<>×{ivScale.toFixed(2)} · iv ≈ {fmtPct(repIv * ivScale, 0)}</>}>
           <Slider aria-label="Volatility multiplier" min={0.5} max={1.8} step={0.05}
             value={[ivScale]} onValueChange={(v) => setIvScale(oneOf(v))} />
         </Dial>
@@ -129,14 +133,24 @@ export function DialStack({
   );
 }
 
-function Dial({ label, value, children }: { label: string; value: React.ReactNode; children: React.ReactNode }) {
+function Dial({
+  spot,
+  label,
+  value,
+  children,
+}: {
+  spot: TourTarget;
+  label: string;
+  value: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
-    <div>
+    <Spot id={spot}>
       <div className="mb-1.5 flex items-baseline justify-between gap-2">
-        <span className="hud !text-[9px]">{label}</span>
+        <span className="hud !text-[11px] !tracking-[0.16em] text-secondary-foreground/90">{label}</span>
         <span className="figures text-[11px] text-secondary-foreground">{value}</span>
       </div>
       {children}
-    </div>
+    </Spot>
   );
 }

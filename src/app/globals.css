@@ -286,6 +286,41 @@
   stroke-linejoin: round;
 }
 
+/* Tour spotlight: the control a step is talking about wears a ring and
+   a glow on a pseudo-element whose opacity breathes — ink only, and the
+   one property the compositor animates for free. Nothing shifts, nothing
+   scrolls. */
+.tour-spot {
+  position: relative;
+}
+.tour-spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  outline: 1px solid var(--primary);
+  outline-offset: 4px;
+  box-shadow: 0 0 22px -4px rgba(57, 135, 229, 0.9);
+  animation: tour-spot 1.8s ease-in-out infinite;
+  will-change: opacity;
+}
+@keyframes tour-spot {
+  50% { opacity: 0.4; }
+}
+.pill-halo {
+  animation: pill-halo 1.8s ease-in-out infinite;
+}
+@keyframes pill-halo {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+/* The tour chip keeps a quiet glow until the first tour has been flown —
+   a state, not a motion. */
+.tour-chip-glow {
+  box-shadow: 0 0 14px -2px rgba(57, 135, 229, 0.55);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

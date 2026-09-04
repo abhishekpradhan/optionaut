@@ -8,7 +8,8 @@ import { payoffPriceDomain } from "@/lib/viz/domain";
 import { strikeCandidates, type LabLeg, type StrategyDef } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
 import type { MarketCtx, OptionKind } from "@/lib/options/types";
-import { fmtUsd, fmtUsdCompact, fmtSignedUsd } from "@/lib/format";
+import { fmtUsd, fmtUsdCompact, fmtSignedUsd, fmtSignedPctOf } from "@/lib/format";
+import { useTourTarget } from "@/components/cockpit/tour/target";
 
 const GRID_N = 241;
 
@@ -76,6 +77,8 @@ export function PayoffChart({
   const innerH = height - margin.top - margin.bottom;
   const [hoverX, setHoverX] = React.useState<number | null>(null);
   const [dragRole, setDragRole] = React.useState<string | null>(null);
+  // a tour step talking about the pills lights them up
+  const spotStrikes = useTourTarget("strikes");
 
   const ctx: MarketCtx = { r: snapshot.riskFreeRate, q: snapshot.divYield };
   const spot = snapshot.spot;
@@ -409,6 +412,11 @@ export function PayoffChart({
                     style={{ cursor: "ew-resize", outline: "none" }}
                     className="group focus-visible:[&>rect]:stroke-[var(--ring)]"
                   >
+                    {spotStrikes && (
+                      <rect x={-w / 2 - 4} y={-15} width={w + 8} height={30} rx={15}
+                        fill="none" stroke="var(--primary)" strokeWidth={1.5}
+                        className="pill-halo" pointerEvents="none" />
+                    )}
                     {/* generous hit target */}
                     <rect x={-w / 2 - 6} y={-14} width={w + 12} height={30} fill="transparent" />
                     <rect x={-w / 2} y={-11} width={w} height={22} rx={11}
@@ -462,10 +470,6 @@ export function PayoffChart({
   );
 }
 
-function fmtSignedPctOf(v: number, base: number): string {
-  const pct = ((v - base) / base) * 100;
-  return `${pct >= 0 ? "+" : "−"}${Math.abs(pct).toFixed(1)}%`;
-}
 
 function TooltipRow({ color, value, label }: { color: string; value: string; label: string }) {
   return (

@@ -5,7 +5,9 @@ import { useCockpit } from "@/lib/cockpit/store";
 import { strategyById } from "@/lib/options/strategies";
 import { STRATEGY_GUIDES } from "@/lib/learn/strategyGuides";
 import { GLOSSARY } from "@/lib/learn/glossary";
-import { TOURS } from "../tour/tours";
+import { TOURS, TOTAL_MINUTES } from "../tour/tours";
+import { startTour } from "../tour/navigate";
+import { resumeStep, useTourProgress } from "@/lib/cockpit/tourProgress";
 import { CustomSheet } from "./CustomSheet";
 import { SizingSheet } from "./SizingSheet";
 import type { Snapshot } from "@/lib/data/types";
@@ -244,7 +246,8 @@ function HelpSheet() {
     ["s", "position sizing — trials against your account"],
     ["g", "glossary"],
     ["t", "tours"],
-    ["esc", "close overlay / exit tour"],
+    ["← →", "previous / next step in a tour"],
+    ["esc", "close the sheet · leave the tour (your place is saved)"],
   ];
   return (
     <>
@@ -262,32 +265,46 @@ function HelpSheet() {
 }
 
 function ToursSheet() {
-  const setTour = useCockpit((s) => s.setTour);
+  const progress = useTourProgress();
   return (
     <>
       <SheetTitle kicker="learn by flying — the instrument teaches itself">Tours</SheetTitle>
       <ol className="space-y-2">
-        {TOURS.map((t, i) => (
-          <li key={t.id}>
-            <button
-              onClick={() => setTour({ id: t.id, step: 0 })}
-              className="group flex w-full items-center gap-3 rounded-lg border border-border/70 px-4 py-3 text-left transition-colors hover:border-primary/50"
-            >
-              <span className="figures w-5 text-right text-base font-semibold text-muted-foreground/60">
-                {i + 1}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-[14px] font-semibold tracking-tight">{t.title}</span>
-                <span className="block truncate text-[12px] text-muted-foreground">{t.tagline}</span>
-              </span>
-              <Play className="size-4 shrink-0 text-primary opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
-            </button>
-          </li>
-        ))}
+        {TOURS.map((t, i) => {
+          const p = progress[t.id];
+          const at = resumeStep(t.id, t.steps.length);
+          return (
+            <li key={t.id}>
+              <button
+                onClick={() => startTour(t.id)}
+                className="group flex w-full items-center gap-3 rounded-lg border border-border/70 px-4 py-3 text-left transition-colors hover:border-primary/50"
+              >
+                <span className="figures w-5 text-right text-base font-semibold text-muted-foreground/60">
+                  {i + 1}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[14px] font-semibold tracking-tight">{t.title}</span>
+                  <span className="block text-[12px] leading-snug text-muted-foreground">{t.tagline}</span>
+                </span>
+                <span className="hud shrink-0 !text-[9px] text-muted-foreground/70">
+                  {p?.done ? (
+                    <span className="text-primary">done ✓</span>
+                  ) : at > 0 ? (
+                    <span className="text-primary">resume · {at + 1}/{t.steps.length}</span>
+                  ) : (
+                    `${t.minutes} min`
+                  )}
+                </span>
+                <Play className="size-4 shrink-0 text-primary opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
+              </button>
+            </li>
+          );
+        })}
       </ol>
       <p className="mt-4 text-[12px] leading-relaxed text-muted-foreground">
-        Each tour drives the real instrument with real snapshot prices — captions guide, you fly.
-        Ten minutes end to end. Start at 1 if options are new to you.
+        Each tour drives the real instrument — captions guide, you fly. About {TOTAL_MINUTES}{" "}
+        minutes for all {TOURS.length}, two to five each, and every tour stands alone; leave
+        whenever you like and it remembers your place. Start at 1 if options are new to you.
       </p>
     </>
   );

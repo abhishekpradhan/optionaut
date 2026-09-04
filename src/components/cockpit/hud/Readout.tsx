@@ -5,6 +5,7 @@ import { markToMarket, netEntryCost, expectedMove } from "@/lib/options/position
 import type { LabLeg } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
 import { fmtUsd, fmtSignedUsd, fmtPct } from "@/lib/format";
+import { Spot } from "@/components/cockpit/tour/Spot";
 
 /** Bottom-left: the giant live number — the "85.4 billion ly" of this
  *  instrument. In history view it reads the market; otherwise it reads
@@ -70,7 +71,7 @@ export function Readout({
       }${ivScale !== 1 && !stockOnly ? ` · vol ×${ivScale.toFixed(2)}` : ""}`;
 
   return (
-    <div className="pointer-events-none select-none">
+    <Spot id="readout" className="pointer-events-none select-none">
       <div className="hud !text-[9px] text-muted-foreground/70">your profit / loss</div>
       <div
         className={`figures mt-0.5 font-semibold tracking-tight ${
@@ -88,15 +89,15 @@ export function Readout({
         <div className="text-secondary-foreground">{scenario}</div>
         <div className="text-muted-foreground">
           {stockOnly ? (
-            <>100 shares · {fmtUsd(snapshot.spot * 100, { cents: false })} notional · no expiry, no decay</>
+            <>100 shares · {fmtUsd(snapshot.spot * 100, { cents: false })} of stock · no deadline, no decay</>
           ) : (
             <>
               you {cost >= 0 ? "paid" : "were paid"} {fmtUsd(Math.abs(cost), { cents: false })}{" "}
-              {cost >= 0 ? "to open" : "up front"} · expires in {dte}d · one contract per leg
+              {cost >= 0 ? "to open" : "up front"} · expires in {dte}d · one contract each
             </>
           )}
         </div>
       </div>
-    </div>
+    </Spot>
   );
 }

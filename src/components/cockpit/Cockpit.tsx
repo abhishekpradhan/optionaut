@@ -9,6 +9,7 @@ import {
   buildPosition,
   defaultExpIndex,
   strikeCandidates,
+  nearestStrike,
 } from "@/lib/options/strategies";
 import { parseShareParams, deviationParams } from "@/lib/cockpit/shareUrl";
 import { payoffPriceDomain } from "@/lib/viz/domain";
@@ -22,7 +23,7 @@ import { StatStack } from "./hud/StatStack";
 import { Stage } from "./Stage";
 import { Overlays } from "./overlays/Overlays";
 import { TourMode } from "./tour/TourMode";
-import { IntroLine } from "./IntroLine";
+import { FirstRun } from "./FirstRun";
 import { MobileGate } from "./MobileGate";
 
 export interface CockpitInitial {
@@ -83,11 +84,13 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
     const s = useCockpit.getState();
     const d = strategyById(s.strategyId);
     if (!d) return;
-    // During a tour, the tour's own step setups drive the expiry —
-    // don't fight them when a ticker switch lands its snapshot.
-    if (s.tour) return;
+    // A shared setup is consumed by the first snapshot, whatever else is
+    // going on — it must never surface later on an unrelated security.
     const shared = sharedConsumed.current ? null : sharedInit;
     sharedConsumed.current = true;
+    // During a tour, the tour's own scenes drive the expiry — don't fight
+    // them when a ticker switch lands its snapshot.
+    if (s.tour) return;
     const defIdx = defaultExpIndex(snapshot, d);
     if (!shared) {
       if (s.expIndex !== defIdx) setExpIndex(defIdx);
@@ -115,7 +118,7 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
         if (!tmpl || tmpl.kind === "stock") return;
         const ks = strikeCandidates(exp, tmpl.kind as OptionKind);
         if (!ks.length) return;
-        overrides[role] = ks.reduce((p, c) => (Math.abs(c - raw) < Math.abs(p - raw) ? c : p));
+        overrides[role] = nearestStrike(exp, tmpl.kind as OptionKind, raw);
       });
     }
 
@@ -185,8 +188,10 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
       if (s.overlay && !["Escape", "t", "g", "i", "s", "?"].includes(e.key)) return;
       switch (e.key) {
         case "Escape":
-          if (s.tour) setTour(null);
-          else if (s.overlay) setOverlay(null);
+          // one layer at a time: the sheet first, the tour only when
+          // nothing sits above it (its place is saved either way)
+          if (s.overlay) setOverlay(null);
+          else if (s.tour) setTour(null);
           return;
         case "h": setView("history"); return;
         case "p": setView("payoff"); return;
@@ -205,6 +210,7 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
         case "r": resetDials(); return;
         case "ArrowLeft":
         case "ArrowRight": {
+          // plain arrows walk a tour's steps; shift+arrows still hop tickers
           if (!e.shiftKey) return;
           e.preventDefault();
           const list = manifest.map((m) => m.symbol);
@@ -259,6 +265,11 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
         )}
       </div>
 
+      {/* tour lane: the caption card gets its own row between stage and
+          readout, so it never covers the pills, labels, or numbers a
+          caption is pointing at */}
+      {tour && <TourMode snapshot={snapshot} legs={legs} />}
+
       {/* bottom: readout + rails (safe-area aware for notched phones) */}
       <div className="flex flex-col gap-2.5 px-4 pt-1 sm:px-5 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         <Readout snapshot={snapshot} legs={legs} dte={dte} />
@@ -303,9 +314,8 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
         <MobilePanel snapshot={snapshot} legs={legs} dte={dte} view={view} />
       )}
 
-      <IntroLine />
+      <FirstRun />
       <Overlays snapshot={snapshot} />
-      {tour && <TourMode />}
       <MobileGate />
     </div>
   );

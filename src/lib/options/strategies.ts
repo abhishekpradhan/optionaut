@@ -245,6 +245,20 @@ export function strikeCandidates(exp: Expiration, kind: OptionKind): number[] {
     .map((row) => row.k);
 }
 
+/** The listed, priceable strike nearest a price (the price itself on an empty chain). */
+export function nearestStrike(exp: Expiration, kind: OptionKind, price: number): number {
+  const ks = strikeCandidates(exp, kind);
+  return ks.length ? ks.reduce((p, c) => (Math.abs(c - price) < Math.abs(p - price) ? c : p)) : price;
+}
+
+/** n listed strikes away from `strike` (negative = lower), clamped to the chain's ends. */
+export function stepStrike(exp: Expiration, kind: OptionKind, strike: number, n: number): number {
+  const ks = strikeCandidates(exp, kind);
+  const i = ks.indexOf(strike);
+  if (i < 0) return strike;
+  return ks[Math.min(Math.max(i + n, 0), ks.length - 1)];
+}
+
 export function legIv(
   snapshot: Snapshot,
   exp: Expiration,

@@ -47,7 +47,7 @@ at the edges as a HUD, and three views morph in place (`H` / `P` / `M`):
 <p align="center">
   <img src="docs/shot-tours.webp" alt="Tour mode: seven guided flights that drive the real instrument" width="100%" />
   <em>TOUR mode — seven guided flights that drive the real instrument, with action gates
-  ("drag the time dial yourself…"). Ten minutes from zero to iron condor, then an
+  ("drag the time dial yourself…"). About twenty minutes from zero to iron condor, then an
   earnings-night IV-crush replay flown from both sides.</em>
 </p>
 

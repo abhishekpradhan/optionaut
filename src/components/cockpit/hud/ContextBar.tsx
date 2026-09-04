@@ -5,6 +5,7 @@ import { strategyById } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
 import { fmtDate } from "@/lib/format";
 import { AlertTriangle } from "lucide-react";
+import { Spot } from "@/components/cockpit/tour/Spot";
 
 /** Top-left: who and where you are, Universe-Atlas corner style. */
 export function ContextBar({ snapshot }: { snapshot: Snapshot | null }) {
@@ -55,6 +56,7 @@ export function ContextBar({ snapshot }: { snapshot: Snapshot | null }) {
                 {fmtDate(exp.date)} · {exp.dte}d
               </span>
             )}
+            <Spot id="bite" inline className="shrink-0">
             <button
               onClick={() => setOverlay("guide")}
               className="ml-1 flex shrink-0 items-center gap-1 rounded-md border border-border/80 bg-background/40 px-2 py-0.5 !text-[9.5px] transition-colors hover:border-[color:var(--warn)]/50 hover:text-foreground"
@@ -63,6 +65,7 @@ export function ContextBar({ snapshot }: { snapshot: Snapshot | null }) {
               <AlertTriangle className="size-3" style={{ color: "var(--warn)" }} aria-hidden />
               what can bite?
             </button>
+            </Spot>
           </>
         )}
       </div>

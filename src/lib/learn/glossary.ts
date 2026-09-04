@@ -210,6 +210,12 @@ export const GLOSSARY: GlossaryEntry[] = [
     short: "The dollars your position gains or loses when implied volatility rises by one percentage point. Long options are long vega; sellers are short it.",
     unit: 5,
   },
+  {
+    id: "earnings",
+    term: "earnings",
+    short: "A company's quarterly results announcement — a date the whole market knows in advance. Option prices swell with uncertainty before it and deflate the moment it is over.",
+    unit: 5,
+  },
   // ——— Unit 6 · Greeks ———
   {
     id: "greeks",
@@ -254,6 +260,18 @@ export const GLOSSARY: GlossaryEntry[] = [
     term: "credit / debit",
     short: "Debit: you pay to open (long spreads). Credit: you collect to open (short spreads) and hope to keep it. Neither is better — they're mirror images.",
     unit: 8,
+  },
+  {
+    id: "straddle",
+    term: "straddle",
+    short: "Buying a call and a put at the same strike and expiry. You are not picking a direction — you are betting the stock moves further than the two premiums combined, either way.",
+    unit: 9,
+  },
+  {
+    id: "iron-condor",
+    term: "iron condor",
+    short: "Sell a put spread below the stock and a call spread above it: four legs that collect a credit if the stock stays between the short strikes. Profit is capped at the credit; loss is capped by the wings.",
+    unit: 9,
   },
   {
     id: "wing",

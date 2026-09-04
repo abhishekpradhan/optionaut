@@ -6,6 +6,7 @@ import { STRATEGIES } from "@/lib/options/strategies";
 import manifest from "@/data/manifest.json";
 import { useSnapshot } from "@/lib/data/snapshot";
 import { useCustomMarkets } from "@/lib/data/customMarkets";
+import { useTourProgress } from "@/lib/cockpit/tourProgress";
 import { TrendingUp, TrendingDown, MoveHorizontal, Zap, BookOpen, Plus, Scale } from "lucide-react";
 import type { Outlook } from "@/lib/options/strategies";
 
@@ -74,6 +75,7 @@ function Chip({
   accent,
   dashed,
   title,
+  className = "",
 }: {
   active?: boolean;
   onClick: () => void;
@@ -82,13 +84,14 @@ function Chip({
   /** user-supplied securities: quieter, hand-added look */
   dashed?: boolean;
   title?: string;
+  className?: string;
 }) {
   return (
     <button
       onClick={onClick}
       title={title}
       aria-pressed={active}
-      className={`hud shrink-0 whitespace-nowrap rounded-md border px-2.5 py-1.5 !text-[9.5px] transition-all ${dashed ? "border-dashed" : ""} ${
+      className={`hud shrink-0 whitespace-nowrap rounded-md border px-2.5 py-1.5 !text-[9.5px] transition-all ${className} ${dashed ? "border-dashed" : ""} ${
         active
           ? "border-primary/70 bg-accent text-foreground shadow-[0_0_14px_-2px_rgba(57,135,229,0.5)]"
           : accent
@@ -114,6 +117,8 @@ export function ChipRails() {
   const overlay = useCockpit((s) => s.overlay);
   const { snapshot } = useSnapshot(ticker);
   const customs = useCustomMarkets();
+  // the tour chip breathes until the first tour has been flown
+  const untouched = Object.keys(useTourProgress()).length === 0;
 
   return (
     <div className="pointer-events-auto flex select-none flex-col gap-1.5">
@@ -176,6 +181,7 @@ export function ChipRails() {
         <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" />
         <Chip
           accent
+          className={untouched ? "tour-chip-glow" : ""}
           active={overlay === "tours"}
           onClick={() => setOverlay(overlay === "tours" ? null : "tours")}
           title="Guided tours — learn by flying (t)"

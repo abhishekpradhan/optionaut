@@ -13,6 +13,8 @@ import type { LabLeg } from "@/lib/options/strategies";
 import type { Snapshot } from "@/lib/data/types";
 import { fmtUsd, fmtSignedUsd, fmtPct, fmtDate } from "@/lib/format";
 import { Term } from "@/components/learn/Term";
+import { Spot } from "@/components/cockpit/tour/Spot";
+import type { TourTarget } from "@/components/cockpit/tour/tours";
 
 /** Right stack, lower — view-aware readouts. History view: volatility
  *  context. Payoff/map: position stats + a greeks micro-strip. */
@@ -38,6 +40,7 @@ export function StatStack({
     const em = snapshot.iv30 ? expectedMove(snapshot.spot, snapshot.iv30, monthly.dte) : null;
     return (
       <Rows
+        spot="volpanel"
         title="volatility"
         rows={[
           [<Term key="iv" id="iv">options expect</Term>, snapshot.iv30 ? fmtPct(snapshot.iv30, 0) : "—"],
@@ -64,6 +67,7 @@ export function StatStack({
   return (
     <div className="space-y-4">
       <Rows
+        spot="position"
         title="position"
         rows={[
           [
@@ -85,6 +89,7 @@ export function StatStack({
       />
       {!stockOnly && (
         <Rows
+          spot="greeks"
           title="greeks · the dials, named"
           rows={[
             [<Term key="d" id="delta">Δ delta / $1</Term>, fmtSignedUsd(g.delta, { cents: false })],
@@ -106,15 +111,17 @@ export function StatStack({
 }
 
 function Rows({
+  spot,
   title,
   rows,
 }: {
+  spot: TourTarget;
   title: string;
   rows: Array<[React.ReactNode, React.ReactNode, ("gain" | "loss")?]>;
 }) {
   return (
-    <div className="pointer-events-auto select-none">
-      <div className="hud mb-1.5 !text-[9px] !tracking-[0.2em] text-muted-foreground/70">{title}</div>
+    <Spot id={spot} className="pointer-events-auto select-none">
+      <div className="hud mb-1.5 !text-[10px] !tracking-[0.2em] text-muted-foreground/70">{title}</div>
       <dl className="space-y-1">
         {rows.map(([k, v, tone], i) => (
           <div key={i} className="flex items-baseline justify-between gap-4">
@@ -129,6 +136,6 @@ function Rows({
           </div>
         ))}
       </dl>
-    </div>
+    </Spot>
   );
 }
