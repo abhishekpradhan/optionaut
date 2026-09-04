@@ -56,16 +56,23 @@ export function HintsBar({ snapshot }: { snapshot: Snapshot | null }) {
         className="hud max-w-[52vw] truncate rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline sm:max-w-none"
         title="How the numbers are made"
       >
-        {custom
-          ? "educational · your data · this browser only · not advice"
-          : "educational · simulated market · fictional securities · not advice"}
+        {/* the full line needs ~600px; narrower windows keep the part that matters */}
+        <span className="hidden xl:inline">
+          {custom
+            ? "educational · your data · this browser only · not advice"
+            : "educational · simulated market · fictional securities · not advice"}
+        </span>
+        <span className="xl:hidden">
+          {custom ? "educational · your data · not advice" : "educational · simulated · not advice"}
+        </span>
       </button>
       <button
         onClick={() => setOverlay("help")}
         className="hud hidden rounded !text-[9.5px] !tracking-[0.16em] text-muted-foreground/60 underline-offset-2 transition-colors hover:text-foreground hover:underline md:block"
         title="All controls (?)"
       >
-        h/p/m views · [ ] expiry · drag strikes · ? help
+        <span className="hidden xl:inline">h/p/m views · [ ] expiry · drag strikes · ? help</span>
+        <span className="xl:hidden">? help</span>
       </button>
       {snapshot && !custom && (
         <button

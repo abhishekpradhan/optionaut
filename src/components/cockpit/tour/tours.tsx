@@ -407,7 +407,7 @@ export const TOURS: Tour[] = [
             income: own 100 shares and sell a call against them — a{" "}
             <Term id="covered">covered call</Term>. The premium is yours today (the readout
             says you were paid); the price of that income is a ceiling on the upside, the flat
-            shelf on the right. Same downside as plain shares, plus a paid-for cap.
+            shelf on the right. Same downside as plain shares; the cap is what you were paid for.
           </>
         ),
       },
@@ -416,15 +416,15 @@ export const TOURS: Tour[] = [
         target: "strikes",
         gate: {
           check: (s) => Object.keys(s.overrides).length > 0,
-          hint: "drag the sold call's pill (−C) to the right",
+          hint: "drag the sold call's pill (−C)",
         },
         caption: (
           <>
             Now a <Term id="spread">spread</Term>: buy one call and sell another at a higher
             strike. The sold <Term id="leg">leg</Term>{" "}pays down the bought one, so the ticket
             is cheaper — and in exchange the upside stops at the second strike. Capped both
-            ways. Drag the sold call&apos;s pill to the right and watch the cost and the cap grow
-            together.
+            ways. Drag the sold call&apos;s pill: farther out, the spread costs more and can make
+            more; closer in, cheaper and smaller. Cost and cap move together.
           </>
         ),
         reveal: (s, c) => {
@@ -446,11 +446,11 @@ export const TOURS: Tour[] = [
         target: "readout",
         caption: (
           <>
-            Flip the spread: sell the higher put and buy a lower one as protection. Now you are{" "}
-            <em>paid</em>{" "}up front — a <Term id="credit-debit">credit</Term>{" "}— you keep it if
-            the stock stays above the sold strike, and the bought put caps what a crash can
-            take. The same shape as the last one, mirrored: pay now for a capped win, or get
-            paid now and post the width as collateral. Two currencies, one bet.
+            Flip it: sell the higher put and buy a lower one as protection. Now you are{" "}
+            <em>paid</em>{" "}up front — a <Term id="credit-debit">credit</Term>{" "}— and you keep
+            it if the stock stays above the sold strike; the bought put caps what a crash can
+            take. Same shape as the last step, mirrored: pay now for a capped win, or get paid
+            now and accept a capped loss. Two currencies, one bet.
           </>
         ),
       },
@@ -466,7 +466,8 @@ export const TOURS: Tour[] = [
             Now stop picking a direction. A <Term id="strangle">strangle</Term>{" "}buys a put
             below the stock and a call above it: it pays if the stock moves far enough{" "}
             <em>either</em>{" "}way. Drag the price dial hard in one direction and notice how far
-            it has to travel before the white line clears zero. Cheap tickets, wide breakevens.
+            it has to travel before the white line clears zero. Cheap to buy, but a long way to
+            breakeven.
           </>
         ),
         reveal: (s, c) => {
@@ -490,11 +491,11 @@ export const TOURS: Tour[] = [
           <>
             Turn the strangle inside out and add seatbelts. <em>Sell</em>{" "}the strangle —
             collect the drama premium — then buy a further-out put and call so a crash or a
-            squeeze can&apos;t run away from you. That is an{" "}
+            spike can&apos;t run away from you. That is an{" "}
             <Term id="iron-condor">iron condor</Term>: a bull put spread and a bear call spread
-            on the same stock, four <Term id="leg">legs</Term>. Read the position panel: max
-            profit is the credit, max loss is the width of a <Term id="wing">wing</Term>{" "}minus
-            that credit.
+            on the same stock, four <Term id="leg">legs</Term>. In the position panel, max profit
+            is the credit; max loss is a <Term id="wing">wing</Term>&apos;s width minus that
+            credit.
           </>
         ),
       },

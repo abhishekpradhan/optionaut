@@ -34,7 +34,7 @@ export function Overlays({ snapshot }: { snapshot: Snapshot | null }) {
       role="dialog"
       aria-modal="true"
     >
-      <div className="panel stage-enter relative flex max-h-[82vh] w-full max-w-2xl flex-col overflow-hidden">
+      <div className="panel stage-enter relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden">
         <button
           ref={closeRef}
           onClick={() => setOverlay(null)}
@@ -269,7 +269,7 @@ function ToursSheet() {
   return (
     <>
       <SheetTitle kicker="learn by flying — the instrument teaches itself">Tours</SheetTitle>
-      <ol className="space-y-2">
+      <ol className="space-y-1">
         {TOURS.map((t, i) => {
           const p = progress[t.id];
           const at = resumeStep(t.id, t.steps.length);
@@ -277,7 +277,7 @@ function ToursSheet() {
             <li key={t.id}>
               <button
                 onClick={() => startTour(t.id)}
-                className="group flex w-full items-center gap-3 rounded-lg border border-border/70 px-4 py-3 text-left transition-colors hover:border-primary/50"
+                className="group flex w-full items-center gap-3 rounded-lg border border-border/70 px-4 py-2 text-left transition-colors hover:border-primary/50"
               >
                 <span className="figures w-5 text-right text-base font-semibold text-muted-foreground/60">
                   {i + 1}
@@ -301,10 +301,10 @@ function ToursSheet() {
           );
         })}
       </ol>
-      <p className="mt-4 text-[12px] leading-relaxed text-muted-foreground">
-        Each tour drives the real instrument — captions guide, you fly. About {TOTAL_MINUTES}{" "}
-        minutes for all {TOURS.length}, two to five each, and every tour stands alone; leave
-        whenever you like and it remembers your place. Start at 1 if options are new to you.
+      <p className="mt-2.5 text-[12px] leading-relaxed text-muted-foreground">
+        Captions guide, you fly. About {TOTAL_MINUTES} minutes for all {TOURS.length}, two to
+        five each; every tour stands alone and remembers your place. Start at 1 if options are
+        new to you.
       </p>
     </>
   );

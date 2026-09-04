@@ -23,6 +23,7 @@ import { StatStack } from "./hud/StatStack";
 import { Stage } from "./Stage";
 import { Overlays } from "./overlays/Overlays";
 import { TourMode } from "./tour/TourMode";
+import { tourById } from "./tour/tours";
 import { FirstRun } from "./FirstRun";
 import { MobileGate } from "./MobileGate";
 
@@ -171,7 +172,15 @@ export function Cockpit({ initial }: { initial?: CockpitInitial }) {
     if (window.location.pathname + window.location.search !== url) {
       window.history.replaceState(null, "", url);
     }
-  }, [ticker, strategyId, view, snapshot, def, expIndex, overrides, legs, whatIfPrice, elapsedDays, ivScale]);
+    // The tab title follows the scene the same way the address does,
+    // in the shapes the prerendered pages use.
+    const title = tour
+      ? `${tourById.get(tour.id)?.title ?? "Tour"} — Tour — Optionaut`
+      : view === "history"
+        ? `${ticker}${snapshot?.name && snapshot.name !== ticker ? ` · ${snapshot.name}` : ""} — Optionaut`
+        : `${def?.name ?? strategyId} on ${ticker} — Optionaut`;
+    if (document.title !== title) document.title = title;
+  }, [ticker, strategyId, view, snapshot, def, expIndex, overrides, legs, whatIfPrice, elapsedDays, ivScale, tour]);
 
   // ——— keyboard map ———
   const snapshotRef = React.useRef(snapshot);
